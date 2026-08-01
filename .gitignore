@@ -1,0 +1,54 @@
+# === PETPULSE - Gitignore ===
+
+# Plan maestro (no subir al repo)
+PETPULSE_ROADMAP.md
+
+# === Node / JavaScript ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnp
+.pnp.js
+
+# === Build outputs ===
+build/
+dist/
+.next/
+out/
+
+# === Environment variables ===
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# === IDE / Editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+*.log
+
+# === Docker ===
+docker-compose.override.yml
+
+# === Oracle DB (volumen persistente) ===
+oracle-data/
+
+# === Coverage / Tests ===
+coverage/
+.nyc_output/
+
+# === Misc ===
+*.tgz
+*.tar.gz
+.cache/

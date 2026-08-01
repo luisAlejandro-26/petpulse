@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  oracle-db:
+    image: gvenzl/oracle-free:latest
+    container_name: petpulse-oracle-db
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: PetPulse2024
+      APP_USER: petpulse
+      APP_USER_PASSWORD: PetPulse2024
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./database/init.sql:/opt/oracle/scripts/startup/init.sql
+    networks:
+      - petpulse-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: petpulse-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: oracle-db
+      DATABASE_PORT: 1521
+      DATABASE_USER: petpulse
+      DATABASE_PASSWORD: PetPulse2024
+      DATABASE_SERVICE: XEPDB1
+      JWT_SECRET: petpulse-jwt-secret-2024
+      PORT: 3000
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    networks:
+      - petpulse-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: petpulse-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - petpulse-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+networks:
+  petpulse-network:
+    driver: bridge
+
+volumes:
+  oracle-data:
