@@ -12,7 +12,6 @@ services:
       APP_USER_PASSWORD: PetPulse2024
     volumes:
       - oracle-data:/opt/oracle/oradata
-      - ./database/init.sql:/opt/oracle/scripts/startup/init.sql
     networks:
       - petpulse-network
     healthcheck:
@@ -21,6 +20,18 @@ services:
       timeout: 5s
       retries: 10
       start_period: 60s
+
+  db-init:
+    image: gvenzl/oracle-free:latest
+    container_name: petpulse-db-init
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    volumes:
+      - ./database/init.sql:/tmp/init.sql
+    entrypoint: ["bash", "-c", "echo 'Running init.sql...' && sqlplus -s 'petpulse/PetPulse2024@//oracle-db:1521/FREEPDB1' @/tmp/init.sql && echo 'Tables created!'"]
+    networks:
+      - petpulse-network
 
   backend:
     build:
@@ -35,12 +46,12 @@ services:
       DATABASE_PORT: 1521
       DATABASE_USER: petpulse
       DATABASE_PASSWORD: PetPulse2024
-      DATABASE_SERVICE: XEPDB1
+      DATABASE_SERVICE: FREEPDB1
       JWT_SECRET: petpulse-jwt-secret-2024
       PORT: 3000
     depends_on:
-      oracle-db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     networks:
       - petpulse-network
     volumes:
