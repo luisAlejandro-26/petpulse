@@ -42,7 +42,7 @@ Esto crea el archivo `.env` con los valores por defecto. **No modifiques** los v
 
 > **Seguridad:** El archivo `.env` está en el `.gitignore` y **nunca** debe subirse al repositorio.
 
-### Paso 3: Levantar los servicios con Docker Compose
+### Paso 3: Levantar la infraestructura con Docker Compose
 
 ```bash
 docker-compose up --build
@@ -50,18 +50,32 @@ docker-compose up --build
 
 Este comando hace lo siguiente automáticamente:
 
-1. Construye las imágenes de `backend` y `frontend`
+1. Construye la imagen del `backend`
 2. Levanta **Oracle Database Free** (primera vez tarda ~2-3 min)
 3. Ejecuta el servicio **`db-init`** que crea las 4 tablas automáticamente
 4. Arranca el **backend** en el puerto 3000
-5. Arranca el **frontend** en el puerto 5173
 
 > Para ejecutar en segundo plano (sin ocupar la terminal):
 > ```bash
 > docker-compose up -d
 > ```
 
-### Paso 4: Verificar que todo funciona
+### Paso 4: Levantar el frontend con npm (hot-reload nativo)
+
+En otra terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+> **¿Por qué no en Docker?** En desarrollo es mejor correr el frontend con `npm run dev` porque Vite tiene hot-reload nativo mucho más rápido que dentro de un contenedor. La imagen Docker del frontend (multistage + Nginx) queda disponible para **producción**:
+> ```bash
+> docker-compose --profile production up --build
+> ```
+
+### Paso 5: Verificar que todo funciona
 
 | Servicio | URL / Comando | Resultado esperado |
 |----------|---------------|-------------------|
@@ -89,16 +103,18 @@ USERS
 ## Comandos Útiles de Docker
 
 ```bash
-# Levantar todo (foreground)
+# Levantar la infraestructura (Oracle + Backend, foreground)
 docker-compose up
 
-# Levantar todo (background)
+# Levantar la infraestructura (background)
 docker-compose up -d
+
+# Levantar TODO incluyendo el frontend en producción
+docker-compose --profile production up --build
 
 # Ver logs de un servicio
 docker-compose logs -f oracle-db
 docker-compose logs -f backend
-docker-compose logs -f frontend
 
 # Ver estado de los servicios
 docker-compose ps
@@ -267,13 +283,13 @@ docker-compose up db-init
 
 ---
 
-### Error 7: El frontend no carga pero el contenedor está arriba
+### Error 7: El frontend no carga pero `npm run dev` no muestra errores
 
-**Causa:** Vite no está escuchando en `0.0.0.0` dentro del contenedor.
+**Causa:** Otra aplicación ocupa el puerto 5173, o Vite no está escuchando en `0.0.0.0`.
 
-**Solución:** El `vite.config.ts` ya tiene `host: true`. Si modificaste algo, verifica los logs:
+**Solución:** El `vite.config.ts` ya tiene `host: true`. Verifica que el puerto esté libre:
 ```bash
-docker-compose logs -f frontend
+lsof -i :5173
 ```
 
 ---
@@ -291,9 +307,25 @@ docker-compose up --build
 
 ---
 
+## Desarrollo del Frontend (Flujo Diario)
+
+Este es el flujo recomendado para el equipo de UI:
+
+```bash
+# 1. Levantar la infraestructura una sola vez (Oracle + Backend)
+docker-compose up --build
+
+# 2. En otra terminal, levantar el frontend con hot-reload
+cd frontend
+npm install      # solo la primera vez
+npm run dev      # → http://localhost:5173
+```
+
+> Vite recarga automáticamente el navegador al guardar cambios en `frontend/src/`. No necesitas reconstruir nada.
+
 ## Desarrollo sin Docker (Avanzado)
 
-Si prefieres ejecutar sin contenedores (recomendado solo para desarrollo de UI/Backend con Oracle ya corriendo):
+Si prefieres ejecutar todo sin contenedores (recomendado solo para desarrollo de UI/Backend con Oracle ya corriendo en Docker):
 
 ```bash
 # Backend

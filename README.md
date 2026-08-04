@@ -31,9 +31,9 @@ petpulse/
 │   │   └── api/           # Endpoints de la API
 │   ├── Dockerfile         # Imagen multistage (deps → builder → runner)
 │   └── package.json
-├── frontend/              # SPA (React + Vite)
+├── frontend/              # SPA (React + Vite) - se corre con npm run dev
 │   ├── src/               # Código fuente de la interfaz
-│   ├── Dockerfile         # Imagen multistage con Nginx
+│   ├── Dockerfile         # Imagen multistage con Nginx (solo producción)
 │   └── package.json
 ├── database/
 │   └── init.sql           # Esquema de la base de datos Oracle
@@ -69,14 +69,24 @@ cd petpulse
 # 2. Configurar variables de entorno
 cp backend/.env.example backend/.env
 
-# 3. Levantar todos los servicios (Oracle, Backend, Frontend)
+# 3. Levantar la infraestructura (Oracle + Backend)
 docker-compose up --build
 
-# 4. Acceder a la aplicación
+# 4. En otra terminal, levantar el frontend con npm
+cd frontend
+npm install
+npm run dev
+
+# 5. Acceder a la aplicación
 #    Frontend → http://localhost:5173
 #    Backend  → http://localhost:3000
 #    Oracle   → localhost:1521 (service name: FREEPDB1)
 ```
+
+> **Frontend en desarrollo:** el frontend corre con `npm run dev` (fuera de Docker) porque Vite tiene hot-reload nativo más rápido. La imagen Docker del frontend (multistage + Nginx) queda disponible para **producción**:
+> ```bash
+> docker-compose --profile production up --build
+> ```
 
 > **Guía detallada:** Consulta [INSTALL.md](./INSTALL.md) para la instalación completa paso a paso, solución de errores comunes y las convenciones de ramas.
 
