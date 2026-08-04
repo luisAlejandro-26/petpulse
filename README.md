@@ -1,26 +1,26 @@
-# 🐾 PetPulse
+# PetPulse
 
 > **SPA de Control Veterinario** para gestionar la salud de tus mascotas: registra mascotas, vacunas, controles, desparasitaciones y cirugías, todo en un solo lugar.
 
 ---
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 PetPulse es una aplicación web (SPA) que permite a los dueños de mascotas llevar un **control completo de la salud** de sus animales. El sistema permite registrar mascotas y los eventos de salud que estas experimentan a lo largo de su vida.
 
 ### Funcionalidades principales
 
-- 🐕 **Registro de mascotas** (perro, gato, conejo, pájaro, otro)
-- 💉 **Eventos de salud** (vacunas, controles, desparasitaciones, cirugías, otros)
-- 📅 **Fechas de vencimiento** para próximos eventos
-- 👤 **Gestión de usuarios** con roles (USER / ADMIN)
-- 🖼️ **Imágenes de perfil** de mascotas y usuarios
-- 🤖 **Chatbot de consejos veterinarios** con IA (Fase 4)
-- ☁️ **Almacenamiento en la nube** de imágenes (Fase 4)
+- **Registro de mascotas** (perro, gato, conejo, pájaro, otro)
+- **Eventos de salud** (vacunas, controles, desparasitaciones, cirugías, otros)
+- **Fechas de vencimiento** para próximos eventos
+- **Gestión de usuarios** con roles (USER / ADMIN)
+- **Imágenes de perfil** de mascotas y usuarios
+- **Chatbot de consejos veterinarios** con IA (Fase 4)
+- **Almacenamiento en la nube** de imágenes (Fase 4)
 
 ---
 
-## 🏗️ Arquitectura del Proyecto
+## Arquitectura del Proyecto
 
 Proyecto en **monorepo** con la siguiente estructura:
 
@@ -49,17 +49,17 @@ petpulse/
 
 | Capa | Tecnología |
 |------|------------|
-| 🖥️ **Frontend** | React 18 + Vite 5 + TypeScript |
-| ⚙️ **Backend** | Next.js 14 (API Routes) + TypeScript |
-| 🗄️ **Base de datos** | Oracle Database Free (`gvenzl/oracle-free`) |
-| 🐳 **Contenedores** | Docker + Docker Compose |
-| 🔄 **CI/CD** | GitHub Actions |
-| ☁️ **Storage** | AWS S3 (Fase 4) |
-| 🤖 **IA** | Google Gemini API (Fase 4) |
+| **Frontend** | React 18 + Vite 5 + TypeScript |
+| **Backend** | Next.js 14 (API Routes) + TypeScript |
+| **Base de datos** | Oracle Database Free (`gvenzl/oracle-free`) |
+| **Contenedores** | Docker + Docker Compose |
+| **CI/CD** | GitHub Actions |
+| **Storage** | AWS S3 (Fase 4) |
+| **IA** | Google Gemini API (Fase 4) |
 
 ---
 
-## 🚀 Puesta en Marcha Rápida
+## Puesta en Marcha Rápida
 
 ```bash
 # 1. Clonar el repositorio
@@ -78,11 +78,11 @@ docker-compose up --build
 #    Oracle   → localhost:1521 (service name: FREEPDB1)
 ```
 
-> 📖 **Guía detallada:** Consulta [INSTALL.md](./INSTALL.md) para la instalación completa paso a paso, solución de errores comunes y las convenciones de ramas.
+> **Guía detallada:** Consulta [INSTALL.md](./INSTALL.md) para la instalación completa paso a paso, solución de errores comunes y las convenciones de ramas.
 
 ---
 
-## 🧭 Rutas de la API
+## Rutas de la API
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
@@ -92,7 +92,7 @@ docker-compose up --build
 
 ---
 
-## 🌿 Convenciones de Ramas (GitFlow Adaptado)
+## Convenciones de Ramas (GitFlow Adaptado)
 
 El proyecto sigue un **GitFlow adaptado** con un monorepo:
 
@@ -107,25 +107,25 @@ El proyecto sigue un **GitFlow adaptado** con un monorepo:
 
 ---
 
-## 📊 Fases del Proyecto
+## Fases del Proyecto
 
 | Fase | Descripción | Estado |
 |------|-------------|--------|
-| 1 | Infraestructura y Docker | ✅ Completada |
-| 2 | Backend y Autenticación (Next.js) | 🔜 Próxima |
-| 3 | Frontend UI (React) | ⏳ Pendiente |
-| 4 | Integraciones AWS S3 + Gemini AI | ⏳ Pendiente |
-| 5 | CI/CD y Pulido Final | ⏳ Pendiente |
+| 1 | Infraestructura y Docker | Completada |
+| 2 | Backend y Autenticación (Next.js) | Próxima |
+| 3 | Frontend UI (React) | Pendiente |
+| 4 | Integraciones AWS S3 + Gemini AI | Pendiente |
+| 5 | CI/CD y Pulido Final | Pendiente |
 
 ---
 
-## 👥 Equipo
+## Equipo
 
 - **Tech Lead:** Luis Jiménez
 - **Equipo:** 3 desarrolladores
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Proyecto académico universitario. Sin licencia específica.
