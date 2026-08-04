@@ -1,10 +1,10 @@
-# 📦 Guía de Instalación - PetPulse
+# Guía de Instalación - PetPulse
 
 Esta guía detalla el proceso completo para **clonar, configurar y ejecutar** el proyecto PetPulse en un entorno local, siguiendo las convenciones de ramas establecidas.
 
 ---
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 | Herramienta | Versión mínima | Verificar con |
 |-------------|----------------|---------------|
@@ -18,7 +18,7 @@ Esta guía detalla el proceso completo para **clonar, configurar y ejecutar** el
 
 ---
 
-## 🚀 Instalación Paso a Paso
+## Instalación Paso a Paso
 
 ### Paso 1: Clonar el repositorio
 
@@ -27,7 +27,7 @@ git clone git@github.com:luisAlejandro-26/petpulse.git
 cd petpulse
 ```
 
-> 💡 Si usas HTTPS en vez de SSH:
+> Si usas HTTPS en vez de SSH:
 > ```bash
 > git clone https://github.com/luisAlejandro-26/petpulse.git
 > ```
@@ -40,7 +40,7 @@ cp backend/.env.example backend/.env
 
 Esto crea el archivo `.env` con los valores por defecto. **No modifiques** los valores de conexión a la base de datos (los que empiezan con `DATABASE_`) ya que están sincronizados con el `docker-compose.yml`.
 
-> ⚠️ **Seguridad:** El archivo `.env` está en el `.gitignore` y **nunca** debe subirse al repositorio.
+> **Seguridad:** El archivo `.env` está en el `.gitignore` y **nunca** debe subirse al repositorio.
 
 ### Paso 3: Levantar los servicios con Docker Compose
 
@@ -50,13 +50,13 @@ docker-compose up --build
 
 Este comando hace lo siguiente automáticamente:
 
-1. 🔨 Construye las imágenes de `backend` y `frontend`
-2. 🗄️ Levanta **Oracle Database Free** (primera vez tarda ~2-3 min)
-3. 🧪 Ejecuta el servicio **`db-init`** que crea las 4 tablas automáticamente
-4. ⚙️ Arranca el **backend** en el puerto 3000
-5. 🖥️ Arranca el **frontend** en el puerto 5173
+1. Construye las imágenes de `backend` y `frontend`
+2. Levanta **Oracle Database Free** (primera vez tarda ~2-3 min)
+3. Ejecuta el servicio **`db-init`** que crea las 4 tablas automáticamente
+4. Arranca el **backend** en el puerto 3000
+5. Arranca el **frontend** en el puerto 5173
 
-> 💡 Para ejecutar en segundo plano (sin ocupar la terminal):
+> Para ejecutar en segundo plano (sin ocupar la terminal):
 > ```bash
 > docker-compose up -d
 > ```
@@ -86,7 +86,7 @@ USERS
 
 ---
 
-## 🐳 Comandos Útiles de Docker
+## Comandos Útiles de Docker
 
 ```bash
 # Levantar todo (foreground)
@@ -120,7 +120,7 @@ docker-compose up db-init
 
 ---
 
-## 🖥️ Conectarse a Oracle desde SQL Developer
+## Conectarse a Oracle desde SQL Developer
 
 Para inspeccionar la base de datos visualmente:
 
@@ -133,11 +133,11 @@ Para inspeccionar la base de datos visualmente:
 | Puerto | `1521` |
 | **Service Name** | `FREEPDB1` |
 
-> ⚠️ **Importante:** Usa **Service Name = `FREEPDB1`**, NO `XEPDB1` ni `XE`. Es un error común.
+> **Importante:** Usa **Service Name = `FREEPDB1`**, NO `XEPDB1` ni `XE`. Es un error común.
 
 ---
 
-## 🌿 Distribución de Ramas (GitFlow Adaptado)
+## Distribución de Ramas (GitFlow Adaptado)
 
 El proyecto usa un **GitFlow adaptado** con ramas de integración y ramas de feature.
 
@@ -186,15 +186,16 @@ git branch -d feature/SInformacion-mi-tarea
 
 ### Recomendaciones
 
-- ✅ **Una tarea = una rama.** No mezcles varias tareas en la misma rama.
-- ✅ Usa mensajes de commit descriptivos (`feat:`, `fix:`, `chore:`, `docs:`).
-- ✅ Pull `develop` frecuentemente para evitar conflictos.
-- ⚠️ **NUNCA** hacer push directamente a `main`.
-- ⚠️ **NUNCA** subir archivos `.env` o el `PETPULSE_ROADMAP.md`.
+- **Una tarea = una rama.** No mezcles varias tareas en la misma rama.
+- Usa mensajes de commit descriptivos (`feat:`, `fix:`, `chore:`, `docs:`).
+- Haz pull de `develop` frecuentemente para evitar conflictos.
+- **NUNCA** hacer push directamente a `main`.
+- **NUNCA** subir archivos `.env` o el `PETPULSE_ROADMAP.md`.
+- **NUNCA** agregar emojis a archivos del repositorio.
 
 ---
 
-## 🐛 Errores Comunes y Soluciones
+## Errores Comunes y Soluciones
 
 ### Error 1: `ORA-12514: Cannot connect to database. Service XEPDB1 is not registered`
 
@@ -277,7 +278,7 @@ docker-compose logs -f frontend
 
 ---
 
-## 🔄 Reinicio Total del Entorno
+## Reinicio Total del Entorno
 
 Si quieres empezar **completamente de cero** (borrar la base de datos y reconstruir todo):
 
@@ -286,11 +287,11 @@ docker-compose down -v
 docker-compose up --build
 ```
 
-> ⚠️ Esto borra TODA la data de Oracle. Úsalo solo si es necesario.
+> Esto borra TODA la data de Oracle. Úsalo solo si es necesario.
 
 ---
 
-## 🧑‍💻 Desarrollo sin Docker (Avanzado)
+## Desarrollo sin Docker (Avanzado)
 
 Si prefieres ejecutar sin contenedores (recomendado solo para desarrollo de UI/Backend con Oracle ya corriendo):
 
