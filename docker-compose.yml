@@ -37,18 +37,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: deps
     container_name: petpulse-backend
+    command: npm run dev
     ports:
       - "3000:3000"
-    environment:
-      NODE_ENV: development
-      DATABASE_HOST: oracle-db
-      DATABASE_PORT: 1521
-      DATABASE_USER: petpulse
-      DATABASE_PASSWORD: PetPulse2024
-      DATABASE_SERVICE: FREEPDB1
-      JWT_SECRET: petpulse-jwt-secret-2024
-      PORT: 3000
+    env_file:
+      - ./backend/.env
     depends_on:
       db-init:
         condition: service_completed_successfully
@@ -62,11 +57,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: deps
     container_name: petpulse-frontend
+    command: npm run dev
     ports:
       - "5173:5173"
     environment:
-      VITE_API_URL: http://localhost:3000
+      - VITE_API_URL=http://localhost:3000
     depends_on:
       - backend
     networks:
