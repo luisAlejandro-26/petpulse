@@ -47,6 +47,8 @@ export function getPool(): Promise<oracledb.Pool> {
   return pool
 }
 
+const WRITE_RE = /^\s*(INSERT|UPDATE|DELETE)\b/i
+
 export async function query<T = Record<string, unknown>>(
   sql: string,
   binds: oracledb.BindParameters = {},
@@ -57,6 +59,7 @@ export async function query<T = Record<string, unknown>>(
   try {
     const result = await connection.execute<T>(sql, binds, {
       outFormat: oracledb.OUT_FORMAT_OBJECT,
+      autoCommit: WRITE_RE.test(sql),
       ...options,
     })
     return (result.rows ?? []) as T[]
