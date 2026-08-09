@@ -8,13 +8,11 @@ Esta guía detalla el proceso completo para **clonar, configurar y ejecutar** el
 
 | Herramienta | Versión mínima | Verificar con |
 |-------------|----------------|---------------|
-| **Docker** | 24+ (con Docker Compose v2) | `docker --version` |
-| **Docker Compose** | v2 (incluido en Docker Desktop) | `docker compose version` |
 | **Git** | 2.30+ | `git --version` |
-| **Node.js** (opcional) | 20+ (solo si desarrollas fuera de Docker) | `node --version` |
-| **SQL Developer** (opcional) | Cualquiera | Para inspeccionar la base de datos |
+| **Node.js** | 20+ | `node --version` |
+| **npm** | 10+ | `npm --version` |
 
-> **IMPORTANTE:** Para este proyecto NO necesitas instalar Oracle localmente. La base de datos corre en un contenedor Docker automáticamente.
+> **IMPORTANTE:** No se necesita Docker ni Oracle local. La base de datos (Supabase, PostgreSQL) está alojada en la nube y el proyecto corre con `npm run dev`.
 
 ---
 
@@ -38,118 +36,46 @@ cd petpulse
 cp backend/.env.example backend/.env
 ```
 
-Esto crea el archivo `.env` con los valores por defecto. **No modifiques** los valores de conexión a la base de datos (los que empiezan con `DATABASE_`) ya que están sincronizados con el `docker-compose.yml`.
+Completa `backend/.env` con las credenciales reales:
+
+| Variable | Descripción |
+|----------|-------------|
+| `SUPABASE_URL` | URL del proyecto en Supabase (ej. `https://xxxx.supabase.co`) |
+| `SUPABASE_ANON_KEY` | Clave pública (anon key) del proyecto |
+| `JWT_SECRET` | Secreto para firmar los tokens de sesión |
+| `EMAIL_USER` / `EMAIL_PASS` | Cuenta SMTP para el envío de correos de recuperación |
 
 > **Seguridad:** El archivo `.env` está en el `.gitignore` y **nunca** debe subirse al repositorio.
 
-### Paso 3: Levantar la infraestructura con Docker Compose
+### Paso 3: Instalar dependencias e iniciar el backend
 
 ```bash
-docker-compose up --build
+cd backend
+npm install
+npm run dev    # → http://localhost:3000
 ```
 
-Este comando hace lo siguiente automáticamente:
+> El backend usa las tablas que ya existen en Supabase (`users`, `sessions`, `pet`, `health_event`). No hace falta crear nada localmente.
 
-1. Construye la imagen del `backend`
-2. Levanta **Oracle Database Free** (primera vez tarda ~2-3 min)
-3. Ejecuta el servicio **`db-init`** que crea las 4 tablas automáticamente
-4. Arranca el **backend** en el puerto 3000
-
-> Para ejecutar en segundo plano (sin ocupar la terminal):
-> ```bash
-> docker-compose up -d
-> ```
-
-### Paso 4: Levantar el frontend con npm (hot-reload nativo)
+### Paso 4: Iniciar el frontend
 
 En otra terminal:
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev    # → http://localhost:5173
 ```
 
-> **¿Por qué no en Docker?** En desarrollo es mejor correr el frontend con `npm run dev` porque Vite tiene hot-reload nativo mucho más rápido que dentro de un contenedor. La imagen Docker del frontend (multistage + Nginx) queda disponible para **producción**:
-> ```bash
-> docker-compose --profile production up --build
-> ```
+> `frontend/.env` debe contener `VITE_API_URL=http://localhost:3000` para apuntar al backend local.
 
 ### Paso 5: Verificar que todo funciona
 
 | Servicio | URL / Comando | Resultado esperado |
 |----------|---------------|-------------------|
-| Frontend | `http://localhost:5173` | Página de PetPulse |
 | Backend | `http://localhost:3000/api/health` | `{"status":"ok","service":"petpulse-backend"}` |
-| Oracle | Ver comando abajo | Lista las 4 tablas |
-
-Verificar las tablas de Oracle:
-
-```bash
-echo "SELECT table_name FROM user_tables ORDER BY table_name;" | docker exec -i petpulse-oracle-db sqlplus -s "petpulse/PetPulse2024@//localhost:1521/FREEPDB1"
-```
-
-Resultado esperado:
-
-```
-HEALTH_EVENT
-PET
-SESSIONS
-USERS
-```
-
----
-
-## Comandos Útiles de Docker
-
-```bash
-# Levantar la infraestructura (Oracle + Backend, foreground)
-docker-compose up
-
-# Levantar la infraestructura (background)
-docker-compose up -d
-
-# Levantar TODO incluyendo el frontend en producción
-docker-compose --profile production up --build
-
-# Ver logs de un servicio
-docker-compose logs -f oracle-db
-docker-compose logs -f backend
-
-# Ver estado de los servicios
-docker-compose ps
-
-# Detener servicios (conserva la data de Oracle)
-docker-compose down
-
-# Detener y ELIMINAR la data de Oracle (reinicio limpio de la DB)
-docker-compose down -v
-
-# Reconstruir imágenes desde cero
-docker-compose up --build
-
-# Reconstruir SOLO la base de datos desde cero (borra tablas y recrea)
-docker-compose down -v
-docker-compose up -d oracle-db
-docker-compose up db-init
-```
-
----
-
-## Conectarse a Oracle desde SQL Developer
-
-Para inspeccionar la base de datos visualmente:
-
-| Campo | Valor |
-|-------|-------|
-| Nombre de conexión | PetPulse |
-| Usuario | `petpulse` |
-| Contraseña | `PetPulse2024` |
-| Host | `localhost` |
-| Puerto | `1521` |
-| **Service Name** | `FREEPDB1` |
-
-> **Importante:** Usa **Service Name = `FREEPDB1`**, NO `XEPDB1` ni `XE`. Es un error común.
+| Backend + Supabase | `http://localhost:3000/api/db-test` | `{"count":N}` con el total de usuarios |
+| Frontend | `http://localhost:5173` | Página de PetPulse |
 
 ---
 
@@ -168,7 +94,7 @@ El proyecto usa un **GitFlow adaptado** con ramas de integración y ramas de fea
 
 | Tipo de trabajo | Prefijo | Ejemplo |
 |-----------------|---------|---------|
-| Backend, DB, DevOps, Docker, Repo | `feature/SInformacion-<tarea>` | `feature/SInformacion-auth-jwt` |
+| Backend, DB, DevOps, Repo | `feature/SInformacion-<tarea>` | `feature/SInformacion-auth-jwt` |
 | Frontend React / UI | `feature/multimedia-<tarea>` | `feature/multimedia-dashboard` |
 
 ### Flujo de trabajo diario
@@ -195,10 +121,9 @@ git push -u origin feature/SInformacion-mi-tarea
 git checkout develop
 git merge --no-ff feature/SInformacion-mi-tarea
 git push origin develop
-
-# 7. Eliminar la rama local ya integrada
-git branch -d feature/SInformacion-mi-tarea
 ```
+
+> **Regla obligatoria:** NUNCA eliminar ramas (ni locales ni en el repositorio). Una rama integrada a `develop` se conserva; si ya no se trabaja en ella, simplemente se deja de usar.
 
 ### Recomendaciones
 
@@ -206,22 +131,14 @@ git branch -d feature/SInformacion-mi-tarea
 - Usa mensajes de commit descriptivos (`feat:`, `fix:`, `chore:`, `docs:`).
 - Haz pull de `develop` frecuentemente para evitar conflictos.
 - **NUNCA** hacer push directamente a `main`.
-- **NUNCA** subir archivos `.env` o el `PETPULSE_ROADMAP.md`.
+- **NUNCA** subir archivos `.env` ni `PETPULSE_TICKETS.md`.
 - **NUNCA** agregar emojis a archivos del repositorio.
 
 ---
 
 ## Errores Comunes y Soluciones
 
-### Error 1: `ORA-12514: Cannot connect to database. Service XEPDB1 is not registered`
-
-**Causa:** Usar el service name incorrecto. La imagen `gvenzl/oracle-free` usa `FREEPDB1`, no `XEPDB1`.
-
-**Solución:** En cualquier conexión usa `FREEPDB1` como Service Name.
-
----
-
-### Error 2: `refusing to allow an OAuth App to create or update workflow`
+### Error 1: `refusing to allow an OAuth App to create or update workflow`
 
 **Causa:** El token de GitHub no tiene el permiso `workflow` para subir/modificar archivos en `.github/workflows/`.
 
@@ -235,28 +152,7 @@ git remote set-url origin https://USUARIO:TOKEN@github.com/luisAlejandro-26/petp
 
 ---
 
-### Error 3: El servicio `db-init` falla o las tablas no aparecen
-
-**Causa:** Oracle aún no terminó de iniciar, o el volumen tiene data previa corrupta.
-
-**Solución:**
-```bash
-docker-compose down -v
-docker-compose up -d oracle-db
-docker-compose up db-init
-```
-
----
-
-### Error 4: `docker-compose up --build` falla con `unable to prepare context: path not found`
-
-**Causa:** Faltan directorios o archivos del monorepo.
-
-**Solución:** Verifica que las carpetas `backend/` y `frontend/` existan con su `Dockerfile`. Si clonaste antes de que existieran, haz `git pull origin develop` en `main`/`develop`.
-
----
-
-### Error 5: El puerto 3000 o 5173 ya está en uso
+### Error 2: El puerto 3000 o 5173 ya está en uso
 
 **Causa:** Otra aplicación está usando el puerto.
 
@@ -272,18 +168,7 @@ kill -9 <PID>
 
 ---
 
-### Error 6: `no rows selected` al listar tablas de Oracle
-
-**Causa:** El usuario `petpulse` no tiene las tablas en su esquema, o `db-init` no se ejecutó.
-
-**Solución:** Ejecutar el servicio `db-init` manualmente:
-```bash
-docker-compose up db-init
-```
-
----
-
-### Error 7: El frontend no carga pero `npm run dev` no muestra errores
+### Error 3: El frontend no carga pero `npm run dev` no muestra errores
 
 **Causa:** Otra aplicación ocupa el puerto 5173, o Vite no está escuchando en `0.0.0.0`.
 
@@ -294,49 +179,34 @@ lsof -i :5173
 
 ---
 
-## Reinicio Total del Entorno
+### Error 4: `/api/db-test` devuelve 500 con un error de Supabase
 
-Si quieres empezar **completamente de cero** (borrar la base de datos y reconstruir todo):
+**Causa:** `SUPABASE_URL` o `SUPABASE_ANON_KEY` están mal configurados en `backend/.env`, o las tablas no existen en el proyecto.
 
-```bash
-docker-compose down -v
-docker-compose up --build
-```
+**Solución:** Verifica los valores en el dashboard de Supabase (Settings → API). Confirma que las tablas `users`, `sessions`, `pet` y `health_event` existan en el esquema.
 
-> Esto borra TODA la data de Oracle. Úsalo solo si es necesario.
+---
+
+### Error 5: No llega el correo de recuperación de contraseña
+
+**Causa:** El SMTP falla, o la contraseña de aplicación de Gmail está mal.
+
+**Solución:** Verifica que `EMAIL_USER`/`EMAIL_PASS` en `backend/.env` usen una **contraseña de aplicación** de Gmail (no la contraseña normal). Revisa también la carpeta de spam.
 
 ---
 
 ## Desarrollo del Frontend (Flujo Diario)
 
-Este es el flujo recomendado para el equipo de UI:
-
 ```bash
-# 1. Levantar la infraestructura una sola vez (Oracle + Backend)
-docker-compose up --build
+# 1. Iniciar el backend una sola vez
+cd backend
+npm install    # solo la primera vez
+npm run dev    # → http://localhost:3000
 
 # 2. En otra terminal, levantar el frontend con hot-reload
 cd frontend
-npm install      # solo la primera vez
-npm run dev      # → http://localhost:5173
+npm install    # solo la primera vez
+npm run dev    # → http://localhost:5173
 ```
 
 > Vite recarga automáticamente el navegador al guardar cambios en `frontend/src/`. No necesitas reconstruir nada.
-
-## Desarrollo sin Docker (Avanzado)
-
-Si prefieres ejecutar todo sin contenedores (recomendado solo para desarrollo de UI/Backend con Oracle ya corriendo en Docker):
-
-```bash
-# Backend
-cd backend
-npm install
-npm run dev        # → http://localhost:3000
-
-# Frontend (en otra terminal)
-cd frontend
-npm install
-npm run dev        # → http://localhost:5173
-```
-
-> Requiere que `oracle-db` esté corriendo: `docker-compose up -d oracle-db` y `docker-compose up db-init`

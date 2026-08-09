@@ -39,12 +39,6 @@ next-env.d.ts
 Thumbs.db
 *.log
 
-# === Docker ===
-docker-compose.override.yml
-
-# === Oracle DB (volumen persistente) ===
-oracle-data/
-
 # === Coverage / Tests ===
 coverage/
 .nyc_output/

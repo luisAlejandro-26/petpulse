@@ -9,7 +9,7 @@ export async function GET() {
 
     const { count, error } = await client
       .from('users')
-      .select('*', { count: 'exact', head: true })
+      .select('id_user', { count: 'exact' })
 
     if (error) throw new Error(error.message)
 

@@ -26,21 +26,15 @@ Proyecto en **monorepo** con la siguiente estructura:
 
 ```
 petpulse/
-├── backend/               # API REST (Next.js)
+├── backend/               # API REST (Next.js) - se corre con npm run dev
 │   ├── app/
 │   │   └── api/           # Endpoints de la API
-│   ├── Dockerfile         # Imagen multistage (deps → builder → runner)
 │   └── package.json
 ├── frontend/              # SPA (React + Vite) - se corre con npm run dev
-│   ├── src/               # Código fuente de la interfaz
-│   ├── Dockerfile         # Imagen multistage con Nginx (solo producción)
-│   └── package.json
-├── database/
-│   └── init.sql           # Esquema de la base de datos Oracle
+│   └── src/               # Código fuente de la interfaz
 ├── .github/
 │   └── workflows/
 │       └── ci.yml         # Pipeline de integración continua
-├── docker-compose.yml     # Orquestación de todos los servicios
 ├── README.md              # Documentación general
 └── INSTALL.md             # Guía de instalación y puesta en marcha
 ```
@@ -51,8 +45,7 @@ petpulse/
 |------|------------|
 | **Frontend** | React 18 + Vite 5 + TypeScript |
 | **Backend** | Next.js 14 (API Routes) + TypeScript |
-| **Base de datos** | Oracle Database Free (`gvenzl/oracle-free`) |
-| **Contenedores** | Docker + Docker Compose |
+| **Base de datos** | Supabase (PostgreSQL) |
 | **CI/CD** | GitHub Actions |
 | **Storage** | AWS S3 (Fase 4) |
 | **IA** | Google Gemini API (Fase 4) |
@@ -61,32 +54,31 @@ petpulse/
 
 ## Puesta en Marcha Rápida
 
+> **Requisito previo:** Node.js 20+ y `npm`. No se necesita Docker; la base de datos (Supabase) ya está en la nube.
+
 ```bash
 # 1. Clonar el repositorio
 git clone git@github.com:luisAlejandro-26/petpulse.git
 cd petpulse
 
-# 2. Configurar variables de entorno
+# 2. Configurar variables de entorno del backend
 cp backend/.env.example backend/.env
+#    Editar backend/.env con las credenciales de Supabase y el SMTP
 
-# 3. Levantar la infraestructura (Oracle + Backend)
-docker-compose up --build
+# 3. Instalar dependencias e iniciar el backend
+cd backend
+npm install
+npm run dev   # → http://localhost:3000
 
-# 4. En otra terminal, levantar el frontend con npm
+# 4. En otra terminal, iniciar el frontend
 cd frontend
 npm install
-npm run dev
+npm run dev   # → http://localhost:5173
 
 # 5. Acceder a la aplicación
 #    Frontend → http://localhost:5173
 #    Backend  → http://localhost:3000
-#    Oracle   → localhost:1521 (service name: FREEPDB1)
 ```
-
-> **Frontend en desarrollo:** el frontend corre con `npm run dev` (fuera de Docker) porque Vite tiene hot-reload nativo más rápido. La imagen Docker del frontend (multistage + Nginx) queda disponible para **producción**:
-> ```bash
-> docker-compose --profile production up --build
-> ```
 
 > **Guía detallada:** Consulta [INSTALL.md](./INSTALL.md) para la instalación completa paso a paso, solución de errores comunes y las convenciones de ramas.
 
@@ -97,8 +89,13 @@ npm run dev
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `GET` | `/api/health` | Estado del backend |
-
-> Los endpoints de autenticación y CRUD se implementarán en la **Fase 2**.
+| `POST` | `/api/auth/register` | Registro de usuario |
+| `POST` | `/api/auth/login` | Inicio de sesión (JWT) |
+| `GET` | `/api/auth/me` | Perfil del usuario autenticado |
+| `PUT` | `/api/auth/profile` | Actualizar perfil |
+| `POST` | `/api/auth/logout` | Cerrar sesión |
+| `POST` | `/api/auth/forgot-password` | Enviar código de recuperación |
+| `POST` | `/api/auth/reset-password` | Restablecer contraseña |
 
 ---
 
@@ -108,7 +105,7 @@ El proyecto sigue un **GitFlow adaptado** con un monorepo:
 
 | Tipo de cambio | Prefijo de rama | Ejemplo |
 |----------------|-----------------|---------|
-| Backend, DB, DevOps, Docker, Repo | `feature/SInformacion-<tarea>` | `feature/SInformacion-setup-infraestructura` |
+| Backend, DB, DevOps, Repo | `feature/SInformacion-<tarea>` | `feature/SInformacion-setup-infraestructura` |
 | Frontend React / UI | `feature/multimedia-<tarea>` | `feature/multimedia-login-component` |
 
 **Ramas base:**
@@ -121,8 +118,8 @@ El proyecto sigue un **GitFlow adaptado** con un monorepo:
 
 | Fase | Descripción | Estado |
 |------|-------------|--------|
-| 1 | Infraestructura y Docker | Completada |
-| 2 | Backend y Autenticación (Next.js) | Próxima |
+| 1 | Infraestructura (setup del monorepo) | Completada |
+| 2 | Backend y Autenticación (Next.js + Supabase) | En curso |
 | 3 | Frontend UI (React) | Pendiente |
 | 4 | Integraciones AWS S3 + Gemini AI | Pendiente |
 | 5 | CI/CD y Pulido Final | Pendiente |
