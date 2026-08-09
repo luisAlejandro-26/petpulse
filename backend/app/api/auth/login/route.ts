@@ -1,17 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { query } from '@/lib/db'
+import { getClient } from '@/lib/db'
 import { signToken } from '@/lib/jwt'
 
 export const runtime = 'nodejs'
-
-interface UserRow {
-  ID_USER: number
-  NAME_USER: string
-  EMAIL: string
-  PASSWORD_HASH: string
-  ROLE_ACCOUNT: string
-}
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
@@ -29,13 +21,41 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  let rows: UserRow[]
   try {
-    rows = await query<UserRow>(
-      `SELECT id_user, name_user, email, password_hash, role_account
-       FROM USERS WHERE email = :email`,
-      { email: email.trim().toLowerCase() }
-    )
+    const client = getClient()
+
+    // Buscar usuario por email
+    const { data: user, error } = await client
+      .from('users')
+      .select('id_user, name_user, email, password_hash, role_account')
+      .eq('email', email.trim().toLowerCase())
+      .single()
+
+    if (error || !user) {
+      return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
+    }
+
+    // Verificar contraseña
+    const match = await bcrypt.compare(password, user.password_hash)
+    if (!match) {
+      return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
+    }
+
+    // Generar token
+    const token = signToken({
+      id_user: user.id_user,
+      role_account: user.role_account,
+    })
+
+    return NextResponse.json({
+      token,
+      user: {
+        id_user: user.id_user,
+        name_user: user.name_user,
+        email: user.email,
+        role_account: user.role_account,
+      },
+    })
   } catch (error) {
     console.error('Error en login:', error)
     return NextResponse.json(
@@ -43,29 +63,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
-
-  const user = rows[0]
-  if (!user) {
-    return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
-  }
-
-  const match = await bcrypt.compare(password, user.PASSWORD_HASH)
-  if (!match) {
-    return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
-  }
-
-  const token = signToken({
-    id_user: user.ID_USER,
-    role_account: user.ROLE_ACCOUNT,
-  })
-
-  return NextResponse.json({
-    token,
-    user: {
-      id_user: user.ID_USER,
-      name_user: user.NAME_USER,
-      email: user.EMAIL,
-      role_account: user.ROLE_ACCOUNT,
-    },
-  })
 }

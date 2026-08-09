@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { query } from '@/lib/db'
+import { getClient } from '@/lib/db'
 import { generateResetCode, hashResetCode } from '@/lib/reset-code'
 import { sendPasswordResetCode } from '@/lib/mailer'
 
 export const runtime = 'nodejs'
-
-interface UserRow {
-  ID_USER: number
-  EMAIL: string
-}
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
@@ -24,22 +19,37 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const users = await query<UserRow>(
-      'SELECT id_user, email FROM USERS WHERE email = :email',
-      { email: email.trim().toLowerCase() }
-    )
-    const user = users[0]
+    const client = getClient()
+
+    // Buscar usuario
+    const { data: user } = await client
+      .from('users')
+      .select('id_user, email')
+      .eq('email', email.trim().toLowerCase())
+      .single()
+
     if (user) {
       const code = generateResetCode()
-      await query('DELETE FROM SESSIONS WHERE id_user = :id_user', {
-        id_user: user.ID_USER,
-      })
-      await query(
-        `INSERT INTO SESSIONS (session_token, id_user, expires)
-         VALUES (:token, :id_user, SYSTIMESTAMP + INTERVAL '15' MINUTE)`,
-        { token: hashResetCode(code), id_user: user.ID_USER }
-      )
-      await sendPasswordResetCode(user.EMAIL, code)
+
+      // Eliminar sesiones anteriores
+      await client
+        .from('sessions')
+        .delete()
+        .eq('id_user', user.id_user)
+
+      // Crear nueva sesión con código de reset
+      const expires = new Date()
+      expires.setMinutes(expires.getMinutes() + 15)
+
+      await client
+        .from('sessions')
+        .insert({
+          session_token: hashResetCode(code),
+          id_user: user.id_user,
+          expires: expires.toISOString(),
+        })
+
+      await sendPasswordResetCode(user.email, code)
     }
   } catch (error) {
     console.error('Error en /auth/forgot-password:', error)

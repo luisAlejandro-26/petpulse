@@ -1,14 +1,19 @@
 import { NextResponse } from 'next/server'
-import { query } from '@/lib/db'
+import { getClient } from '@/lib/db'
 
 export const runtime = 'nodejs'
 
 export async function GET() {
   try {
-    const rows = await query<{ TOTAL: number }>(
-      'SELECT COUNT(*) AS TOTAL FROM USERS'
-    )
-    return NextResponse.json({ count: Number(rows[0]?.TOTAL ?? 0) })
+    const client = getClient()
+
+    const { count, error } = await client
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+
+    if (error) throw new Error(error.message)
+
+    return NextResponse.json({ count: count ?? 0 })
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Error desconocido'

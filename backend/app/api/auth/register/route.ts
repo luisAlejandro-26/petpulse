@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { query } from '@/lib/db'
+import { getClient } from '@/lib/db'
 
 export const runtime = 'nodejs'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-interface UserRow {
-  ID_USER: number
-  NAME_USER: string
-  EMAIL: string
-  ROLE_ACCOUNT: string
-}
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
@@ -26,12 +19,12 @@ export async function POST(req: NextRequest) {
   if (!name_user || !email || !password || !gender || !birth_date) {
     return NextResponse.json(
       {
-        error:
-          'Todos los campos son obligatorios: name_user, email, password, gender, birth_date',
+        error: 'Todos los campos son obligatorios: name_user, email, password, gender, birth_date',
       },
       { status: 400 }
     )
   }
+
   if (
     typeof name_user !== 'string' ||
     typeof gender !== 'string' ||
@@ -40,9 +33,11 @@ export async function POST(req: NextRequest) {
   ) {
     return NextResponse.json({ error: 'Formato de datos inválido' }, { status: 400 })
   }
+
   if (!EMAIL_REGEX.test(email)) {
     return NextResponse.json({ error: 'Email inválido' }, { status: 400 })
   }
+
   if (password.length < 6) {
     return NextResponse.json(
       { error: 'La contraseña debe tener al menos 6 caracteres' },
@@ -53,44 +48,46 @@ export async function POST(req: NextRequest) {
   const normalizedEmail = email.trim().toLowerCase()
 
   try {
-    const existing = await query<{ EMAIL: string }>(
-      'SELECT email FROM USERS WHERE email = :email',
-      { email: normalizedEmail }
-    )
-    if (existing.length > 0) {
+    const client = getClient()
+
+    // Verificar si el email ya existe
+    const { data: existing } = await client
+      .from('users')
+      .select('email')
+      .eq('email', normalizedEmail)
+      .single()
+
+    if (existing) {
       return NextResponse.json(
         { error: 'El email ya está registrado' },
         { status: 409 }
       )
     }
 
-    const password_hash = await bcrypt.hash(password, 10)
+    // Hashear contraseña
+    const password_hash = await bcrypt.hash(password as string, 10)
 
-    await query(
-      `INSERT INTO USERS (name_user, email, password_hash, gender, birth_date)
-       VALUES (:name_user, :email, :password_hash, :gender, TO_DATE(:birth_date, 'YYYY-MM-DD'))`,
-      {
-        name_user: name_user.trim(),
+    // Insertar usuario
+    const { data: user, error } = await client
+      .from('users')
+      .insert({
+        name_user: (name_user as string).trim(),
         email: normalizedEmail,
         password_hash,
-        gender: gender.trim(),
-        birth_date: birth_date,
-      }
-    )
+        gender: (gender as string).trim(),
+        birth_date: birth_date as string,
+      })
+      .select('id_user, name_user, email, role_account')
+      .single()
 
-    const rows = await query<UserRow>(
-      `SELECT id_user, name_user, email, role_account
-       FROM USERS WHERE email = :email`,
-      { email: normalizedEmail }
-    )
-    const user = rows[0]
+    if (error) throw new Error(error.message)
 
     return NextResponse.json(
       {
-        id_user: user.ID_USER,
-        name_user: user.NAME_USER,
-        email: user.EMAIL,
-        role_account: user.ROLE_ACCOUNT,
+        id_user: user.id_user,
+        name_user: user.name_user,
+        email: user.email,
+        role_account: user.role_account,
       },
       { status: 201 }
     )
