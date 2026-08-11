@@ -8,9 +8,29 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 }
 
-export function middleware(_req: NextRequest) {
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+
+const CORS_HEADERS: Record<string, string> = {
+  'Access-Control-Allow-Origin': FRONTEND_URL,
+  'Access-Control-Allow-Credentials': 'true',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+export function middleware(req: NextRequest) {
+  if (req.method === 'OPTIONS') {
+    const res = new NextResponse(null, { status: 204 })
+    for (const [name, value] of Object.entries(CORS_HEADERS)) {
+      res.headers.set(name, value)
+    }
+    return res
+  }
+
   const res = NextResponse.next()
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+    res.headers.set(name, value)
+  }
+  for (const [name, value] of Object.entries(CORS_HEADERS)) {
     res.headers.set(name, value)
   }
   return res
