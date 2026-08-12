@@ -190,6 +190,7 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
               <div className="flex justify-end pt-1">
                 <button
                   type="button"
+                  onClick={() => navigate('/forgot-password')}
                   className="text-sm text-[#E76F51] font-medium hover:underline transition-colors"
                 >
                   ¿Olvidaste tu contraseña?

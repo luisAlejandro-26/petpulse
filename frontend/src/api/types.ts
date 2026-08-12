@@ -27,5 +27,20 @@ export interface RegisterDTO {
   email: string
   password: string
   gender: string
-  birth_date: Date
+  birth_date: string
+}
+
+export interface ForgotPasswordDTO {
+  email: string
+}
+
+export interface VerifyCodeDTO {
+  email: string
+  code: string
+}
+
+export interface ResetPasswordDTO {
+  email: string
+  code: string
+  new_password: string
 }
