@@ -5,6 +5,8 @@ import { sendPasswordResetCode } from '@/lib/mailer'
 
 export const runtime = 'nodejs'
 
+const CODE_REGEX = /^\d{6}$/
+
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
   try {
@@ -28,34 +30,43 @@ export async function POST(req: NextRequest) {
       .eq('email', email.trim().toLowerCase())
       .single()
 
-    if (user) {
-      const code = generateResetCode()
-
-      // Eliminar sesiones anteriores
-      await client
-        .from('sessions')
-        .delete()
-        .eq('id_user', user.id_user)
-
-      // Crear nueva sesión con código de reset
-      const expires = new Date()
-      expires.setMinutes(expires.getMinutes() + 15)
-
-      await client
-        .from('sessions')
-        .insert({
-          session_token: hashResetCode(code),
-          id_user: user.id_user,
-          expires: expires.toISOString(),
-        })
-
-      await sendPasswordResetCode(user.email, code)
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Correo no se encontró' },
+        { status: 404 }
+      )
     }
+
+    const code = generateResetCode()
+
+    // Eliminar sesiones anteriores
+    await client
+      .from('sessions')
+      .delete()
+      .eq('id_user', user.id_user)
+
+    // Crear nueva sesión con código de reset
+    const expires = new Date()
+    expires.setMinutes(expires.getMinutes() + 15)
+
+    await client
+      .from('sessions')
+      .insert({
+        session_token: hashResetCode(code),
+        id_user: user.id_user,
+        expires: expires.toISOString(),
+      })
+
+    await sendPasswordResetCode(user.email, code)
+
+    return NextResponse.json({
+      message: 'Código de recuperación enviado',
+    })
   } catch (error) {
     console.error('Error en /auth/forgot-password:', error)
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    )
   }
-
-  return NextResponse.json({
-    message: 'Si el email existe, recibirás un código de recuperación',
-  })
 }

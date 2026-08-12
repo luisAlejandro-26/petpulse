@@ -17,10 +17,30 @@ export interface MeResponse {
   user: User
 }
 
-export interface RegisterPayload {
+export interface LoginDTO {
+  email: string
+  password: string
+}
+
+export interface RegisterDTO {
   name_user: string
   email: string
   password: string
   gender: string
   birth_date: string
+}
+
+export interface ForgotPasswordDTO {
+  email: string
+}
+
+export interface VerifyCodeDTO {
+  email: string
+  code: string
+}
+
+export interface ResetPasswordDTO {
+  email: string
+  code: string
+  new_password: string
 }

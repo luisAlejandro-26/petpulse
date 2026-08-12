@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
-import type { LoginResponse, MeResponse, RegisterPayload, User } from '../api/types'
+import type { LoginDTO, LoginResponse, MeResponse, RegisterDTO, User } from '../api/types'
 
 const TOKEN_KEY = 'petpulse_token'
 const USER_KEY = 'petpulse_user'
@@ -10,7 +10,7 @@ interface AuthContextValue {
   token: string | null
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (data: RegisterPayload) => Promise<void>
+  register: (data: RegisterDTO) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -42,14 +42,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function login(email: string, password: string) {
-    const res = await api.post<LoginResponse>('/api/auth/login', { email, password })
+    const credentials: LoginDTO = { email, password }
+    const res = await api.post<LoginResponse>('/api/auth/login', credentials)
     localStorage.setItem(TOKEN_KEY, res.token)
     localStorage.setItem(USER_KEY, JSON.stringify(res.user))
     setToken(res.token)
     setUser(res.user)
   }
 
-  async function register(data: RegisterPayload) {
+  async function register(data: RegisterDTO) {
     await api.post('/api/auth/register', data)
   }
 
