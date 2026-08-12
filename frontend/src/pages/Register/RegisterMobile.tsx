@@ -30,7 +30,7 @@ function RegisterMobile() {
     setSubmitting(true)
     try {
       await register({ name_user, email, password, gender, birth_date })
-      navigate('/login', { state: { registered: true } })
+      navigate('/register-success')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al registrarse')
     } finally {
