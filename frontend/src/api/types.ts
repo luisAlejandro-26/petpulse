@@ -17,10 +17,15 @@ export interface MeResponse {
   user: User
 }
 
-export interface RegisterPayload {
+export interface LoginDTO {
+  email: string
+  password: string
+}
+
+export interface RegisterDTO {
   name_user: string
   email: string
   password: string
   gender: string
-  birth_date: string
+  birth_date: Date
 }
