@@ -7,6 +7,7 @@ import Register from './pages/Register'
 import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
+import PetForm from './pages/Pets/PetForm'
 
 function App() {
   return (
@@ -24,6 +25,22 @@ function App() {
             element={
               <RequireAuth>
                 <Home />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pets/new"
+            element={
+              <RequireAuth>
+                <PetForm />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pets/:id/edit"
+            element={
+              <RequireAuth>
+                <PetForm />
               </RequireAuth>
             }
           />
