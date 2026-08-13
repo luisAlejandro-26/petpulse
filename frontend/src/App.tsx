@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
 import ForgotPassword from './pages/ForgotPassword'
+import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/register-success" element={<RegisterSuccessMobile />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password-success" element={<ResetPasswordSuccessMobile />} />
           <Route
             path="/dashboard"
             element={
