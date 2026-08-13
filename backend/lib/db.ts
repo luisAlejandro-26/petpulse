@@ -16,6 +16,8 @@ export type Database = {
       sessions: { Row: TableRow; Insert: TableRow; Update: TableRow; Relationships: [] }
       pet: { Row: TableRow; Insert: TableRow; Update: TableRow; Relationships: [] }
       health_event: { Row: TableRow; Insert: TableRow; Update: TableRow; Relationships: [] }
+      ai_conversations: { Row: TableRow; Insert: TableRow; Update: TableRow; Relationships: [] }
+      ai_messages: { Row: TableRow; Insert: TableRow; Update: TableRow; Relationships: [] }
     }
     Views: Record<never, never>
     Functions: Record<never, never>

@@ -21,10 +21,11 @@ export function jsonError(message: string, status = 400): NextResponse {
 
 export function requireAuth(
   handler: (
-    req: AuthedRequest
+    req: AuthedRequest,
+    context: any
   ) => NextResponse | Promise<NextResponse>
-): (req: NextRequest) => Promise<NextResponse> {
-  return async (req) => {
+): (req: NextRequest, context: any) => Promise<NextResponse> {
+  return async (req, context) => {
     const header = req.headers.get('authorization') ?? ''
     const token = header.startsWith('Bearer ') ? header.slice(7) : null
     const user = token ? verifyToken(token) : null
@@ -32,7 +33,7 @@ export function requireAuth(
       return jsonError('No autorizado', 401)
     }
     ;(req as AuthedRequest).user = user
-    return handler(req as AuthedRequest)
+    return handler(req as AuthedRequest, context)
   }
 }
 
