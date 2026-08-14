@@ -11,17 +11,29 @@ type Step = 'email' | 'code' | 'password' | 'success'
 function ForgotPasswordTablet() {
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>('email')
+  const [progress, setProgress] = useState(0)
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
+  const REDIRECT_MS = 2500
+
   useEffect(() => {
     if (step !== 'success') return
-    const timer = setTimeout(() => navigate('/login'), 2500)
-    return () => clearTimeout(timer)
+    const start = Date.now()
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - start
+      setProgress(Math.min((elapsed / REDIRECT_MS) * 100, 100))
+    }, 30)
+    const timer = setTimeout(() => navigate('/login'), REDIRECT_MS)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
   }, [step, navigate])
 
   async function handleEmailSubmit(event: FormEvent) {
@@ -66,6 +78,10 @@ function ForgotPasswordTablet() {
     setError('')
     if (newPassword.length < 8) {
       setError('La contrasena debe tener al menos 8 caracteres')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setError('Las contrasenas no coinciden')
       return
     }
     setSubmitting(true)
@@ -259,6 +275,35 @@ function ForgotPasswordTablet() {
                     autoComplete="new-password"
                   />
                 </div>
+
+                <div className={styles.field}>
+                  <label className={styles.fieldLabel} htmlFor="fp-confirm-password">
+                    Confirmar contrasena
+                  </label>
+                  <input
+                    id="fp-confirm-password"
+                    className={styles.input}
+                    type="password"
+                    placeholder="********"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                  />
+                  {confirmPassword.length > 0 && (
+                    <p
+                      className={
+                        confirmPassword === newPassword ? styles.hintOk : styles.hintError
+                      }
+                    >
+                      {confirmPassword === newPassword
+                        ? 'Las contrasenas coinciden'
+                        : 'Las contrasenas no coinciden'}
+                    </p>
+                  )}
+                </div>
+
                 <button className={styles.submit} type="submit" disabled={submitting}>
                   {submitting ? 'Guardando...' : 'Continuar'}
                 </button>
@@ -268,10 +313,35 @@ function ForgotPasswordTablet() {
 
           {step === 'success' && (
             <>
-              <div className={`${styles.bigIcon} ${styles.bigIconSuccess}`}>
-                <ShieldCheckBigIcon />
+              <div className={styles.shieldWrap} role="status" aria-live="polite">
+                <svg width="150" height="172" viewBox="0 0 120 138" fill="none" aria-hidden="true">
+                  <path
+                    d="M60 6 L110 24 V66 C110 100 90 122 60 133 C30 122 10 100 10 66 V24 Z"
+                    stroke="#7a9a7b"
+                    strokeWidth="7"
+                    fill="none"
+                    strokeLinejoin="round"
+                    strokeDasharray="400"
+                    strokeDashoffset="400"
+                    className={styles.drawShield}
+                  />
+                  <path
+                    d="M39 68 L54 83 L83 50"
+                    stroke="#7a9a7b"
+                    strokeWidth="7"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="65"
+                    strokeDashoffset="65"
+                    className={styles.drawCheck}
+                  />
+                </svg>
               </div>
               <p className={styles.successCaption}>Espera un momento para redirigirte al inicio.</p>
+              <div className={styles.progressTrack}>
+                <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+              </div>
             </>
           )}
         </div>
@@ -333,20 +403,6 @@ function LockBigIcon() {
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="4.5" y="10.5" width="15" height="10" rx="2.5" stroke="#faf9f6" strokeWidth="1.8" />
       <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function ShieldCheckBigIcon() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"
-        stroke="#7a9a7b"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-      <path d="M8.5 12l2.5 2.5 4.5-5" stroke="#7a9a7b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
