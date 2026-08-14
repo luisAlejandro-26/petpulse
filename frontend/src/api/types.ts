@@ -87,3 +87,39 @@ export interface UpdatePetDTO {
   notes?: string
   pet_image_url?: string
 }
+
+// ── Dashboard (Home) ──
+
+export interface UsersResponse {
+  users: User[]
+}
+
+export interface AdminStats {
+  total_users: number
+  total_consultations: number
+  storage_used_gb: number
+}
+
+export interface Appointment {
+  id_appointment: number
+  title: string
+  date: string
+  pet_name?: string
+}
+
+export interface Reminder {
+  id_reminder: number
+  title: string
+  due_date: string
+  done: boolean
+}
+
+export type ActivityType = 'VACUNA' | 'CONSULTA' | 'MEDICAMENTO' | 'RECORDATORIO'
+
+export interface Activity {
+  id: number
+  type: ActivityType
+  title: string
+  description: string
+  time: string
+}
