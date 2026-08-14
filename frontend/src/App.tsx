@@ -8,6 +8,10 @@ import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
 import PetForm from './pages/Pets/PetForm'
+import CalendarMobile from './pages/Calendar/CalendarMobile'
+import EventForm from './pages/Calendar/EventForm'
+import BusinessBooking from './pages/Calendar/BusinessBooking'
+import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
 
 function App() {
   return (
@@ -37,10 +41,34 @@ function App() {
             }
           />
           <Route
-            path="/pets/:id/edit"
+            path="/calendar"
             element={
               <RequireAuth>
-                <PetForm />
+                <CalendarMobile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/category"
+            element={
+              <RequireAuth>
+                <EventCategoryPicker />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/new"
+            element={
+              <RequireAuth>
+                <EventForm />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/business-booking"
+            element={
+              <RequireAuth>
+                <BusinessBooking />
               </RequireAuth>
             }
           />
