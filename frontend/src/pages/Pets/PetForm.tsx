@@ -85,15 +85,8 @@ function PetForm() {
         <div className="flex items-center justify-between px-5 pt-6">
           <button type="button" onClick={() => navigate(-1)} aria-label="Volver">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
-              <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
+              <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </button>
-          <button type="button" aria-label="Notificaciones" className="relative">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
-              <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-petpulse-accent rounded-full border border-petpulse-bg" />
           </button>
         </div>
 
