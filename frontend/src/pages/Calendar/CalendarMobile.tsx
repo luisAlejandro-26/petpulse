@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import SideMenu from '../../components/SideMenu'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { useAuth } from '../../context/AuthContext'
 import { getEvents, updateEvent, deleteEvent } from '../../api/events'
@@ -44,9 +44,8 @@ const STATUS_LABEL: Record<string, { text: string; className: string }> = {
 
 function CalendarMobile() {
   const { token } = useAuth()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const isActive = (path: string) => location.pathname === path
+  
+  
 
   const [events, setEvents] = useState<HealthEvent[]>([])
   const [loading, setLoading] = useState(true)

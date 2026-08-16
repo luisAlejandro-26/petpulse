@@ -1,5 +1,45 @@
+export interface User {
+  id_user: number
+  name_user: string
+  email: string
+  role_account: string
+  gender?: string
+  birth_date?: string
+  profile_image_url?: string
+}
+export interface LoginResponse {
+  token: string
+  user: User
+}
+export interface MeResponse {
+  user: User
+}
+export interface LoginDTO {
+  email: string
+  password: string
+}
+export interface RegisterDTO {
+  name_user: string
+  email: string
+  password: string
+  gender: string
+  birth_date: string
+}
+export interface ForgotPasswordDTO {
+  email: string
+}
+export interface VerifyCodeDTO {
+  email: string
+  code: string
+}
+export interface ResetPasswordDTO {
+  email: string
+  code: string
+  new_password: string
+}
 export type PetSpecies = 'PERRO' | 'GATO' | 'CONEJO' | 'PAJARO' | 'OTHER'
-
+export type EventType = 'VACUNA' | 'CONTROL' | 'DESPARACITACION' | 'CIRUGIA' | 'OTHER'
+export type EventStatus = 'COMPLETED' | 'SCHEDULED' | 'CANCELLED'
 export interface Pet {
   id_pet: number
   id_user: number
@@ -12,15 +52,12 @@ export interface Pet {
   pet_image_url: string | null
   created_at: string
 }
-
 export interface PetsResponse {
   pets: Pet[]
 }
-
 export interface PetResponse {
   pet: Pet
 }
-
 export interface CreatePetDTO {
   name_pet: string
   species: PetSpecies
@@ -30,7 +67,6 @@ export interface CreatePetDTO {
   notes?: string
   pet_image_url?: string
 }
-
 export interface UpdatePetDTO {
   name_pet?: string
   species?: PetSpecies
@@ -40,3 +76,37 @@ export interface UpdatePetDTO {
   notes?: string
   pet_image_url?: string
 }
+export interface HealthEvent {
+  id_event: number
+  id_pet: number
+  event_type: EventType
+  title: string
+  event_date: string
+  event_place: string
+  next_due_date: string | null
+  status: EventStatus
+  pet?: { name_pet: string }
+}
+export interface EventsResponse {
+  events: HealthEvent[]
+}
+export interface EventResponse {
+  event: HealthEvent
+}
+export interface CreateEventDTO {
+  id_pet: number
+  event_type: EventType
+  title: string
+  event_date: string
+  event_place: string
+  next_due_date?: string
+  status?: EventStatus
+}
+export interface UpdateEventDTO {
+  title?: string
+  event_date?: string
+  event_place?: string
+  next_due_date?: string
+  status?: EventStatus
+  event_type?: EventType
+} 

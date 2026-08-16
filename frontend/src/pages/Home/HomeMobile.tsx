@@ -6,7 +6,6 @@ import BottomNav from '../../components/BottomNav'
 import { getPets } from '../../api/pets'
 import type { Pet } from '../../api/types'
 import logo from '../../assets/logo.png'
-import tituloLogo from '../../assets/titulo_logo.png'
 
 function calculateAge(birthDate: string): string {
   const birth = new Date(birthDate)
