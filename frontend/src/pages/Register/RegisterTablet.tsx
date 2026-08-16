@@ -1,10 +1,19 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Icon } from '@iconify/react'
 import { useAuth } from '../../context/AuthContext'
-import styles from './RegisterTablet.module.css'
 import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
+
+function Dot({ state }: { state: 'neutral' | 'ok' | 'error' }) {
+  const color = state === 'ok' ? '#7a9a7b' : state === 'error' ? '#e07a5f' : '#d8d3cd'
+  return (
+    <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
+      <circle cx="4" cy="4" r="4" fill={color} />
+    </svg>
+  )
+}
 
 function RegisterTablet() {
   const { register } = useAuth()
@@ -55,69 +64,93 @@ function RegisterTablet() {
     setInfo('Registro con Google estara disponible proximamente')
   }
 
+  const inputClass =
+    'w-full box-border font-inter text-[15px] py-[13px] pr-4 pl-11 rounded-full border-[1.5px] border-petpulse-border bg-petpulse-bg text-petpulse-text transition-colors appearance-none placeholder:text-petpulse-text-secondary focus:outline-none focus:border-petpulse-primary focus:ring-[3px] focus:ring-[rgba(122,154,123,0.18)] focus:bg-petpulse-card'
+
   return (
-    <div className={styles.page}>
-      <Link to="/login" className={styles.backBtn} aria-label="Volver a iniciar sesion">
-        <ArrowLeftIcon />
+    <div className="relative min-h-screen bg-petpulse-bg font-inter text-petpulse-text flex flex-col items-center pt-10 px-6 box-border">
+      <Link
+        to="/login"
+        className="absolute top-6 left-6 text-petpulse-text flex items-center justify-center no-underline hover:text-petpulse-primary"
+        aria-label="Volver a iniciar sesion"
+      >
+        <Icon icon="mdi:arrow-left" width={20} height={20} />
       </Link>
 
-      <div className={styles.container}>
-        <div className={styles.logoWrap}>
-          <img src={logo} alt="" className={styles.logoIcon} />
-          <img src={tituloLogo} alt="PetPulse" className={styles.brandImg} />
-          <p className={styles.tagline}>Salud y bienestar para tus mascotas.</p>
+      <div className="w-full max-w-[460px] flex flex-col items-center">
+        <div className="flex flex-col items-center text-center mb-6">
+          <img src={logo} alt="" className="w-[72px] h-auto mb-2" />
+          <img src={tituloLogo} alt="PetPulse" className="h-8 w-auto mb-2" />
+          <p className="text-sm text-petpulse-text-secondary">Salud y bienestar para tus mascotas.</p>
         </div>
 
-        <div className={styles.features}>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>
-              <ShieldIcon />
+        <div className="flex items-start justify-center gap-6 mb-8 w-full">
+          <div className="flex flex-col items-center text-center w-[108px]">
+            <span className="w-11 h-11 rounded-full bg-petpulse-primary flex items-center justify-center mb-2">
+              <Icon icon="mdi:shield-check-outline" width={20} height={20} color="#faf9f6" />
             </span>
-            <p className={styles.featureTitle}>Seguridad</p>
-            <p className={styles.featureCaption}>Protegemos la informacion de tus mascotas</p>
+            <p className="text-[13px] font-semibold text-petpulse-text mb-0.5">Seguridad</p>
+            <p className="text-[11px] text-petpulse-text-secondary leading-[1.4]">
+              Protegemos la informacion de tus mascotas
+            </p>
           </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>
-              <HeartIcon />
+          <div className="flex flex-col items-center text-center w-[108px]">
+            <span className="w-11 h-11 rounded-full bg-petpulse-primary flex items-center justify-center mb-2">
+              <Icon icon="mdi:heart-outline" width={20} height={20} color="#faf9f6" />
             </span>
-            <p className={styles.featureTitle}>Bienestar</p>
-            <p className={styles.featureCaption}>Promovemos una vida saludable y feliz</p>
+            <p className="text-[13px] font-semibold text-petpulse-text mb-0.5">Bienestar</p>
+            <p className="text-[11px] text-petpulse-text-secondary leading-[1.4]">
+              Promovemos una vida saludable y feliz
+            </p>
           </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>
-              <CalendarIcon />
+          <div className="flex flex-col items-center text-center w-[108px]">
+            <span className="w-11 h-11 rounded-full bg-petpulse-primary flex items-center justify-center mb-2">
+              <Icon icon="mdi:calendar-month-outline" width={20} height={20} color="#faf9f6" />
             </span>
-            <p className={styles.featureTitle}>Recordatorios</p>
-            <p className={styles.featureCaption}>Nunca olvides citas, vacunas y tratamientos</p>
+            <p className="text-[13px] font-semibold text-petpulse-text mb-0.5">Recordatorios</p>
+            <p className="text-[11px] text-petpulse-text-secondary leading-[1.4]">
+              Nunca olvides citas, vacunas y tratamientos
+            </p>
           </div>
         </div>
 
-        <div className={styles.card}>
-          <h1 className={styles.cardHeading}>Registrate</h1>
-          <p className={styles.cardSubtitle}>Crea tu cuenta para comenzar</p>
+        <div className="w-full bg-petpulse-card rounded-3xl shadow-[0_24px_48px_-28px_rgba(47,62,50,0.25)] px-6 pt-8 pb-6 box-border">
+          <h1 className="font-poppins font-bold text-[22px] text-petpulse-primary text-center mb-1">Registrate</h1>
+          <p className="text-sm text-petpulse-text-secondary text-center mb-6">Crea tu cuenta para comenzar</p>
 
           {error && (
-            <p className={styles.alert} role="alert">
+            <p
+              className="text-[13px] px-4 py-3 rounded-[14px] mb-5 text-center bg-[#fbe9e5] text-petpulse-accent border border-[#f2cec3]"
+              role="alert"
+            >
               {error}
             </p>
           )}
           {info && !error && (
-            <p className={styles.info} role="status">
+            <p
+              className="text-[13px] px-4 py-3 rounded-[14px] mb-5 text-center bg-[#f2f2f0] text-petpulse-text-secondary border border-petpulse-border"
+              role="status"
+            >
               {info}
             </p>
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className={styles.row}>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel} htmlFor="reg-nombre">
+            <div className="flex gap-4">
+              <div className="flex-1 min-w-0 mb-5">
+                <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="reg-nombre">
                   Nombre
                 </label>
-                <div className={styles.inputWrap}>
-                  <UserIcon className={styles.inputIcon} />
+                <div className="relative flex items-center">
+                  <Icon
+                    icon="mdi:account-outline"
+                    width={18}
+                    height={18}
+                    className="absolute left-4 text-petpulse-text-secondary pointer-events-none"
+                  />
                   <input
                     id="reg-nombre"
-                    className={styles.input}
+                    className={inputClass}
                     placeholder="Tu nombre"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
@@ -125,15 +158,20 @@ function RegisterTablet() {
                   />
                 </div>
               </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel} htmlFor="reg-apellido">
+              <div className="flex-1 min-w-0 mb-5">
+                <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="reg-apellido">
                   Apellido
                 </label>
-                <div className={styles.inputWrap}>
-                  <UserIcon className={styles.inputIcon} />
+                <div className="relative flex items-center">
+                  <Icon
+                    icon="mdi:account-outline"
+                    width={18}
+                    height={18}
+                    className="absolute left-4 text-petpulse-text-secondary pointer-events-none"
+                  />
                   <input
                     id="reg-apellido"
-                    className={styles.input}
+                    className={inputClass}
                     placeholder="Tu apellido"
                     value={apellido}
                     onChange={(e) => setApellido(e.target.value)}
@@ -143,16 +181,21 @@ function RegisterTablet() {
               </div>
             </div>
 
-            <div className={styles.row}>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel} htmlFor="reg-genero">
+            <div className="flex gap-4">
+              <div className="flex-1 min-w-0 mb-5">
+                <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="reg-genero">
                   Sexo
                 </label>
-                <div className={styles.inputWrap}>
-                  <UserIcon className={styles.inputIcon} />
+                <div className="relative flex items-center">
+                  <Icon
+                    icon="mdi:account-outline"
+                    width={18}
+                    height={18}
+                    className="absolute left-4 text-petpulse-text-secondary pointer-events-none"
+                  />
                   <select
                     id="reg-genero"
-                    className={styles.input}
+                    className={`${inputClass} cursor-pointer`}
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
                     required
@@ -166,15 +209,20 @@ function RegisterTablet() {
                   </select>
                 </div>
               </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel} htmlFor="reg-fecha">
+              <div className="flex-1 min-w-0 mb-5">
+                <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="reg-fecha">
                   Fecha de nacimiento
                 </label>
-                <div className={styles.inputWrap}>
-                  <CalendarSmallIcon className={styles.inputIcon} />
+                <div className="relative flex items-center">
+                  <Icon
+                    icon="mdi:calendar-month-outline"
+                    width={18}
+                    height={18}
+                    className="absolute left-4 text-petpulse-text-secondary pointer-events-none"
+                  />
                   <input
                     id="reg-fecha"
-                    className={styles.input}
+                    className={inputClass}
                     type="date"
                     value={birthDate}
                     onChange={(e) => setBirthDate(e.target.value)}
@@ -184,15 +232,20 @@ function RegisterTablet() {
               </div>
             </div>
 
-            <div className={styles.field}>
-              <label className={styles.fieldLabel} htmlFor="reg-email">
+            <div className="mb-5">
+              <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="reg-email">
                 Correo electronico
               </label>
-              <div className={styles.inputWrap}>
-                <MailIcon className={styles.inputIcon} />
+              <div className="relative flex items-center">
+                <Icon
+                  icon="mdi:email-outline"
+                  width={18}
+                  height={18}
+                  className="absolute left-4 text-petpulse-text-secondary pointer-events-none"
+                />
                 <input
                   id="reg-email"
-                  className={styles.input}
+                  className={inputClass}
                   type="email"
                   placeholder="ejemplo@gmail.com"
                   value={email}
@@ -203,15 +256,20 @@ function RegisterTablet() {
               </div>
             </div>
 
-            <div className={styles.field}>
-              <label className={styles.fieldLabel} htmlFor="reg-password">
+            <div className="mb-5">
+              <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="reg-password">
                 Contrasena
               </label>
-              <div className={styles.inputWrap}>
-                <LockIcon className={styles.inputIcon} />
+              <div className="relative flex items-center">
+                <Icon
+                  icon="mdi:lock-outline"
+                  width={18}
+                  height={18}
+                  className="absolute left-4 text-petpulse-text-secondary pointer-events-none"
+                />
                 <input
                   id="reg-password"
-                  className={styles.input}
+                  className={inputClass}
                   type="password"
                   placeholder="********"
                   value={password}
@@ -220,170 +278,69 @@ function RegisterTablet() {
                   autoComplete="new-password"
                 />
               </div>
-              <div className={styles.passwordHints}>
+              <div className="flex gap-4 mt-2 flex-wrap">
                 <span
-                  className={
+                  className={`inline-flex items-center gap-1.5 text-[11px] ${
                     password.length === 0
-                      ? styles.hint
+                      ? 'text-petpulse-text-secondary'
                       : hasMinLength
-                        ? styles.hintOk
-                        : styles.hintError
-                  }
+                        ? 'text-petpulse-primary font-semibold'
+                        : 'text-petpulse-accent font-semibold'
+                  }`}
                 >
-                  <Dot state={password.length === 0 ? 'neutral' : hasMinLength ? 'ok' : 'error'} />{' '}
+                  <Dot state={password.length === 0 ? 'neutral' : hasMinLength ? 'ok' : 'error'} />
                   Minimo 8 caracteres
                 </span>
                 <span
-                  className={
+                  className={`inline-flex items-center gap-1.5 text-[11px] ${
                     password.length === 0
-                      ? styles.hint
+                      ? 'text-petpulse-text-secondary'
                       : hasLettersAndNumbers
-                        ? styles.hintOk
-                        : styles.hintError
-                  }
+                        ? 'text-petpulse-primary font-semibold'
+                        : 'text-petpulse-accent font-semibold'
+                  }`}
                 >
-                  <Dot state={password.length === 0 ? 'neutral' : hasLettersAndNumbers ? 'ok' : 'error'} />{' '}
+                  <Dot state={password.length === 0 ? 'neutral' : hasLettersAndNumbers ? 'ok' : 'error'} />
                   Incluir numeros y letras
                 </span>
               </div>
             </div>
 
-            <button className={styles.submit} type="submit" disabled={submitting}>
+            <button
+              className="w-full font-inter text-base font-bold text-white bg-petpulse-primary border-none rounded-full py-[15px] cursor-pointer transition-colors mt-2 enabled:hover:bg-petpulse-primary-dark enabled:active:scale-[0.99] disabled:bg-petpulse-border disabled:cursor-not-allowed"
+              type="submit"
+              disabled={submitting}
+            >
               {submitting ? 'Registrando...' : 'Registrarse'}
             </button>
           </form>
 
-          <div className={styles.divider}>
-            <span className={styles.dividerLine} />
-            <span className={styles.dividerText}>o continuar con</span>
-            <span className={styles.dividerLine} />
+          <div className="flex items-center gap-3 my-6">
+            <span className="flex-1 h-px bg-petpulse-border" />
+            <span className="text-[13px] text-petpulse-text-secondary whitespace-nowrap">o continuar con</span>
+            <span className="flex-1 h-px bg-petpulse-border" />
           </div>
 
-          <button type="button" className={styles.googleBtn} onClick={handleGoogleClick}>
-            <GoogleIcon />
+          <button
+            type="button"
+            className="w-full flex items-center justify-center gap-3 font-inter text-[15px] font-semibold text-petpulse-text bg-petpulse-card border-[1.5px] border-petpulse-border rounded-[14px] p-3 cursor-pointer box-border transition-colors hover:bg-petpulse-bg hover:border-petpulse-text-secondary"
+            onClick={handleGoogleClick}
+          >
+            <Icon icon="logos:google-icon" width={18} height={18} />
             Continuar con Google
           </button>
 
-          <p className={styles.footer}>
+          <p className="text-center mt-6 mb-0 text-sm">
             ¿Ya tienes cuenta?{' '}
-            <Link className={styles.footerLink} to="/login">
+            <Link className="text-petpulse-accent font-bold no-underline hover:underline" to="/login">
               Inicia sesion
             </Link>
           </p>
         </div>
       </div>
 
-      <img src={fondoInicio} alt="" className={styles.illustration} />
+      <img src={fondoInicio} alt="" className="w-screen h-auto mt-auto pt-8 block object-cover" />
     </div>
-  )
-}
-
-/* ---------- Iconos ---------- */
-
-function Dot({ state }: { state: 'neutral' | 'ok' | 'error' }) {
-  const color = state === 'ok' ? '#7a9a7b' : state === 'error' ? '#e07a5f' : '#d8d3cd'
-  return (
-    <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
-      <circle cx="4" cy="4" r="4" fill={color} />
-    </svg>
-  )
-}
-
-function ArrowLeftIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M19 12H5M5 12l6-6M5 12l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function ShieldIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="#faf9f6" strokeWidth="1.8" strokeLinejoin="round" />
-      <path d="M9 12l2 2 4-4" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function HeartIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 20s-7-4.4-9.5-9C1 8 2 4.5 5.3 3.6 8 2.9 10.4 4.4 12 6.7 13.6 4.4 16 2.9 18.7 3.6 22 4.5 23 8 21.5 11 19 15.6 12 20 12 20z"
-        stroke="#faf9f6"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function CalendarIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="#faf9f6" strokeWidth="1.8" />
-      <path d="M3.5 10h17" stroke="#faf9f6" strokeWidth="1.8" />
-      <path d="M8 3v4M16 3v4" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="12" cy="15" r="1.6" fill="#faf9f6" />
-    </svg>
-  )
-}
-
-function CalendarSmallIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M3.5 10h17" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function UserIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M4.5 20c1.5-4 5-5.5 7.5-5.5s6 1.5 7.5 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function MailIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M4 7l8 6 8-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function LockIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="4.5" y="10.5" width="15" height="10" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function GoogleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="#4285F4"
-        d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.7-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1C3.3 21.3 7.3 24 12 24z"
-      />
-      <path fill="#FBBC05" d="M5.3 14.3c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3V6.6H1.3A12 12 0 0 0 0 12c0 1.9.5 3.8 1.3 5.4l4-3.1z" />
-      <path
-        fill="#EA4335"
-        d="M12 4.8c1.7 0 3.3.6 4.5 1.8l3.4-3.4C17.9 1.2 15.2 0 12 0 7.3 0 3.3 2.7 1.3 6.6l4 3.1c.9-2.9 3.6-5 6.7-5z"
-      />
-    </svg>
   )
 }
 
