@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon } from '@iconify/react'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import L from 'leaflet'
+
+// Fix del ícono por defecto de Leaflet (problema conocido con bundlers)
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+})
 
 type BusinessType = 'peluqueria' | 'veterinaria'
 
@@ -12,18 +22,34 @@ interface Business {
   schedule: string
   verifiedLabel: string
   verifiedDesc: string
+  lat: number
+  lng: number
 }
 
+// Coordenadas reales de San Cristóbal, Táchira
 const BUSINESSES: Record<BusinessType, Business[]> = {
   peluqueria: [
     {
       id: 'peludog',
       name: 'PeluDog Spa & Grooming',
       phone: '+58 424 676 7676',
-      address: 'Calle Sucre, Urb. El bosque, Maracay 1203.',
+      address: 'Av. Ferrero Tamayo, San Cristóbal, Táchira',
       schedule: 'Lunes a Viernes: 9:00 AM - 5:00 PM\nSábados: 9:00 AM - 2:00 PM',
       verifiedLabel: 'Servicios profesionales',
       verifiedDesc: 'Baño, corte, limpieza de oídos, corte de uñas y más para el bienestar de tu mascota.',
+      lat: 7.7669,
+      lng: -72.2250,
+    },
+    {
+      id: 'pawspa',
+      name: 'Paw Spa Táchira',
+      phone: '+58 414 555 2233',
+      address: 'Av. España, San Cristóbal, Táchira',
+      schedule: 'Lunes a Sábado: 8:00 AM - 5:00 PM',
+      verifiedLabel: 'Servicios profesionales',
+      verifiedDesc: 'Estética canina y felina, corte de uñas y tratamientos especiales.',
+      lat: 7.7788,
+      lng: -72.2308,
     },
   ],
   veterinaria: [
@@ -31,10 +57,23 @@ const BUSINESSES: Record<BusinessType, Business[]> = {
       id: 'sanjose',
       name: 'Clínica Veterinaria San José',
       phone: '+58 412 123 4567',
-      address: 'Av. Principal de Las Acacias, C.C. Vet Center, Local 12. Maracay.',
+      address: 'Av. Libertador, San Cristóbal, Táchira',
       schedule: 'Lunes a Sábado: 8:00 AM - 6:00 PM',
       verifiedLabel: 'Clínica verificada',
       verifiedDesc: 'Profesionales certificados y atención de calidad para tu mascota.',
+      lat: 7.7738,
+      lng: -72.2245,
+    },
+    {
+      id: 'animalhealth',
+      name: 'Animal Health Center',
+      phone: '+58 276 344 5566',
+      address: 'Av. Carabobo, San Cristóbal, Táchira',
+      schedule: 'Lunes a Viernes: 8:00 AM - 7:00 PM',
+      verifiedLabel: 'Clínica verificada',
+      verifiedDesc: 'Atención de emergencias 24h y consultas generales.',
+      lat: 7.7695,
+      lng: -72.2198,
     },
   ],
 }
@@ -73,13 +112,6 @@ function BusinessBooking() {
             className="w-9 h-9 flex items-center justify-center rounded-full active:bg-petpulse-primary/10 transition-colors -ml-2"
           >
             <Icon icon="mdi:chevron-left" width={24} height={24} color="#2F3E32" />
-          </button>
-          <button type="button" aria-label="Notificaciones" className="relative">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
-              <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-petpulse-accent rounded-full border border-petpulse-bg" />
           </button>
         </div>
 
@@ -129,15 +161,36 @@ function BusinessBooking() {
           </div>
         </div>
 
-        {/* Mapa (placeholder) */}
-        <div
-          className="mx-5 mt-4 h-[200px] rounded-xl border border-petpulse-border flex items-center justify-center"
-          style={{ background: 'linear-gradient(119.64deg, #E8F5E9 0%, #F1F8F6 100%)' }}
-        >
-          <div className="flex flex-col items-center gap-1">
-            <Icon icon="mdi:map-marker" width={28} height={28} color="#E53935" />
-            <span className="font-inter text-xs text-petpulse-text-secondary">Mapa de ubicación</span>
-          </div>
+        {/* Mapa real con Leaflet - muestra todos los negocios */}
+        <div className="mx-5 mt-4 h-[220px] rounded-xl border border-petpulse-border overflow-hidden">
+          <MapContainer
+            center={[selected.lat, selected.lng]}
+            zoom={14}
+            scrollWheelZoom={true}
+            style={{ height: '100%', width: '100%' }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {businesses.map((b) => (
+              <Marker key={b.id} position={[b.lat, b.lng]}>
+                <Popup>
+                  <div className="text-sm">
+                    <p className="font-semibold">{b.name}</p>
+                    <p className="text-xs text-gray-500 mt-1">{b.address}</p>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(b.id)}
+                      className="mt-2 text-xs font-semibold text-white bg-[#7A9A7B] px-3 py-1 rounded-full"
+                    >
+                      Ver información
+                    </button>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </div>
 
         {/* Card verificada */}

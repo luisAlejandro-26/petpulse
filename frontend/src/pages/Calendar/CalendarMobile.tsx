@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import SideMenu from '../../components/SideMenu'
+import { Link } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { useAuth } from '../../context/AuthContext'
 import { getEvents, updateEvent, deleteEvent } from '../../api/events'
 import type { HealthEvent } from '../../api/types'
-import iconCalendar from '../../assets/icon-calendar.png'
-import iconPaw from '../../assets/icon-paw.png'
-import iconUser from '../../assets/icon-user.png'
+import BottomNav from '../../components/BottomNav'
+
 
 const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 const MONTH_NAMES = [
@@ -44,15 +44,15 @@ const STATUS_LABEL: Record<string, { text: string; className: string }> = {
 
 function CalendarMobile() {
   const { token } = useAuth()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const isActive = (path: string) => location.pathname === path
+  
+  
 
   const [events, setEvents] = useState<HealthEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [confirmId, setConfirmId] = useState<number | null>(null)
+ const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!token) return
@@ -143,19 +143,13 @@ function CalendarMobile() {
         <div className="flex-1 pb-24">
           {/* Header */}
           <div className="flex items-center justify-between px-6 pt-6">
-            <button type="button" aria-label="Abrir menú">
+            <button type="button" aria-label="Abrir menú" onClick={() => setMenuOpen(true)}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
                 <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
               </svg>
             </button>
             <h1 className="font-inter font-bold text-base text-petpulse-primary-dark">Calendario</h1>
-            <button type="button" aria-label="Notificaciones" className="relative">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
-                <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-petpulse-accent rounded-full border border-petpulse-bg" />
-            </button>
+            <div className="w-6" />
           </div>
 
           {/* Navegación de mes */}
@@ -288,64 +282,7 @@ function CalendarMobile() {
         </div>
 
         {/* NavBar inferior */}
-        <nav className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[338px] h-[60px] bg-white/10 border border-petpulse-border rounded-2xl backdrop-blur-sm flex items-center justify-around">
-          <Link
-            to="/dashboard"
-            className={`flex flex-col items-center gap-1 px-2 py-1 rounded-lg transition-colors ${
-              isActive('/dashboard') ? 'bg-petpulse-primary/15' : ''
-            }`}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={isActive('/dashboard') ? '#6B8C6C' : '#7A9A7B'} strokeWidth="2">
-              <path d="M3 11l9-8 9 8" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M5 10v10h14V10" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span className={`font-inter text-[12px] ${isActive('/dashboard') ? 'text-petpulse-primary-dark font-semibold' : 'text-petpulse-text'}`}>
-              Inicio
-            </span>
-          </Link>
-
-          <div className="w-px h-[60%] bg-petpulse-border" />
-
-          <Link
-            to="/calendar"
-            className={`flex flex-col items-center gap-1 px-2 py-1 rounded-lg transition-colors ${
-              isActive('/calendar') ? 'bg-petpulse-primary/15' : ''
-            }`}
-          >
-            <img src={iconCalendar} alt="" className="w-6 h-6" aria-hidden="true" />
-            <span className={`font-inter text-[12px] ${isActive('/calendar') ? 'text-petpulse-primary-dark font-semibold' : 'text-petpulse-text'}`}>
-              Calendario
-            </span>
-          </Link>
-
-          <div className="w-px h-[60%] bg-petpulse-border" />
-
-          <Link
-            to="/pet-ia"
-            className={`flex flex-col items-center gap-1 px-2 py-1 rounded-lg transition-colors ${
-              isActive('/pet-ia') ? 'bg-petpulse-primary/15' : ''
-            }`}
-          >
-            <img src={iconPaw} alt="" className="w-6 h-6" aria-hidden="true" />
-            <span className={`font-inter text-[12px] ${isActive('/pet-ia') ? 'text-petpulse-primary-dark font-semibold' : 'text-petpulse-text'}`}>
-              PetIA
-            </span>
-          </Link>
-
-          <div className="w-px h-[60%] bg-petpulse-border" />
-
-          <Link
-            to="/profile"
-            className={`flex flex-col items-center gap-1 px-2 py-1 rounded-lg transition-colors ${
-              isActive('/profile') ? 'bg-petpulse-primary/15' : ''
-            }`}
-          >
-            <img src={iconUser} alt="" className="w-6 h-6" aria-hidden="true" />
-            <span className={`font-inter text-[12px] ${isActive('/profile') ? 'text-petpulse-primary-dark font-semibold' : 'text-petpulse-text'}`}>
-              Perfil
-            </span>
-          </Link>
-        </nav>
+        <BottomNav />
 
         {/* Modal de confirmación de eliminación */}
         {confirmId !== null && eventToDelete && (
@@ -388,6 +325,8 @@ function CalendarMobile() {
             </div>
           </div>
         )}
+
+        <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       </div>
 
       <style>{`

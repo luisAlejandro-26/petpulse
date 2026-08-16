@@ -20,7 +20,7 @@ function EventCategoryPicker() {
   const navigate = useNavigate()
 
   function handleSelect(category: Category) {
-    navigate(`/business-booking?type=${category.businessType}&eventType=${category.type}`)
+    navigate(`/events/booking?type=${category.businessType}&eventType=${category.type}`)
   }
 
   return (

@@ -83,9 +83,6 @@ function EventForm() {
           >
             <Icon icon="mdi:chevron-left" width={24} height={24} color="#2F3E32" />
           </button>
-          <button type="button" aria-label="Abrir menú">
-            <Icon icon="mdi:menu" width={22} height={22} color="#2F3E32" />
-          </button>
         </div>
 
         <h1 className="font-encode-expanded font-bold text-xl text-petpulse-primary text-center mt-2">

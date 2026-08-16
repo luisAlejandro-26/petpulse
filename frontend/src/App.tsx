@@ -8,10 +8,10 @@ import RegisterSuccess from './pages/RegisterSuccess'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
 import PetForm from './pages/Pets/PetForm'
-import CalendarMobile from './pages/Calendar/CalendarMobile'
-import EventForm from './pages/Calendar/EventForm'
-import BusinessBooking from './pages/Calendar/BusinessBooking'
-import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
+import CalendarMobile from "./pages/Calendar/CalendarMobile";
+import EventCategoryPicker from "./pages/Calendar/EventCategoryPicker";
+import BusinessBooking from "./pages/Calendar/BusinessBooking";
+import EventForm from "./pages/Calendar/EventForm";
 
 function App() {
   return (
@@ -69,6 +69,46 @@ function App() {
             element={
               <RequireAuth>
                 <BusinessBooking />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <RequireAuth>
+                <CalendarMobile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/category"
+            element={
+              <RequireAuth>
+                <EventCategoryPicker />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/category"
+            element={
+              <RequireAuth>
+                <EventCategoryPicker />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/booking"
+            element={
+              <RequireAuth>
+                <BusinessBooking />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/new"
+            element={
+              <RequireAuth>
+                <EventForm />
               </RequireAuth>
             }
           />
