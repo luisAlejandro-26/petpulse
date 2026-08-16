@@ -46,6 +46,8 @@ export interface ResetPasswordDTO {
 }
 
 export type PetSpecies = 'PERRO' | 'GATO' | 'CONEJO' | 'PAJARO' | 'OTHER'
+export type EventType = 'VACUNA' | 'CONTROL' | 'DESPARACITACION' | 'CIRUGIA' | 'OTHER'
+export type EventStatus = 'COMPLETED' | 'SCHEDULED' | 'CANCELLED'
 
 export interface Pet {
   id_pet: number
@@ -122,4 +124,41 @@ export interface Activity {
   title: string
   description: string
   time: string
+export interface HealthEvent {
+  id_event: number
+  id_pet: number
+  event_type: EventType
+  title: string
+  event_date: string
+  event_place: string
+  next_due_date: string | null
+  status: EventStatus
+  pet?: { name_pet: string }
+}
+
+export interface EventsResponse {
+  events: HealthEvent[]
+}
+
+export interface EventResponse {
+  event: HealthEvent
+}
+
+export interface CreateEventDTO {
+  id_pet: number
+  event_type: EventType
+  title: string
+  event_date: string
+  event_place: string
+  next_due_date?: string
+  status?: EventStatus
+}
+
+export interface UpdateEventDTO {
+  title?: string
+  event_date?: string
+  event_place?: string
+  next_due_date?: string
+  status?: EventStatus
+  event_type?: EventType
 }
