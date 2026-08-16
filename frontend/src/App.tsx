@@ -4,7 +4,7 @@ import { RequireAuth } from './components/RequireAuth'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
+import RegisterSuccess from './pages/RegisterSuccess'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
 import PetForm from './pages/Pets/PetForm'
@@ -21,7 +21,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/register-success" element={<RegisterSuccessMobile />} />
+          <Route path="/register-success" element={<RegisterSuccess />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password-success" element={<ResetPasswordSuccessMobile />} />
           <Route
@@ -41,10 +41,34 @@ function App() {
             }
           />
           <Route
-            path="/pets/:id/edit"
+            path="/calendar"
             element={
               <RequireAuth>
-                <PetForm />
+                <CalendarMobile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/category"
+            element={
+              <RequireAuth>
+                <EventCategoryPicker />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/new"
+            element={
+              <RequireAuth>
+                <EventForm />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/business-booking"
+            element={
+              <RequireAuth>
+                <BusinessBooking />
               </RequireAuth>
             }
           />
