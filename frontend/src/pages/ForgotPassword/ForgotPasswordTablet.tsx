@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { Icon } from '@iconify/react'
 import { api, ApiError } from '../../api/client'
-import styles from './ForgotPasswordTablet.module.css'
 import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
@@ -103,74 +103,100 @@ function ForgotPasswordTablet() {
     else navigate('/login')
   }
 
+  const isWide = step === 'success'
+  const inputClass =
+    'w-full box-border font-inter text-[15px] py-[13px] px-4 rounded-full border-[1.5px] border-petpulse-border bg-petpulse-bg text-petpulse-text transition-colors placeholder:text-petpulse-text-secondary focus:outline-none focus:border-petpulse-primary focus:ring-[3px] focus:ring-[rgba(122,154,123,0.18)] focus:bg-petpulse-card'
+
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.logoWrap}>
-          <img src={logo} alt="" className={styles.logoIcon} />
-          <img src={tituloLogo} alt="PetPulse" className={styles.brandImg} />
-          <p className={styles.tagline}>Salud y bienestar para tus mascotas.</p>
+    <div className="min-h-screen bg-petpulse-bg font-inter text-petpulse-text flex flex-col items-center pt-10 px-6 box-border">
+      <div className={`w-full flex flex-col items-center ${isWide ? 'max-w-[604px]' : 'max-w-[440px]'}`}>
+        <div className="flex flex-col items-center text-center mb-6">
+          <img src={logo} alt="" className={`h-auto mb-2 ${isWide ? 'w-[92px]' : 'w-[72px]'}`} />
+          <img src={tituloLogo} alt="PetPulse" className={`w-auto mb-2 ${isWide ? 'h-10' : 'h-8'}`} />
+          <p className="text-sm text-petpulse-text-secondary">Salud y bienestar para tus mascotas.</p>
         </div>
 
-        <div className={styles.features}>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>
-              <ShieldSmallIcon />
+        <div className="flex items-start justify-center gap-7 mb-8 w-full">
+          <div className="flex flex-col items-center text-center w-[108px]">
+            <span className="w-11 h-11 rounded-full bg-petpulse-primary flex items-center justify-center mb-2">
+              <Icon icon="mdi:shield-check-outline" width={18} height={18} color="#faf9f6" />
             </span>
-            <p className={styles.featureTitle}>Seguridad</p>
-            <p className={styles.featureCaption}>Protegemos la informacion de tus mascotas</p>
+            <p className="text-[13px] font-semibold text-petpulse-text mb-0.5">Seguridad</p>
+            <p className="text-[11px] text-petpulse-text-secondary leading-[1.4]">
+              Protegemos la informacion de tus mascotas
+            </p>
           </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>
-              <HeartSmallIcon />
+          <span className="w-px h-10 bg-petpulse-border self-center shrink-0" aria-hidden="true" />
+          <div className="flex flex-col items-center text-center w-[108px]">
+            <span className="w-11 h-11 rounded-full bg-petpulse-primary flex items-center justify-center mb-2">
+              <Icon icon="mdi:heart-outline" width={18} height={18} color="#faf9f6" />
             </span>
-            <p className={styles.featureTitle}>Bienestar</p>
-            <p className={styles.featureCaption}>Promovemos una vida saludable y feliz</p>
+            <p className="text-[13px] font-semibold text-petpulse-text mb-0.5">Bienestar</p>
+            <p className="text-[11px] text-petpulse-text-secondary leading-[1.4]">
+              Promovemos una vida saludable y feliz
+            </p>
           </div>
-          <div className={styles.feature}>
-            <span className={styles.featureIcon}>
-              <CalendarSmallIcon />
+          <span className="w-px h-10 bg-petpulse-border self-center shrink-0" aria-hidden="true" />
+          <div className="flex flex-col items-center text-center w-[108px]">
+            <span className="w-11 h-11 rounded-full bg-petpulse-primary flex items-center justify-center mb-2">
+              <Icon icon="mdi:calendar-month-outline" width={18} height={18} color="#faf9f6" />
             </span>
-            <p className={styles.featureTitle}>Recordatorios</p>
-            <p className={styles.featureCaption}>Nunca olvides citas, vacunas y tratamientos</p>
+            <p className="text-[13px] font-semibold text-petpulse-text mb-0.5">Recordatorios</p>
+            <p className="text-[11px] text-petpulse-text-secondary leading-[1.4]">
+              Nunca olvides citas, vacunas y tratamientos
+            </p>
           </div>
         </div>
 
-        <div className={styles.card}>
+        <div
+          className={`relative text-center box-border bg-petpulse-card px-6 py-8 ${
+            isWide
+              ? 'w-[536px] max-w-full mx-auto rounded-xl border border-petpulse-border shadow-[0_20px_44px_-28px_rgba(47,62,50,0.18)]'
+              : 'w-full rounded-3xl shadow-[0_24px_48px_-28px_rgba(47,62,50,0.25)]'
+          }`}
+        >
           {step !== 'success' && (
-            <button type="button" className={styles.backBtn} onClick={goBack} aria-label="Volver">
-              <ArrowLeftIcon />
+            <button
+              type="button"
+              className="absolute top-5 left-5 bg-transparent border-0 cursor-pointer text-petpulse-text flex items-center justify-center p-1 hover:text-petpulse-primary"
+              onClick={goBack}
+              aria-label="Volver"
+            >
+              <Icon icon="mdi:arrow-left" width={20} height={20} />
             </button>
           )}
 
-          <h1 className={styles.cardTitle}>
+          <h1 className="font-poppins font-bold text-xl text-petpulse-primary mb-6 leading-[1.3]">
             {step === 'success' ? 'Recuperacion exitosa, ya puedes iniciar sesion' : 'Recuperar contrasena'}
           </h1>
 
           {step === 'email' && (
             <>
-              <div className={styles.bigIcon}>
-                <MailBigIcon />
+              <div className="w-16 h-16 rounded-full bg-petpulse-primary flex items-center justify-center mx-auto mb-5">
+                <Icon icon="mdi:email-outline" width={28} height={28} color="#faf9f6" />
               </div>
-              <h2 className={styles.stepHeading}>Encuentra tu cuenta</h2>
-              <p className={styles.stepText}>
+              <h2 className="font-poppins font-bold text-lg text-petpulse-text mb-2">Encuentra tu cuenta</h2>
+              <p className="text-sm text-petpulse-text-secondary leading-relaxed mb-6">
                 Ingresa tu direccion de correo electronico y te ayudaremos a recuperar tu cuenta.
               </p>
 
               {error && (
-                <p className={styles.alert} role="alert">
+                <p
+                  className="text-[13px] px-4 py-3 rounded-[14px] mb-5 text-center bg-[#fbe9e5] text-petpulse-accent border border-[#f2cec3]"
+                  role="alert"
+                >
                   {error}
                 </p>
               )}
 
               <form onSubmit={handleEmailSubmit}>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel} htmlFor="fp-email">
+                <div className="mb-5 text-left">
+                  <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="fp-email">
                     Correo electronico
                   </label>
                   <input
                     id="fp-email"
-                    className={styles.input}
+                    className={inputClass}
                     type="email"
                     placeholder="ejemplo@gmail.com"
                     value={email}
@@ -179,14 +205,18 @@ function ForgotPasswordTablet() {
                     autoComplete="email"
                   />
                 </div>
-                <button className={styles.submit} type="submit" disabled={submitting}>
+                <button
+                  className="w-full font-inter text-base font-bold text-white bg-petpulse-primary border-none rounded-full py-[15px] cursor-pointer transition-colors enabled:hover:bg-petpulse-primary-dark enabled:active:scale-[0.99] disabled:bg-petpulse-border disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={submitting}
+                >
                   {submitting ? 'Enviando...' : 'Continuar'}
                 </button>
               </form>
 
-              <p className={styles.footer}>
+              <p className="text-center mt-6 mb-0 text-sm">
                 ¿Recordaste tu contrasena?{' '}
-                <Link className={styles.footerLink} to="/login">
+                <Link className="text-petpulse-accent font-bold no-underline hover:underline" to="/login">
                   Inicia sesion
                 </Link>
               </p>
@@ -195,33 +225,40 @@ function ForgotPasswordTablet() {
 
           {step === 'code' && (
             <>
-              <div className={styles.bigIcon}>
-                <MailBigIcon />
+              <div className="w-16 h-16 rounded-full bg-petpulse-primary flex items-center justify-center mx-auto mb-5">
+                <Icon icon="mdi:email-outline" width={28} height={28} color="#faf9f6" />
               </div>
-              <h2 className={styles.stepHeading}>Confirma tu cuenta</h2>
-              <p className={styles.stepText}>
-                Ingresa el codigo que enviamos a <strong>{email}</strong> para confirmar tu cuenta.
+              <h2 className="font-poppins font-bold text-lg text-petpulse-text mb-2">Confirma tu cuenta</h2>
+              <p className="text-sm text-petpulse-text-secondary leading-relaxed mb-6">
+                Ingresa el codigo que enviamos a <strong className="text-petpulse-text">{email}</strong> para
+                confirmar tu cuenta.
               </p>
 
               {notice && !error && (
-                <p className={styles.status} role="status">
+                <p
+                  className="text-[13px] px-4 py-3 rounded-[14px] mb-5 text-center bg-[#eef4ee] text-petpulse-primary-dark border border-[#d3e2d3]"
+                  role="status"
+                >
                   {notice}
                 </p>
               )}
               {error && (
-                <p className={styles.alert} role="alert">
+                <p
+                  className="text-[13px] px-4 py-3 rounded-[14px] mb-5 text-center bg-[#fbe9e5] text-petpulse-accent border border-[#f2cec3]"
+                  role="alert"
+                >
                   {error}
                 </p>
               )}
 
               <form onSubmit={handleCodeSubmit}>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel} htmlFor="fp-code">
+                <div className="mb-5 text-left">
+                  <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="fp-code">
                     Ingresa codigo de recuperacion
                   </label>
                   <input
                     id="fp-code"
-                    className={styles.input}
+                    className={inputClass}
                     type="text"
                     inputMode="numeric"
                     maxLength={6}
@@ -231,12 +268,21 @@ function ForgotPasswordTablet() {
                     required
                   />
                 </div>
-                <button className={styles.submit} type="submit" disabled={submitting}>
+                <button
+                  className="w-full font-inter text-base font-bold text-white bg-petpulse-primary border-none rounded-full py-[15px] cursor-pointer transition-colors enabled:hover:bg-petpulse-primary-dark enabled:active:scale-[0.99] disabled:bg-petpulse-border disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={submitting}
+                >
                   Continuar
                 </button>
               </form>
 
-              <button type="button" className={styles.resendLink} onClick={handleResend} disabled={submitting}>
+              <button
+                type="button"
+                className="block w-full text-center bg-transparent border-0 cursor-pointer font-inter text-[13px] font-semibold text-petpulse-accent mt-5 p-0 enabled:hover:underline disabled:text-petpulse-text-secondary disabled:cursor-not-allowed"
+                onClick={handleResend}
+                disabled={submitting}
+              >
                 ¿No has recibido el codigo?
               </button>
             </>
@@ -244,28 +290,31 @@ function ForgotPasswordTablet() {
 
           {step === 'password' && (
             <>
-              <div className={styles.bigIcon}>
-                <LockBigIcon />
+              <div className="w-16 h-16 rounded-full bg-petpulse-primary flex items-center justify-center mx-auto mb-5">
+                <Icon icon="mdi:lock-outline" width={26} height={26} color="#faf9f6" />
               </div>
-              <h2 className={styles.stepHeading}>Crea una contrasena nueva</h2>
-              <p className={styles.stepText}>
+              <h2 className="font-poppins font-bold text-lg text-petpulse-text mb-2">Crea una contrasena nueva</h2>
+              <p className="text-sm text-petpulse-text-secondary leading-relaxed mb-6">
                 Ingresa una contrasena nueva que tenga al menos 8 caracteres.
               </p>
 
               {error && (
-                <p className={styles.alert} role="alert">
+                <p
+                  className="text-[13px] px-4 py-3 rounded-[14px] mb-5 text-center bg-[#fbe9e5] text-petpulse-accent border border-[#f2cec3]"
+                  role="alert"
+                >
                   {error}
                 </p>
               )}
 
               <form onSubmit={handlePasswordSubmit}>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel} htmlFor="fp-new-password">
+                <div className="mb-5 text-left">
+                  <label className="block text-[13px] font-semibold text-petpulse-text mb-2" htmlFor="fp-new-password">
                     Nueva contrasena
                   </label>
                   <input
                     id="fp-new-password"
-                    className={styles.input}
+                    className={inputClass}
                     type="password"
                     placeholder="********"
                     value={newPassword}
@@ -276,13 +325,16 @@ function ForgotPasswordTablet() {
                   />
                 </div>
 
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel} htmlFor="fp-confirm-password">
+                <div className="mb-5 text-left">
+                  <label
+                    className="block text-[13px] font-semibold text-petpulse-text mb-2"
+                    htmlFor="fp-confirm-password"
+                  >
                     Confirmar contrasena
                   </label>
                   <input
                     id="fp-confirm-password"
-                    className={styles.input}
+                    className={inputClass}
                     type="password"
                     placeholder="********"
                     value={confirmPassword}
@@ -293,9 +345,9 @@ function ForgotPasswordTablet() {
                   />
                   {confirmPassword.length > 0 && (
                     <p
-                      className={
-                        confirmPassword === newPassword ? styles.hintOk : styles.hintError
-                      }
+                      className={`text-[13px] mt-2 mb-0 font-semibold ${
+                        confirmPassword === newPassword ? 'text-petpulse-primary' : 'text-petpulse-accent'
+                      }`}
                     >
                       {confirmPassword === newPassword
                         ? 'Las contrasenas coinciden'
@@ -304,7 +356,11 @@ function ForgotPasswordTablet() {
                   )}
                 </div>
 
-                <button className={styles.submit} type="submit" disabled={submitting}>
+                <button
+                  className="w-full font-inter text-base font-bold text-white bg-petpulse-primary border-none rounded-full py-[15px] cursor-pointer transition-colors enabled:hover:bg-petpulse-primary-dark enabled:active:scale-[0.99] disabled:bg-petpulse-border disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={submitting}
+                >
                   {submitting ? 'Guardando...' : 'Continuar'}
                 </button>
               </form>
@@ -313,7 +369,7 @@ function ForgotPasswordTablet() {
 
           {step === 'success' && (
             <>
-              <div className={styles.shieldWrap} role="status" aria-live="polite">
+              <div className="flex justify-center mb-5" role="status" aria-live="polite">
                 <svg width="150" height="172" viewBox="0 0 120 138" fill="none" aria-hidden="true">
                   <path
                     d="M60 6 L110 24 V66 C110 100 90 122 60 133 C30 122 10 100 10 66 V24 Z"
@@ -321,9 +377,7 @@ function ForgotPasswordTablet() {
                     strokeWidth="7"
                     fill="none"
                     strokeLinejoin="round"
-                    strokeDasharray="400"
-                    strokeDashoffset="400"
-                    className={styles.drawShield}
+                    className="[stroke-dasharray:400] [stroke-dashoffset:400] [animation:draw-shield_0.7s_ease-out_forwards] motion-reduce:[animation:none] motion-reduce:[stroke-dashoffset:0]"
                   />
                   <path
                     d="M39 68 L54 83 L83 50"
@@ -332,86 +386,24 @@ function ForgotPasswordTablet() {
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeDasharray="65"
-                    strokeDashoffset="65"
-                    className={styles.drawCheck}
+                    className="[stroke-dasharray:65] [stroke-dashoffset:65] [animation:draw-check_0.4s_ease-out_0.6s_forwards] motion-reduce:[animation:none] motion-reduce:[stroke-dashoffset:0]"
                   />
                 </svg>
               </div>
-              <p className={styles.successCaption}>Espera un momento para redirigirte al inicio.</p>
-              <div className={styles.progressTrack}>
-                <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+              <p className="text-sm text-petpulse-text-secondary mb-5">Espera un momento para redirigirte al inicio.</p>
+              <div className="w-40 h-1.5 bg-petpulse-border rounded-full overflow-hidden mx-auto">
+                <div
+                  className="h-full bg-petpulse-primary rounded-full transition-[width] duration-75 ease-linear"
+                  style={{ width: `${progress}%` }}
+                />
               </div>
             </>
           )}
         </div>
       </div>
 
-      <img src={fondoInicio} alt="" className={styles.illustration} />
+      <img src={fondoInicio} alt="" className="w-screen h-auto mt-auto pt-8 block object-cover" />
     </div>
-  )
-}
-
-/* ---------- Iconos pequenos (fila de features) ---------- */
-
-function ShieldSmallIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke="#faf9f6" strokeWidth="1.8" strokeLinejoin="round" />
-      <path d="M9 12l2 2 4-4" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function HeartSmallIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 20s-7-4.4-9.5-9C1 8 2 4.5 5.3 3.6 8 2.9 10.4 4.4 12 6.7 13.6 4.4 16 2.9 18.7 3.6 22 4.5 23 8 21.5 11 19 15.6 12 20 12 20z"
-        stroke="#faf9f6"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function CalendarSmallIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="#faf9f6" strokeWidth="1.8" />
-      <path d="M3.5 10h17" stroke="#faf9f6" strokeWidth="1.8" />
-      <path d="M8 3v4M16 3v4" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="12" cy="15" r="1.6" fill="#faf9f6" />
-    </svg>
-  )
-}
-
-/* ---------- Iconos grandes (centro de cada paso) ---------- */
-
-function MailBigIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="5.5" width="18" height="13" rx="2.5" stroke="#faf9f6" strokeWidth="1.8" />
-      <path d="M4 7l8 6 8-6" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
-function LockBigIcon() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="4.5" y="10.5" width="15" height="10" rx="2.5" stroke="#faf9f6" strokeWidth="1.8" />
-      <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" stroke="#faf9f6" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function ArrowLeftIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M19 12H5M5 12l6-6M5 12l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }
 

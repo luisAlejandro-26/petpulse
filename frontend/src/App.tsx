@@ -7,11 +7,13 @@ import Register from './pages/Register'
 import RegisterSuccess from './pages/RegisterSuccess'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
-import PetForm from './pages/Pets/PetForm'
-import CalendarMobile from "./pages/Calendar/CalendarMobile";
-import EventCategoryPicker from "./pages/Calendar/EventCategoryPicker";
-import BusinessBooking from "./pages/Calendar/BusinessBooking";
-import EventForm from "./pages/Calendar/EventForm";
+import Pets from './pages/Pets'
+import Profile from './pages/Profile'
+import PetIA from './pages/PetIA'
+import Calendar from './pages/Calendar'
+import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
+import BusinessBooking from './pages/Calendar/BusinessBooking'
+import EventForm from './pages/Calendar/EventForm'
 
 function App() {
   return (
@@ -36,7 +38,31 @@ function App() {
             path="/pets/new"
             element={
               <RequireAuth>
-                <PetForm />
+                <Pets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pets/:id/edit"
+            element={
+              <RequireAuth>
+                <Pets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pet-ia"
+            element={
+              <RequireAuth>
+                <PetIA />
               </RequireAuth>
             }
           />
@@ -44,7 +70,7 @@ function App() {
             path="/calendar"
             element={
               <RequireAuth>
-                <CalendarMobile />
+                <Calendar />
               </RequireAuth>
             }
           />
@@ -73,42 +99,10 @@ function App() {
             }
           />
           <Route
-            path="/calendar"
-            element={
-              <RequireAuth>
-                <CalendarMobile />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/events/category"
-            element={
-              <RequireAuth>
-                <EventCategoryPicker />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/events/category"
-            element={
-              <RequireAuth>
-                <EventCategoryPicker />
-              </RequireAuth>
-            }
-          />
-          <Route
             path="/events/booking"
             element={
               <RequireAuth>
                 <BusinessBooking />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/events/new"
-            element={
-              <RequireAuth>
-                <EventForm />
               </RequireAuth>
             }
           />

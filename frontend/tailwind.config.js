@@ -22,9 +22,9 @@ export default {
         'encode-expanded': ['"Encode Sans Expanded"', 'sans-serif'],
         'encode-semi': ['"Encode Sans Semi Expanded"', 'sans-serif'],
         'inter': ['Inter', 'sans-serif'],
+        'poppins': ['Poppins', 'sans-serif'],
       },
     },
   },
   plugins: [],
 }
-
