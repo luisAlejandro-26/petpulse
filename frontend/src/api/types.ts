@@ -124,6 +124,8 @@ export interface Activity {
   title: string
   description: string
   time: string
+}
+
 export interface HealthEvent {
   id_event: number
   id_pet: number
