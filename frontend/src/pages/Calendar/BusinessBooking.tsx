@@ -100,8 +100,9 @@ function BusinessBooking() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
-      <div className="relative w-full max-w-[402px] min-h-screen pb-24">
+    <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
+      <div className="relative w-full max-w-[402px] h-screen overflow-hidden">
+      <div className="h-full overflow-y-auto pb-10">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6">
@@ -220,6 +221,7 @@ function BusinessBooking() {
             Agendar Cita
           </button>
         </div>
+      </div>
       </div>
     </div>
   )

@@ -71,8 +71,9 @@ function EventForm() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
-      <div className="relative w-full max-w-[402px] min-h-screen pb-10">
+    <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
+      <div className="relative w-full max-w-[402px] h-screen overflow-hidden">
+      <div className="h-full overflow-y-auto pb-10">
 
         <div className="flex items-center justify-between px-5 pt-6">
           <button
@@ -165,6 +166,7 @@ function EventForm() {
             </button>
           </form>
         )}
+      </div>
       </div>
     </div>
   )

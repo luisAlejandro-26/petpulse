@@ -41,10 +41,10 @@ function HomeMobile() {
   }, [token])
 
   return (
-    <div className="min-h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
-      <div className="relative w-full max-w-[402px] min-h-screen flex flex-col">
+    <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
+      <div className="relative w-full max-w-[402px] h-screen flex flex-col overflow-hidden">
 
-        <div className="flex-1 pb-24">
+        <div className="flex-1 overflow-y-auto pb-24">
           {/* Header: menú + campana */}
           <div className="flex items-center justify-between px-6 pt-6">
             <button type="button" aria-label="Abrir menú" onClick={() => setMenuOpen(true)}>

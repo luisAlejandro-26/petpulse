@@ -4,16 +4,16 @@ import { RequireAuth } from './components/RequireAuth'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import RegisterSuccess from './pages/RegisterSuccess'
+import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
-import Pets from './pages/Pets'
-import Profile from './pages/Profile'
-import PetIA from './pages/PetIA'
+import PetForm from './pages/Pets/PetForm'
 import Calendar from './pages/Calendar'
 import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
 import BusinessBooking from './pages/Calendar/BusinessBooking'
 import EventForm from './pages/Calendar/EventForm'
+import PetIA from './pages/PetIA'
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/register-success" element={<RegisterSuccess />} />
+          <Route path="/register-success" element={<RegisterSuccessMobile />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password-success" element={<ResetPasswordSuccessMobile />} />
           <Route
@@ -38,7 +38,7 @@ function App() {
             path="/pets/new"
             element={
               <RequireAuth>
-                <Pets />
+                <PetForm />
               </RequireAuth>
             }
           />
@@ -46,23 +46,7 @@ function App() {
             path="/pets/:id/edit"
             element={
               <RequireAuth>
-                <Pets />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <RequireAuth>
-                <Profile />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/pet-ia"
-            element={
-              <RequireAuth>
-                <PetIA />
+                <PetForm />
               </RequireAuth>
             }
           />
@@ -83,6 +67,14 @@ function App() {
             }
           />
           <Route
+            path="/events/booking"
+            element={
+              <RequireAuth>
+                <BusinessBooking />
+              </RequireAuth>
+            }
+          />
+          <Route
             path="/events/new"
             element={
               <RequireAuth>
@@ -91,18 +83,18 @@ function App() {
             }
           />
           <Route
-            path="/business-booking"
+            path="/pet-ia"
             element={
               <RequireAuth>
-                <BusinessBooking />
+                <PetIA />
               </RequireAuth>
             }
           />
           <Route
-            path="/events/booking"
+            path="/profile"
             element={
               <RequireAuth>
-                <BusinessBooking />
+                <Profile />
               </RequireAuth>
             }
           />

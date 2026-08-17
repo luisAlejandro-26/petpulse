@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { api } from '../api/client'
-import type { LoginDTO, LoginResponse, MeResponse, RegisterDTO, User } from '../api/types'
+import type { LoginDTO, LoginResponse, MeResponse, RegisterDTO, UpdateProfileDTO, User } from '../api/types'
 
 const TOKEN_KEY = 'petpulse_token'
 const USER_KEY = 'petpulse_user'
@@ -12,6 +12,7 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterDTO) => Promise<void>
   logout: () => Promise<void>
+  updateProfile: (data: UpdateProfileDTO) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -64,8 +65,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  async function updateProfile(data: UpdateProfileDTO) {
+    if (!token) return
+    const res = await api.put<MeResponse>('/api/auth/profile', data, token)
+    localStorage.setItem(USER_KEY, JSON.stringify(res.user))
+    setUser(res.user)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   )

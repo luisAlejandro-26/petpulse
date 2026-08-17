@@ -59,8 +59,9 @@ function ForgotPasswordMobile() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
-      <div className="relative w-full max-w-[402px] min-h-screen flex flex-col">
+    <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
+      <div className="relative w-full max-w-[402px] h-screen overflow-hidden">
+      <div className="h-full overflow-y-auto flex flex-col">
 
         <div className="flex-1">
           {/* Logo */}
@@ -271,6 +272,7 @@ function ForgotPasswordMobile() {
         </div>
 
         <img src={fondoInicio} alt="" className="w-full h-auto block" aria-hidden="true" />
+      </div>
       </div>
     </div>
   )
