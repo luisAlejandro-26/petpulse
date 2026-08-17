@@ -4,7 +4,7 @@ import { RequireAuth } from './components/RequireAuth'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import RegisterSuccess from './pages/RegisterSuccess'
+import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
 import Pets from './pages/Pets'
@@ -24,7 +24,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/register-success" element={<RegisterSuccess />} />
+          <Route path="/register-success" element={<RegisterSuccessMobile />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password-success" element={<ResetPasswordSuccessMobile />} />
           <Route
@@ -92,26 +92,18 @@ function App() {
             }
           />
           <Route
-            path="/events/new"
-            element={
-              <RequireAuth>
-                <EventFormSelector />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/business-booking"
-            element={
-              <RequireAuth>
-                <BusinessBookingSelector />
-              </RequireAuth>
-            }
-          />
-          <Route
             path="/events/booking"
             element={
               <RequireAuth>
                 <BusinessBookingSelector />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/events/new"
+            element={
+              <RequireAuth>
+                <EventFormSelector />
               </RequireAuth>
             }
           />

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
 :root {
   --petpulse-olive: #6B8C6C;
   --petpulse-olive-dark: #5a7a5b;
@@ -9,19 +14,16 @@
   --petpulse-coral-dark: #c96a52;
   --petpulse-gray: #7A7A7A;
 }
-
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 @keyframes draw-shield {
   to {
     stroke-dashoffset: 0;
   }
 }
-
 @keyframes draw-check {
   to {
     stroke-dashoffset: 0;

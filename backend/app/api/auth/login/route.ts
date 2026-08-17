@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     // Buscar usuario por email
     const { data: user, error } = await client
       .from('users')
-      .select('id_user, name_user, email, password_hash, role_account')
+      .select('id_user, name_user, email, password_hash, role_account, gender, birth_date, profile_image_url')
       .eq('email', email.trim().toLowerCase())
       .single()
 
@@ -54,6 +54,9 @@ export async function POST(req: NextRequest) {
         name_user: user.name_user,
         email: user.email,
         role_account: user.role_account,
+        gender: user.gender,
+        birth_date: user.birth_date,
+        profile_image_url: user.profile_image_url,
       },
     })
   } catch (error) {

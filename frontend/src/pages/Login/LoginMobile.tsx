@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import GoogleAuth, { type GoogleAuthHandle } from '../../components/GoogleAuth'
 import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
@@ -14,6 +15,11 @@ function LoginMobile() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const googleRef = useRef<GoogleAuthHandle>(null)
+
+  function handleGoogleClick() {
+    googleRef.current?.signIn()
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -137,6 +143,7 @@ function LoginMobile() {
           <div className="px-[55px] mt-5">
             <button
               type="button"
+              onClick={handleGoogleClick}
               className="w-full h-11 bg-petpulse-google-bg border border-petpulse-border rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
@@ -147,6 +154,7 @@ function LoginMobile() {
               </svg>
               <span className="font-encode-expanded text-sm text-black">Iniciar Sesión con Google</span>
             </button>
+            <GoogleAuth ref={googleRef} onError={setError} />
           </div>
         </div>
 

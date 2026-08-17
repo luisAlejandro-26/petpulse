@@ -173,3 +173,11 @@ export interface SendMessageResponse {
   reply: string
   image_url: string | null
 }
+
+export interface UpdateProfileDTO {
+  name_user?: string
+  gender?: string
+  birth_date?: string
+  profile_image_base64?: string
+  profile_image_mime_type?: string
+}
