@@ -139,3 +139,37 @@ export interface UpdateEventDTO {
   status?: EventStatus
   event_type?: EventType
 }
+
+export interface AiConversation {
+  id_conversation: number
+  id_pet: number | null
+  title: string
+  created_at: string
+  updated_at: string
+}
+export interface AiMessage {
+  id_message?: number
+  role: 'user' | 'assistant'
+  content: string | null
+  image_url: string | null
+  created_at: string
+}
+export interface ConversationsResponse {
+  conversations: AiConversation[]
+}
+export interface ConversationResponse {
+  conversation: AiConversation
+  messages: AiMessage[]
+}
+export interface SendMessageDTO {
+  message?: string
+  image_base64?: string
+  image_mime_type?: string
+  id_conversation?: number
+  id_pet?: number
+}
+export interface SendMessageResponse {
+  id_conversation: number
+  reply: string
+  image_url: string | null
+}
