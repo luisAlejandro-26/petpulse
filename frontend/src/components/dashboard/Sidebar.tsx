@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Bot, Calendar, Home, LogOut, PawPrint, User } from 'lucide-react'
+import { Icon } from '@iconify/react'
 
 const NAV_ITEMS = [
-  { label: 'Inicio', path: '/dashboard', icon: Home },
-  { label: 'Calendario', path: '/calendar', icon: Calendar },
-  { label: 'PetIA', path: '/pet-ia', icon: Bot },
-  { label: 'Perfil', path: '/profile', icon: User },
+  { label: 'Inicio', path: '/dashboard', icon: 'mdi:home-outline' },
+  { label: 'Calendario', path: '/calendar', icon: 'mdi:calendar-month-outline' },
+  { label: 'PetIA', path: '/pet-ia', icon: 'mdi:robot-outline' },
+  { label: 'Perfil', path: '/profile', icon: 'mdi:account-outline' },
 ]
 
 function Sidebar() {
@@ -42,7 +42,7 @@ function Sidebar() {
 
       {/* Navegación */}
       <nav className="flex flex-col gap-1.5 px-4 pt-6">
-        {NAV_ITEMS.map(({ label, path, icon: Icon }) => {
+        {NAV_ITEMS.map(({ label, path, icon }) => {
           const active = location.pathname === path
           return (
             <button
@@ -55,7 +55,7 @@ function Sidebar() {
                   : 'border-petpulse-border text-petpulse-text-secondary hover:bg-petpulse-bg hover:text-petpulse-text'
               }`}
             >
-              <Icon className="w-5 h-5" />
+              <Icon icon={icon} width={20} height={20} />
               {label}
             </button>
           )
@@ -69,7 +69,7 @@ function Sidebar() {
           onClick={() => navigate('/pets/new')}
           className="w-full py-3 rounded-full bg-white border border-petpulse-primary text-petpulse-primary-dark font-semibold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm hover:bg-[#6B8C6C] hover:text-white hover:border-[#6B8C6C]"
         >
-          <PawPrint className="w-4 h-4" />
+          <Icon icon="mdi:paw" width={18} height={18} />
           Agregar mascotas
         </button>
       </div>
@@ -89,7 +89,7 @@ function Sidebar() {
           onClick={() => void handleLogout()}
           className="flex items-center gap-2 text-sm text-petpulse-text-secondary hover:text-petpulse-accent font-medium transition-colors"
         >
-          <LogOut className="w-5 h-5" />
+          <Icon icon="mdi:logout" width={20} height={20} />
           Cerrar Sesión
         </button>
       </div>

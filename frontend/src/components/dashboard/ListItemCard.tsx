@@ -1,4 +1,4 @@
-import { PawPrint, Pencil, Trash2, User as UserIcon } from 'lucide-react'
+import { Icon } from '@iconify/react'
 
 interface ListItemCardProps {
   avatarUrl?: string | null
@@ -23,18 +23,16 @@ function ListItemCard({
 }: ListItemCardProps) {
   return (
     <div className="bg-white rounded-2xl border border-petpulse-border p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
-      {/* Avatar */}
       <div className="w-12 h-12 rounded-full bg-petpulse-primary/15 flex items-center justify-center flex-shrink-0 overflow-hidden text-petpulse-primary-dark">
         {avatarUrl ? (
           <img src={avatarUrl} alt={title} className="w-full h-full object-cover" />
         ) : fallback === 'paw' ? (
-          <PawPrint className="w-6 h-6" />
+          <Icon icon="mdi:paw" width={24} height={24} />
         ) : (
-          <UserIcon className="w-6 h-6" />
+          <Icon icon="mdi:account" width={24} height={24} />
         )}
       </div>
 
-      {/* Info */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="font-semibold text-petpulse-text truncate">{title}</p>
@@ -53,16 +51,15 @@ function ListItemCard({
         <p className="text-sm text-petpulse-text-secondary truncate mt-0.5">{subtitle}</p>
       </div>
 
-      {/* Acciones */}
       <div className="flex items-center gap-1 flex-shrink-0">
         {onEdit && (
           <button
             type="button"
             aria-label="Editar"
             onClick={onEdit}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-petpulse-text-secondary hover:bg-petpulse-primary/10 hover:text-petpulse-primary-dark transition-colors"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-petpulse-accent hover:bg-petpulse-accent/10 transition-colors"
           >
-            <Pencil className="w-4 h-4" />
+            <Icon icon="mynaui:pencil" width={16} height={16} />
           </button>
         )}
         {onDelete && (
@@ -72,7 +69,7 @@ function ListItemCard({
             onClick={onDelete}
             className="w-9 h-9 rounded-full flex items-center justify-center text-petpulse-text-secondary hover:bg-petpulse-accent/10 hover:text-petpulse-accent transition-colors"
           >
-            <Trash2 className="w-4 h-4" />
+            <Icon icon="mdi:trash-can-outline" width={16} height={16} />
           </button>
         )}
       </div>
