@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { useAuth } from '../../context/AuthContext'
+import GoogleAuth, { type GoogleAuthHandle } from '../../components/GoogleAuth'
 import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
@@ -17,6 +18,7 @@ function LoginTablet() {
   const [info, setInfo] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const googleRef = useRef<GoogleAuthHandle>(null)
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -35,7 +37,8 @@ function LoginTablet() {
 
   function handleGoogleClick() {
     setError('')
-    setInfo('Inicio con Google estara disponible proximamente')
+    setInfo('')
+    googleRef.current?.signIn()
   }
 
   return (
@@ -198,6 +201,7 @@ function LoginTablet() {
             <Icon icon="logos:google-icon" width={18} height={18} />
             Continuar con Google
           </button>
+          <GoogleAuth ref={googleRef} onError={setError} />
         </div>
 
         <p className="text-center mt-6 text-sm text-petpulse-text">

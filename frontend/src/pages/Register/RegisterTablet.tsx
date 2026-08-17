@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import { useAuth } from '../../context/AuthContext'
+import GoogleAuth, { type GoogleAuthHandle } from '../../components/GoogleAuth'
 import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
@@ -28,6 +29,7 @@ function RegisterTablet() {
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const googleRef = useRef<GoogleAuthHandle>(null)
 
   const hasMinLength = password.length >= 8
   const hasLettersAndNumbers = /[a-zA-Z]/.test(password) && /[0-9]/.test(password)
@@ -61,7 +63,8 @@ function RegisterTablet() {
 
   function handleGoogleClick() {
     setError('')
-    setInfo('Registro con Google estara disponible proximamente')
+    setInfo('')
+    googleRef.current?.signIn()
   }
 
   const inputClass =
@@ -329,6 +332,7 @@ function RegisterTablet() {
             <Icon icon="logos:google-icon" width={18} height={18} />
             Continuar con Google
           </button>
+          <GoogleAuth ref={googleRef} onError={setError} />
 
           <p className="text-center mt-6 mb-0 text-sm">
             ¿Ya tienes cuenta?{' '}
