@@ -50,3 +50,35 @@ export const GET = requireAuth(async (req: AuthedRequest, { params }: RouteParam
     return jsonError('Error interno del servidor', 500)
   }
 })
+
+export const DELETE = requireAuth(async (req: AuthedRequest, { params }: RouteParams) => {
+  const id_user = req.user!.id_user
+  const id_conversation = Number(params.id)
+
+  if (!Number.isInteger(id_conversation)) {
+    return jsonError('id de conversación inválido', 400)
+  }
+
+  const client = getClient()
+
+  try {
+    const { data: existing, error: findError } = await client
+      .from('ai_conversations')
+      .select('id_conversation')
+      .eq('id_conversation', id_conversation)
+      .eq('id_user', id_user)
+      .single()
+
+    if (findError || !existing) {
+      return jsonError('Conversación no encontrada', 404)
+    }
+
+    await client.from('ai_messages').delete().eq('id_conversation', id_conversation)
+    await client.from('ai_conversations').delete().eq('id_conversation', id_conversation)
+
+    return new NextResponse(null, { status: 204 })
+  } catch (error) {
+    console.error('Error en DELETE /api/ia/conversations/:id:', error)
+    return jsonError('Error interno del servidor', 500)
+  }
+})
