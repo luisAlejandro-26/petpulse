@@ -7,13 +7,14 @@ import Register from './pages/Register'
 import RegisterSuccessMobile from './pages/Register/RegisterSuccessMobile'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
-import PetForm from './pages/Pets/PetForm'
+import Pets from './pages/Pets'
+import PetProfile from './pages/PetProfile'
+import Profile from './pages/Profile'
+import PetIA from './pages/PetIA'
 import Calendar from './pages/Calendar'
 import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
-import BusinessBooking from './pages/Calendar/BusinessBooking'
-import EventForm from './pages/Calendar/EventForm'
-import PetIA from './pages/PetIA'
-import Profile from './pages/Profile'
+import BusinessBookingSelector from './pages/Calendar/BusinessBookingSelector'
+import EventFormSelector from './pages/Calendar/EventFormSelector'
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
             path="/pets/new"
             element={
               <RequireAuth>
-                <PetForm />
+                <Pets />
               </RequireAuth>
             }
           />
@@ -46,7 +47,31 @@ function App() {
             path="/pets/:id/edit"
             element={
               <RequireAuth>
-                <PetForm />
+                <Pets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pets/:id"
+            element={
+              <RequireAuth>
+                <PetProfile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <Profile />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pet-ia"
+            element={
+              <RequireAuth>
+                <PetIA />
               </RequireAuth>
             }
           />
@@ -70,7 +95,7 @@ function App() {
             path="/events/booking"
             element={
               <RequireAuth>
-                <BusinessBooking />
+                <BusinessBookingSelector />
               </RequireAuth>
             }
           />
@@ -78,23 +103,7 @@ function App() {
             path="/events/new"
             element={
               <RequireAuth>
-                <EventForm />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/pet-ia"
-            element={
-              <RequireAuth>
-                <PetIA />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <RequireAuth>
-                <Profile />
+                <EventFormSelector />
               </RequireAuth>
             }
           />
