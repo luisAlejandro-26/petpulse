@@ -8,12 +8,13 @@ import RegisterSuccess from './pages/RegisterSuccess'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPasswordSuccessMobile from './pages/ForgotPassword/ResetPasswordSuccessMobile'
 import Pets from './pages/Pets'
+import PetProfile from './pages/PetProfile'
 import Profile from './pages/Profile'
 import PetIA from './pages/PetIA'
 import Calendar from './pages/Calendar'
 import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
-import BusinessBooking from './pages/Calendar/BusinessBooking'
-import EventForm from './pages/Calendar/EventForm'
+import BusinessBookingSelector from './pages/Calendar/BusinessBookingSelector'
+import EventFormSelector from './pages/Calendar/EventFormSelector'
 
 function App() {
   return (
@@ -47,6 +48,14 @@ function App() {
             element={
               <RequireAuth>
                 <Pets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pets/:id"
+            element={
+              <RequireAuth>
+                <PetProfile />
               </RequireAuth>
             }
           />
@@ -86,7 +95,7 @@ function App() {
             path="/events/new"
             element={
               <RequireAuth>
-                <EventForm />
+                <EventFormSelector />
               </RequireAuth>
             }
           />
@@ -94,7 +103,7 @@ function App() {
             path="/business-booking"
             element={
               <RequireAuth>
-                <BusinessBooking />
+                <BusinessBookingSelector />
               </RequireAuth>
             }
           />
@@ -102,7 +111,7 @@ function App() {
             path="/events/booking"
             element={
               <RequireAuth>
-                <BusinessBooking />
+                <BusinessBookingSelector />
               </RequireAuth>
             }
           />
