@@ -46,7 +46,7 @@ export const PUT = requireAuth(async (req: AuthedRequest, { params }: Params) =>
     return jsonError('Body inválido', 400)
   }
 
-  const { name_pet, species, breed, birth_date, diseases, notes, pet_image_url, gender, weight } = body
+  const { name_pet, species, breed, birth_date, diseases, notes, pet_image_url, gender, weight, color } = body
 
   const updates: Record<string, unknown> = {}
   if (name_pet !== undefined) updates.name_pet = name_pet
@@ -64,6 +64,7 @@ export const PUT = requireAuth(async (req: AuthedRequest, { params }: Params) =>
   if (pet_image_url !== undefined) updates.pet_image_url = pet_image_url
   if (gender !== undefined) updates.gender = gender
   if (weight !== undefined) updates.weight = weight
+  if (color !== undefined) updates.color = color
 
   if (Object.keys(updates).length === 0) {
     return jsonError('No hay campos para actualizar', 400)
