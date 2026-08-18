@@ -223,7 +223,7 @@ function EventFormTablet() {
                     value={event_date}
                     onChange={(e) => setEventDate(e.target.value)}
                     required
-                    className={`${inputClass} pr-9`}
+                    className={`${inputClass} pr-9 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-9 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                   />
                   <Icon
                     icon="mdi:calendar-month-outline"

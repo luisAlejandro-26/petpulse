@@ -177,7 +177,7 @@ function CalendarTablet() {
           </button>
         </header>
 
-        <div className="grid grid-cols-[1.3fr_1fr] gap-4 items-start max-[760px]:grid-cols-1">
+        <div className="grid grid-cols-1 gap-4 items-start">
           <div className="bg-petpulse-card border border-petpulse-border rounded-[20px] p-5">
             <div className="flex items-center justify-between mb-4">
               <button
