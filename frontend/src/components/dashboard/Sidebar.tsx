@@ -80,9 +80,13 @@ function Sidebar() {
           type="button"
           onClick={() => navigate('/profile')}
           aria-label="Ir al perfil"
-          className="w-11 h-11 rounded-full bg-petpulse-primary/15 text-petpulse-primary-dark font-bold flex items-center justify-center hover:bg-petpulse-primary/25 transition-colors"
+          className="w-11 h-11 rounded-full bg-petpulse-primary/15 text-petpulse-primary-dark font-bold flex items-center justify-center overflow-hidden hover:bg-petpulse-primary/25 transition-colors"
         >
-          {initials}
+          {user?.profile_image_url ? (
+            <img src={user.profile_image_url} alt="Foto de perfil" className="w-full h-full object-cover" />
+          ) : (
+            initials
+          )}
         </button>
         <button
           type="button"

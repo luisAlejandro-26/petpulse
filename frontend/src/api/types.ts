@@ -189,4 +189,6 @@ export interface UpdateProfileDTO {
   birth_date?: string
   profile_image_base64?: string
   profile_image_mime_type?: string
+  profile_image_url?: string
+  password?: string
 }

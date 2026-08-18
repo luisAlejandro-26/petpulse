@@ -10,6 +10,7 @@ import StatCard from '../../components/dashboard/StatCard'
 import ListItemCard from '../../components/dashboard/ListItemCard'
 import { ACTIVITY_META, STATUS_LABEL, calculateAge, formatDate } from '../../components/dashboard/dashboardUtils'
 import { Icon } from '@iconify/react'
+import petsIllustration from '../../assets/pets-illustration.png'
 
 interface HomeDesktopProps {
   role: 'user' | 'admin'
@@ -304,22 +305,18 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           )}
         </section>
 
-        <section className="rounded-2xl bg-[#6B8C6C] text-white px-6 sm:px-8 py-5 flex flex-col lg:flex-row items-center justify-between gap-5">
-          <img
-            src="/assets/banner-agg-pet.svg"
-            alt="Agrega tu mascota"
-            className="w-40 sm:w-48 h-auto object-contain flex-shrink-0"
-          />
-          <div className="flex-1 text-center lg:text-left">
-            <h3 className="text-xl font-bold">Tu compromiso es su bienestar</h3>
-            <p className="text-sm text-white/85 mt-0.5">
-              Agenda una cita y mantén al día la salud de tus mascotas.
+        <section className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px]">
+          <img src={petsIllustration} alt="" className="h-[88px] w-auto shrink-0 object-contain" />
+          <div className="flex-1 min-w-[140px]">
+            <p className="font-bold text-[15px] text-petpulse-text m-0">Tu compromiso es su bienestar</p>
+            <p className="text-xs text-petpulse-text-secondary mt-0.5 mb-0 max-w-[320px]">
+              Mantén al día sus cuidados para una vida más saludable
             </p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/calendar')}
-            className="px-6 py-3 rounded-full bg-white text-[#6B8C6C] font-semibold text-sm transition-colors shadow-sm hover:bg-[#5a7a5b] hover:text-white flex-shrink-0"
+            className="shrink-0 bg-petpulse-primary-dark text-white rounded-full px-6 py-3 font-bold text-sm no-underline whitespace-nowrap transition-colors hover:bg-[#5c7c5d] active:scale-[0.98]"
           >
             Agendar cita
           </button>
