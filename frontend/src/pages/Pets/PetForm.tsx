@@ -1,7 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { createPet, getPet, updatePet } from '../../api/pets'
+import { uploadPetImage } from '../../api/upload'
 import type { PetSpecies } from '../../api/types'
 import iconPaw from '../../assets/icon-paw.png'
 
@@ -28,6 +29,13 @@ function PetForm() {
   const [submitting, setSubmitting] = useState(false)
   const [loading, setLoading] = useState(isEditing)
 
+  const [pet_image_url, setPetImageUrl] = useState('')
+  const [color, setColor] = useState('')
+  const [weight, setWeight] = useState('')
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     if (!isEditing || !id || !token) return
 
@@ -38,10 +46,32 @@ function PetForm() {
         setBreed(pet.breed ?? '')
         setBirthDate(pet.birth_date.split('T')[0])
         setDiseases(pet.diseases ?? '')
+        setPetImageUrl(pet.pet_image_url ?? '')
+        setColor(pet.color ?? '')
+        setWeight(pet.weight != null ? String(pet.weight) : '')
       })
       .catch(() => setError('No se pudo cargar la mascota'))
       .finally(() => setLoading(false))
   }, [id, isEditing, token])
+
+  async function handlePickImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !token) return
+
+    setImagePreview(URL.createObjectURL(file))
+    setUploadingImage(true)
+    setError('')
+    try {
+      const url = await uploadPetImage(file, token)
+      setPetImageUrl(url)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo subir la imagen')
+      setImagePreview(null)
+    } finally {
+      setUploadingImage(false)
+      e.target.value = ''
+    }
+  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -56,10 +86,11 @@ function PetForm() {
 
     setSubmitting(true)
     try {
+      const weightValue = weight ? Number(weight) : undefined
       if (isEditing && id) {
-        await updatePet(Number(id), { name_pet, species, breed, birth_date, diseases }, token)
+        await updatePet(Number(id), { name_pet, species, breed, birth_date, diseases, pet_image_url, color, weight: weightValue }, token)
       } else {
-        await createPet({ name_pet, species, breed, birth_date, diseases }, token)
+        await createPet({ name_pet, species, breed, birth_date, diseases, pet_image_url, color, weight: weightValue }, token)
       }
       navigate('/dashboard')
     } catch (err) {
@@ -76,6 +107,8 @@ function PetForm() {
       </div>
     )
   }
+
+  const displayImage = imagePreview ?? (pet_image_url || null)
 
   return (
     <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
@@ -103,16 +136,38 @@ function PetForm() {
 
         <form onSubmit={handleSubmit} className="px-5 mt-5" noValidate>
           {/* Subir imagen */}
-          <div className="h-[226px] bg-petpulse-primary/5 border-2 border-dashed border-petpulse-border rounded-xl flex flex-col items-center justify-center gap-2">
-            <div className="w-12 h-12 rounded-full bg-petpulse-primary/20 flex items-center justify-center">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A9A7B" strokeWidth="2">
-                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="12" cy="13" r="4" />
-              </svg>
-            </div>
-            <p className="font-inter font-semibold text-sm text-petpulse-text">Subir imagen</p>
-            <p className="font-inter text-xs text-petpulse-text-secondary">JPG, PNG (máx. 5MB)</p>
-          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handlePickImage}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full h-[226px] bg-petpulse-primary/5 border-2 border-dashed border-petpulse-border rounded-xl flex flex-col items-center justify-center gap-2 overflow-hidden relative"
+          >
+            {displayImage ? (
+              <img src={displayImage} alt="Mascota" className="w-full h-full object-cover" />
+            ) : (
+              <>
+                <div className="w-12 h-12 rounded-full bg-petpulse-primary/20 flex items-center justify-center">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A9A7B" strokeWidth="2">
+                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                </div>
+                <p className="font-inter font-semibold text-sm text-petpulse-text">Subir imagen</p>
+                <p className="font-inter text-xs text-petpulse-text-secondary">JPG, PNG (máx. 5MB)</p>
+              </>
+            )}
+            {uploadingImage && (
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <p className="text-white text-sm font-inter">Subiendo...</p>
+              </div>
+            )}
+          </button>
 
           {/* Sección DATOS */}
           <p className="font-inter font-bold text-[14px] text-petpulse-primary tracking-[0.5px] uppercase mt-8 mb-3">
@@ -189,6 +244,37 @@ function PetForm() {
             />
           </div>
 
+          {/* Color */}
+          <label htmlFor="color" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
+            Color <span className="text-petpulse-text-secondary font-normal normal-case">(opcional)</span>
+          </label>
+          <div className="relative mb-4">
+            <input
+              id="color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              placeholder="Ej: Dorado"
+              className="w-full h-[42px] bg-white border border-petpulse-border rounded-lg pl-3 pr-10 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
+            />
+          </div>
+
+          {/* Peso */}
+          <label htmlFor="weight" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
+            Peso (Kg) <span className="text-petpulse-text-secondary font-normal normal-case">(opcional)</span>
+          </label>
+          <div className="relative mb-4">
+            <input
+              id="weight"
+              type="number"
+              step="0.1"
+              min="0"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              placeholder="Ej: 32"
+              className="w-full h-[42px] bg-white border border-petpulse-border rounded-lg pl-3 pr-10 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
+            />
+          </div>
+
           {/* Enfermedades */}
           <label htmlFor="diseases" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
             Enfermedades <span className="text-petpulse-text-secondary font-normal normal-case">(opcional)</span>
@@ -204,7 +290,7 @@ function PetForm() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || uploadingImage}
             className="w-full h-11 bg-petpulse-primary hover:bg-petpulse-primary-dark active:scale-[0.98] text-white font-encode-semi font-bold text-base rounded-xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {submitting ? 'Guardando...' : 'Guardar Mascota'}

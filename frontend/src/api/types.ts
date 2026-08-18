@@ -52,6 +52,7 @@ export interface Pet {
   pet_image_url: string | null
   gender: string | null
   weight: number | null
+  color: string | null
   created_at: string
 }
 export interface PetsResponse {
@@ -70,6 +71,7 @@ export interface CreatePetDTO {
   pet_image_url?: string
   gender?: string
   weight?: number
+  color?: string
 }
 export interface UpdatePetDTO {
   name_pet?: string
@@ -81,6 +83,7 @@ export interface UpdatePetDTO {
   pet_image_url?: string
   gender?: string
   weight?: number
+  color?: string
 }
 // ── Dashboard (Home) ──
 export interface UsersResponse {
