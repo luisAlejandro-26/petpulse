@@ -11,6 +11,11 @@ export async function deleteUser(id: number, token: string): Promise<void> {
   await api.del(`/api/users/${id}`, token)
 }
 
+export async function updateUserRole(id: number, role_account: 'USER' | 'ADMIN', token: string): Promise<User> {
+  const res = await api.put<{ user: User }>(`/api/users/${id}`, { role_account }, token)
+  return res.user
+}
+
 export async function getAdminStats(token: string): Promise<AdminStats> {
   return api.get<AdminStats>('/api/stats/admin', token)
 }
