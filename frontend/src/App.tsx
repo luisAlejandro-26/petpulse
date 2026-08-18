@@ -12,7 +12,7 @@ import PetProfile from './pages/PetProfile'
 import Profile from './pages/Profile'
 import PetIA from './pages/PetIA'
 import Calendar from './pages/Calendar'
-import EventCategoryPicker from './pages/Calendar/EventCategoryPicker'
+import EventCategoryPickerSelector from './pages/Calendar/EventCategoryPickerSelector'
 import BusinessBookingSelector from './pages/Calendar/BusinessBookingSelector'
 import EventFormSelector from './pages/Calendar/EventFormSelector'
 
@@ -87,7 +87,7 @@ function App() {
             path="/events/category"
             element={
               <RequireAuth>
-                <EventCategoryPicker />
+                <EventCategoryPickerSelector />
               </RequireAuth>
             }
           />

@@ -16,14 +16,23 @@ const EVENT_TYPE_LABELS: Record<EventType, string> = {
   OTHER: 'Peluquería',
 }
 
+// Mismo layout visual del Figma (2 arriba, 1 completo, 2 abajo),
+// usando las etiquetas reales que acepta la base de datos.
+const TYPE_LAYOUT: EventType[][] = [
+  ['VACUNA', 'DESPARACITACION'],
+  ['CONTROL'],
+  ['CIRUGIA', 'OTHER'],
+]
+
 function EventFormTablet() {
   const { token } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  const eventType = (searchParams.get('eventType') as EventType) || 'OTHER'
   const businessName = searchParams.get('business') || ''
+  const initialType = (searchParams.get('eventType') as EventType) || 'OTHER'
 
+  const [eventType] = useState<EventType>(initialType)
   const [pets, setPets] = useState<Pet[]>([])
   const [id_pet, setIdPet] = useState('')
   const [title, setTitle] = useState('')
@@ -77,7 +86,7 @@ function EventFormTablet() {
 
   return (
     <div className="min-h-screen bg-petpulse-bg font-inter text-petpulse-text box-border pb-16">
-      <div className="w-full max-w-[600px] mx-auto px-5 pt-8 flex flex-col gap-5">
+      <div className="w-full max-w-[680px] mx-auto px-5 pt-8 flex flex-col gap-5">
         <header className="flex items-start justify-between gap-4">
           <button
             type="button"
@@ -89,14 +98,19 @@ function EventFormTablet() {
           </button>
 
           <div className="flex-1 text-center">
-            <h1 className="font-poppins font-bold text-xl text-petpulse-primary m-0">Confirmar recordatorio</h1>
-            <p className="text-[13px] text-petpulse-text-secondary mt-0.5 mb-0">
-              {EVENT_TYPE_LABELS[eventType]}
-              {businessName ? ` · ${businessName}` : ''}
-            </p>
+            <h1 className="font-poppins font-bold text-xl text-petpulse-primary m-0 flex items-center justify-center gap-1.5">
+              Agregar recordatorio <Icon icon="mdi:paw" width={18} height={18} className="text-petpulse-primary" />
+            </h1>
+            {businessName && <p className="text-[13px] text-petpulse-text-secondary mt-0.5 mb-0">{businessName}</p>}
           </div>
 
-          <span className="w-10 h-10 shrink-0" aria-hidden="true" />
+          <button
+            type="button"
+            className="w-10 h-10 rounded-full border border-petpulse-border bg-petpulse-card text-petpulse-text flex items-center justify-center cursor-pointer shrink-0 transition-colors hover:bg-[#eaf0ea] hover:border-petpulse-primary"
+            aria-label="Notificaciones"
+          >
+            <Icon icon="mdi:bell-outline" width={22} height={22} />
+          </button>
         </header>
 
         <div className="flex items-center gap-2 -mt-3">
@@ -159,6 +173,32 @@ function EventFormTablet() {
               </div>
 
               <div>
+                <p className="block text-[13px] font-semibold text-petpulse-text mb-1.5">Tipo</p>
+                <div className="flex flex-col gap-2.5">
+                  {TYPE_LAYOUT.map((row, i) => (
+                    <div key={i} className="flex gap-2.5">
+                      {row.map((type) => {
+                        const active = type === eventType
+                        return (
+                          <div
+                            key={type}
+                            aria-current={active ? 'true' : undefined}
+                            className={`flex-1 py-3.5 px-5 rounded-xl font-semibold text-sm text-center border ${
+                              active
+                                ? 'bg-petpulse-primary text-white border-petpulse-primary shadow-[inset_0_2px_4px_rgba(0,0,0,0.18)]'
+                                : 'bg-[#eaf0ea] text-petpulse-primary-dark/40 border-petpulse-primary/10'
+                            }`}
+                          >
+                            {EVENT_TYPE_LABELS[type]}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <label htmlFor="title" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">
                   Descripción
                 </label>
@@ -199,7 +239,7 @@ function EventFormTablet() {
                 disabled={submitting}
                 className="w-full bg-petpulse-primary text-white font-inter font-bold text-sm rounded-full py-3.5 border-0 cursor-pointer transition-colors mt-2 enabled:hover:bg-petpulse-primary-dark enabled:active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {submitting ? 'Guardando...' : 'Guardar recordatorio'}
+                {submitting ? 'Guardando...' : 'Guardar Recordatorio'}
               </button>
             </form>
           )}

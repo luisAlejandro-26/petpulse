@@ -6,7 +6,7 @@ import { getPets } from '../../api/pets'
 import { getEvents } from '../../api/events'
 import type { HealthEvent, Pet } from '../../api/types'
 import logo from '../../assets/logo.png'
-import dogCatIllustration from '../../assets/dog-cat-illustration.png'
+import petsIllustration from '../../assets/pets-illustration.png'
 
 function calculateAge(birthDate: string): string {
   const birth = new Date(birthDate)
@@ -107,7 +107,7 @@ function HomeTablet() {
           <div className="flex-1 min-w-[220px] text-center">
             <h1 className="font-poppins font-bold text-xl text-petpulse-primary m-0">
               Bienvenido\a {user?.name_user ?? 'Nombre'}
-              <Icon icon="mdi:paw" width={18} height={18} className="inline-block align-[-3px] ml-1.5 text-petpulse-accent" />
+              <Icon icon="mdi:paw" width={18} height={18} className="inline-block align-[-3px] ml-1.5 text-petpulse-primary" />
             </h1>
             <p className="text-[13px] text-petpulse-text-secondary mt-0.5 mb-0">
               Aquí tienes la información de tus mascotas
@@ -188,7 +188,7 @@ function HomeTablet() {
               id="mis-mascotas-heading"
               className="font-poppins font-bold text-base text-petpulse-text mb-3 flex items-center gap-1"
             >
-              Mis mascotas <Icon icon="mdi:paw" width={16} height={16} className="text-petpulse-accent" />
+              Mis mascotas <Icon icon="mdi:paw" width={16} height={16} className="text-petpulse-primary" />
             </h2>
 
             {loading && <p className="text-[13px] text-petpulse-text-secondary mb-3">Cargando mascotas...</p>}
@@ -289,7 +289,7 @@ function HomeTablet() {
         </div>
 
         <div className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px] max-[560px]:flex-wrap max-[560px]:justify-center max-[560px]:text-center">
-          <img src={dogCatIllustration} alt="" className="h-[104px] w-auto shrink-0 object-contain" />
+          <img src={petsIllustration} alt="" className="h-[88px] w-auto shrink-0 object-contain" />
           <div className="flex-1 min-w-[140px]">
             <p className="font-poppins font-bold text-[15px] text-petpulse-text m-0">Tu compromiso es su bienestar</p>
             <p className="text-xs text-petpulse-text-secondary mt-0.5 mb-0 max-w-[320px]">
@@ -297,7 +297,7 @@ function HomeTablet() {
             </p>
           </div>
           <Link
-            to="/business-booking"
+            to="/events/category"
             className="shrink-0 bg-petpulse-primary-dark text-white rounded-full px-6 py-3 font-bold text-sm no-underline whitespace-nowrap transition-colors hover:bg-[#5c7c5d] active:scale-[0.98] max-[560px]:w-full max-[560px]:text-center"
           >
             Agendar cita
