@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { Icon } from '@iconify/react'
 
-const NAV_ITEMS = [
+const ALL_NAV_ITEMS = [
   { label: 'Inicio', path: '/dashboard', icon: 'mdi:home-outline' },
   { label: 'Calendario', path: '/calendar', icon: 'mdi:calendar-month-outline' },
   { label: 'PetIA', path: '/pet-ia', icon: 'mdi:robot-outline' },
@@ -42,7 +42,7 @@ function Sidebar() {
 
       {/* Navegación */}
       <nav className="flex flex-col gap-1.5 px-4 pt-6">
-        {NAV_ITEMS.map(({ label, path, icon }) => {
+        {ALL_NAV_ITEMS.filter((item) => user?.role_account !== 'ADMIN' || item.path === '/dashboard').map(({ label, path, icon }) => {
           const active = location.pathname === path
           return (
             <button
