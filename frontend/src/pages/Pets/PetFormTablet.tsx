@@ -112,7 +112,7 @@ function PetFormTablet() {
 
           <div className="flex-1 min-w-[220px] text-center">
             <h1 className="font-poppins font-bold text-xl text-petpulse-primary m-0 flex items-center justify-center gap-1.5">
-              Agregar mascota <Icon icon="mdi:paw" width={18} height={18} className="text-petpulse-accent" />
+              Agregar mascota <Icon icon="mdi:paw" width={18} height={18} className="text-petpulse-primary" />
             </h1>
             <p className="text-[13px] text-petpulse-text-secondary mt-0.5 mb-0">
               Completa la información para agregar a tu peludo

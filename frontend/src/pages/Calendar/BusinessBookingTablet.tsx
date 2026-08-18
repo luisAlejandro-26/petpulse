@@ -116,7 +116,7 @@ function BusinessBookingTablet() {
 
           <div className="flex-1 text-center">
             <h1 className="font-poppins font-bold text-xl text-petpulse-primary m-0 flex items-center justify-center gap-1.5">
-              Agendar cita <Icon icon="mdi:paw" width={18} height={18} className="text-petpulse-accent" />
+              Agendar cita <Icon icon="mdi:paw" width={18} height={18} className="text-petpulse-primary" />
             </h1>
             <p className="text-[13px] text-petpulse-text-secondary mt-0.5 mb-0">{copy.title}</p>
           </div>
