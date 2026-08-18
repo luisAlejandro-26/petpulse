@@ -1,7 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { useAuth } from './context/AuthContext'
 import { RequireAuth } from './components/RequireAuth'
 import Home from './pages/Home'
+import Admin from './pages/Admin'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import RegisterSuccess from './pages/RegisterSuccess'
@@ -15,6 +17,14 @@ import Calendar from './pages/Calendar'
 import EventCategoryPickerSelector from './pages/Calendar/EventCategoryPickerSelector'
 import BusinessBookingSelector from './pages/Calendar/BusinessBookingSelector'
 import EventFormSelector from './pages/Calendar/EventFormSelector'
+
+// El home despues de iniciar sesion: si el usuario es admin, ve el
+// Panel de administracion (Admin/index.tsx); si no, la app normal (Home).
+function Dashboard() {
+  const { user } = useAuth()
+  if (user?.role_account === 'ADMIN') return <Admin />
+  return <Home />
+}
 
 function App() {
   return (
@@ -31,7 +41,15 @@ function App() {
             path="/dashboard"
             element={
               <RequireAuth>
-                <Home />
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <RequireAuth>
+                <Admin />
               </RequireAuth>
             }
           />
