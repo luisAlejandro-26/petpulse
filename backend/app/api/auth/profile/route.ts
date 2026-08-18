@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireAuth, AuthedRequest, jsonError } from '@/lib/errors'
 import { getClient } from '@/lib/db'
+import bcrypt from 'bcryptjs'
 
 export const runtime = 'nodejs'
 
@@ -14,7 +15,7 @@ export const PUT = requireAuth(async (req: AuthedRequest) => {
     return jsonError('Body inválido', 400)
   }
 
-  const { name_user, gender, birth_date, profile_image_url } = body
+  const { name_user, gender, birth_date, profile_image_url, password } = body
 
   const updates: Record<string, unknown> = {}
 
@@ -22,6 +23,13 @@ export const PUT = requireAuth(async (req: AuthedRequest) => {
   if (gender !== undefined) updates.gender = gender
   if (birth_date !== undefined) updates.birth_date = birth_date
   if (profile_image_url !== undefined) updates.profile_image_url = profile_image_url
+
+  if (typeof password === 'string' && password.length > 0) {
+    if (password.length < 6) {
+      return jsonError('La contraseña debe tener al menos 6 caracteres', 400)
+    }
+    updates.password_hash = await bcrypt.hash(password, 10)
+  }
 
   if (Object.keys(updates).length === 0) {
     return jsonError('No hay campos para actualizar', 400)
