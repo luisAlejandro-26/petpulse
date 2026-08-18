@@ -1,6 +1,8 @@
 import { getClient } from './db'
 
-const BUCKET = 'chat-images'
+const CHAT_BUCKET = 'chat-images'
+const PET_BUCKET = 'pet-images'
+const PROFILE_BUCKET = 'profile-images'
 
 const MIME_TO_EXT: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -18,6 +20,29 @@ export class UploadError extends Error {
   }
 }
 
+async function uploadImage(bucket: string, path: string, base64: string, mimeType: string): Promise<string> {
+  const extension = MIME_TO_EXT[mimeType]
+  if (!extension) {
+    throw new UploadError('Tipo de imagen no soportado (usa jpg, png o webp)', 400)
+  }
+
+  const buffer = Buffer.from(base64, 'base64')
+  const fullPath = `${path}.${extension}`
+
+  const client = getClient()
+
+  const { error: uploadError } = await client.storage
+    .from(bucket)
+    .upload(fullPath, buffer, { contentType: mimeType, upsert: false })
+
+  if (uploadError) {
+    throw new UploadError(`No se pudo subir la imagen: ${uploadError.message}`, 502)
+  }
+
+  const { data } = client.storage.from(bucket).getPublicUrl(fullPath)
+  return data.publicUrl
+}
+
 /**
  * Sube una imagen en base64 al bucket 'chat-images' y devuelve su URL publica.
  */
@@ -27,24 +52,19 @@ export async function uploadChatImage(
   base64: string,
   mimeType: string
 ): Promise<string> {
-  const extension = MIME_TO_EXT[mimeType]
-  if (!extension) {
-    throw new UploadError('Tipo de imagen no soportado (usa jpg, png o webp)', 400)
-  }
+  return uploadImage(CHAT_BUCKET, `${id_user}/${id_conversation}/${Date.now()}`, base64, mimeType)
+}
 
-  const buffer = Buffer.from(base64, 'base64')
-  const path = `${id_user}/${id_conversation}/${Date.now()}.${extension}`
+/**
+ * Sube la foto de una mascota al bucket 'pet-images' y devuelve su URL publica.
+ */
+export async function uploadPetImage(id_user: number, base64: string, mimeType: string): Promise<string> {
+  return uploadImage(PET_BUCKET, `${id_user}/${Date.now()}`, base64, mimeType)
+}
 
-  const client = getClient()
-
-  const { error: uploadError } = await client.storage
-    .from(BUCKET)
-    .upload(path, buffer, { contentType: mimeType, upsert: false })
-
-  if (uploadError) {
-    throw new UploadError(`No se pudo subir la imagen: ${uploadError.message}`, 502)
-  }
-
-  const { data } = client.storage.from(BUCKET).getPublicUrl(path)
-  return data.publicUrl
+/**
+ * Sube la foto de perfil de un usuario al bucket 'profile-images' y devuelve su URL publica.
+ */
+export async function uploadProfileImage(id_user: number, base64: string, mimeType: string): Promise<string> {
+  return uploadImage(PROFILE_BUCKET, `${id_user}/${Date.now()}`, base64, mimeType)
 }

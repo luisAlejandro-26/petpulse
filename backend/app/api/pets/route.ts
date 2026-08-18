@@ -37,7 +37,7 @@ export const POST = requireAuth(async (req: AuthedRequest) => {
     return jsonError('Body inválido', 400)
   }
 
-  const { name_pet, species, breed, birth_date, diseases, notes, pet_image_url } = body
+  const { name_pet, species, breed, birth_date, diseases, notes, pet_image_url, gender, weight } = body
 
   if (!name_pet || !species || !birth_date) {
     return jsonError('Los campos name_pet, species y birth_date son obligatorios', 400)
@@ -62,6 +62,8 @@ export const POST = requireAuth(async (req: AuthedRequest) => {
         diseases: diseases ?? null,
         notes: notes ?? null,
         pet_image_url: pet_image_url ?? null,
+        gender: gender ?? null,
+        weight: weight ?? null,
       })
       .select()
       .single()

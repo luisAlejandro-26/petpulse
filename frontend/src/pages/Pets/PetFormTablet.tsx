@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { createPet, getPet, updatePet } from '../../api/pets'
+import { uploadPetImage } from '../../api/upload'
 import type { PetSpecies } from '../../api/types'
 import logo from '../../assets/logo.png'
 import dogCatIllustration from '../../assets/dog-cat-illustration.png'
@@ -27,11 +28,9 @@ function PetFormTablet() {
   const [breed, setBreed] = useState('')
   const [birth_date, setBirthDate] = useState('')
   const [diseases, setDiseases] = useState('')
-  // TODO: "sexo" y "peso" aun no existen en la tabla `pet` ni en CreatePetDTO/UpdatePetDTO.
-  // Quedan capturados aqui para no perder el diseno del Figma, pero no se envian al guardar
-  // hasta que se agreguen esas columnas en el backend/Supabase.
   const [sexo, setSexo] = useState('')
   const [peso, setPeso] = useState('')
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 
   const [error, setError] = useState('')
@@ -48,6 +47,8 @@ function PetFormTablet() {
         setBreed(pet.breed ?? '')
         setBirthDate(pet.birth_date.split('T')[0])
         setDiseases(pet.diseases ?? '')
+        setSexo(pet.gender ?? '')
+        setPeso(pet.weight !== null ? String(pet.weight) : '')
         if (pet.pet_image_url) setPhotoPreview(pet.pet_image_url)
       })
       .catch(() => setError('No se pudo cargar la mascota'))
@@ -57,6 +58,7 @@ function PetFormTablet() {
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     if (!file) return
+    setPhotoFile(file)
     setPhotoPreview(URL.createObjectURL(file))
   }
 
@@ -73,10 +75,26 @@ function PetFormTablet() {
 
     setSubmitting(true)
     try {
+      let pet_image_url: string | undefined
+      if (photoFile) {
+        pet_image_url = await uploadPetImage(photoFile, token)
+      }
+
+      const payload = {
+        name_pet,
+        species,
+        breed,
+        birth_date,
+        diseases,
+        gender: sexo || undefined,
+        weight: peso ? Number(peso) : undefined,
+        ...(pet_image_url ? { pet_image_url } : {}),
+      }
+
       if (isEditing && id) {
-        await updatePet(Number(id), { name_pet, species, breed, birth_date, diseases }, token)
+        await updatePet(Number(id), payload, token)
       } else {
-        await createPet({ name_pet, species, breed, birth_date, diseases }, token)
+        await createPet(payload, token)
       }
       navigate('/dashboard')
     } catch (err) {
