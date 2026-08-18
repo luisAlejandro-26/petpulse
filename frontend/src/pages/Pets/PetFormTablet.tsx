@@ -28,7 +28,7 @@ function PetFormTablet() {
   const [breed, setBreed] = useState('')
   const [birth_date, setBirthDate] = useState('')
   const [diseases, setDiseases] = useState('')
-  const [sexo, setSexo] = useState('')
+  const [color, setColor] = useState('')
   const [peso, setPeso] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
@@ -47,7 +47,7 @@ function PetFormTablet() {
         setBreed(pet.breed ?? '')
         setBirthDate(pet.birth_date.split('T')[0])
         setDiseases(pet.diseases ?? '')
-        setSexo(pet.gender ?? '')
+        setColor(pet.color ?? '')
         setPeso(pet.weight !== null ? String(pet.weight) : '')
         if (pet.pet_image_url) setPhotoPreview(pet.pet_image_url)
       })
@@ -86,7 +86,7 @@ function PetFormTablet() {
         breed,
         birth_date,
         diseases,
-        gender: sexo || undefined,
+        color: color || undefined,
         weight: peso ? Number(peso) : undefined,
         ...(pet_image_url ? { pet_image_url } : {}),
       }
@@ -260,21 +260,18 @@ function PetFormTablet() {
                 </div>
 
                 <div>
-                  <label htmlFor="sexo" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">
-                    Sexo
+                  <label htmlFor="color" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">
+                    Color <span className="text-petpulse-text-secondary font-normal">(opcional)</span>
                   </label>
                   <div className="relative flex items-center">
-                    <Icon icon="mdi:gender-male-female" width={16} height={16} className="absolute left-4 text-petpulse-text-secondary pointer-events-none" />
-                    <select
-                      id="sexo"
-                      value={sexo}
-                      onChange={(e) => setSexo(e.target.value)}
-                      className={`${inputClass} pl-10 cursor-pointer appearance-none`}
-                    >
-                      <option value="">Seleccionar</option>
-                      <option value="Macho">Macho</option>
-                      <option value="Hembra">Hembra</option>
-                    </select>
+                    <Icon icon="mdi:palette-outline" width={16} height={16} className="absolute left-4 text-petpulse-text-secondary pointer-events-none" />
+                    <input
+                      id="color"
+                      value={color}
+                      onChange={(e) => setColor(e.target.value)}
+                      placeholder="Ej: Dorado"
+                      className={`${inputClass} pl-10`}
+                    />
                   </div>
                 </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Icon } from '@iconify/react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { getPets } from '../../api/pets'
 import { getEvents } from '../../api/events'
@@ -43,6 +43,7 @@ const ACTIVITY_META: Record<string, { label: string; icon: string; tone: 'primar
 function HomeTablet() {
   const { user, token } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
   const isActive = (path: string) => location.pathname === path
 
   const [pets, setPets] = useState<Pet[]>([])
@@ -92,7 +93,7 @@ function HomeTablet() {
 
   return (
     <div className="min-h-screen bg-petpulse-bg font-inter text-petpulse-text box-border pb-28 *:box-border">
-      <div className="w-full max-w-[900px] mx-auto px-5 pt-8 flex flex-col gap-5">
+      <div className="w-full max-w-[1100px] mx-auto px-6 pt-8 flex flex-col gap-5">
         <header className="flex items-start justify-between gap-4 flex-wrap max-[560px]:justify-center max-[560px]:text-center">
           <div className="flex items-center gap-2 max-[560px]:justify-center">
             <img src={logo} alt="" className="w-[84px] h-auto shrink-0" />
@@ -203,9 +204,10 @@ function HomeTablet() {
               {!loading &&
                 !error &&
                 pets.map((pet) => (
-                  <div
+                  <Link
                     key={pet.id_pet}
-                    className="relative flex items-center gap-3 bg-petpulse-card border border-petpulse-border rounded-2xl shadow-[0_10px_24px_-20px_rgba(47,62,50,0.4)] px-4 py-3"
+                    to={`/pets/${pet.id_pet}`}
+                    className="relative flex items-center gap-3 bg-petpulse-card border border-petpulse-border rounded-2xl shadow-[0_10px_24px_-20px_rgba(47,62,50,0.4)] px-4 py-3 no-underline text-petpulse-text transition-colors hover:bg-[#eaf0ea]"
                   >
                     <div className="w-12 h-12 rounded-full bg-[#eaf0ea] text-petpulse-primary flex items-center justify-center shrink-0 overflow-hidden">
                       {pet.pet_image_url ? (
@@ -223,14 +225,19 @@ function HomeTablet() {
                         {calculateAge(pet.birth_date)}
                       </p>
                     </div>
-                    <Link
-                      to={`/pets/${pet.id_pet}/edit`}
-                      className="absolute top-2 right-2 text-petpulse-accent flex items-center justify-center p-1"
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        navigate(`/pets/${pet.id_pet}/edit`)
+                      }}
+                      className="absolute top-2 right-2 text-petpulse-accent flex items-center justify-center p-1 bg-transparent border-0 cursor-pointer"
                       aria-label={`Editar ${pet.name_pet}`}
                     >
                       <Icon icon="mdi:pencil-outline" width={18} height={18} />
-                    </Link>
-                  </div>
+                    </button>
+                  </Link>
                 ))}
             </div>
 
