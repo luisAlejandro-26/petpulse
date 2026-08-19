@@ -120,14 +120,6 @@ function BusinessBookingTablet() {
             </h1>
             <p className="text-[13px] text-petpulse-text-secondary mt-0.5 mb-0">{copy.title}</p>
           </div>
-
-          <button
-            type="button"
-            className="w-10 h-10 rounded-full border border-petpulse-border bg-petpulse-card text-petpulse-text flex items-center justify-center cursor-pointer shrink-0 transition-colors hover:bg-[#eaf0ea] hover:border-petpulse-primary"
-            aria-label="Notificaciones"
-          >
-            <Icon icon="mdi:bell-outline" width={22} height={22} />
-          </button>
         </header>
 
         <div className="flex items-center gap-2 -mt-3">

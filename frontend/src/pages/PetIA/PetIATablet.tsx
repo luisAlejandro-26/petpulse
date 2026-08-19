@@ -78,13 +78,18 @@ function PetIATablet() {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [conversations, setConversations] = useState<AiConversation[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
+  const [manuallyStarted, setManuallyStarted] = useState(false)
 
   const firstName = user?.name_user?.split(' ')[0] ?? ''
-  const hasStarted = messages.length > 0
+  const hasStarted = messages.length > 0 || manuallyStarted
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    if (manuallyStarted) inputRef.current?.focus()
+  }, [manuallyStarted])
 
   async function openHistory() {
     if (!token) return
@@ -133,6 +138,7 @@ function PetIATablet() {
     setConversationId(null)
     setMessages([])
     setHistoryOpen(false)
+    setManuallyStarted(false)
   }
 
   async function handlePickImage(e: React.ChangeEvent<HTMLInputElement>) {
@@ -290,7 +296,7 @@ function PetIATablet() {
 
               <button
                 type="button"
-                onClick={() => inputRef.current?.focus()}
+                onClick={() => setManuallyStarted(true)}
                 className="relative w-full max-w-[520px] flex items-center justify-center bg-petpulse-primary text-white font-inter font-bold text-sm rounded-full py-3 mt-6 border-0 cursor-pointer transition-colors hover:bg-petpulse-primary-dark active:scale-[0.99]"
               >
                 Hacer una pregunta
