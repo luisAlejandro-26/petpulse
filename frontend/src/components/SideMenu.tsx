@@ -43,7 +43,7 @@ function SideMenu({ open, onClose }: SideMenuProps) {
 
   function handleAbout() {
     onClose()
-    navigate('/about')
+    window.open('https://luisalejandro-26.github.io/blog-sistemas-informaci-n-I/', '_blank')
   }
 
   return (
