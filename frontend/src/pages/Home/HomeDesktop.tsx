@@ -264,6 +264,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
                       fallback="paw"
                       title={pet.name_pet}
                       subtitle={`${pet.breed || pet.species} · ${calculateAge(pet.birth_date)}`}
+                      onClick={() => navigate(`/pets/${pet.id_pet}`)}
                       onEdit={() => navigate(`/pets/${pet.id_pet}/edit`)}
                       onDelete={() => void handleDeletePet(pet.id_pet)}
                     />

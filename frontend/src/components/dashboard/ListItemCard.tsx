@@ -7,6 +7,7 @@ interface ListItemCardProps {
   subtitle: string
   badge?: string
   badgeTone?: 'admin' | 'user'
+  onClick?: () => void
   onEdit?: () => void
   onDelete?: () => void
 }
@@ -18,11 +19,20 @@ function ListItemCard({
   subtitle,
   badge,
   badgeTone = 'user',
+  onClick,
   onEdit,
   onDelete,
 }: ListItemCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-petpulse-border p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
+    <div
+      className={`bg-white rounded-2xl border border-petpulse-border p-4 flex items-center gap-4 transition-shadow ${
+        onClick ? 'cursor-pointer hover:shadow-md hover:border-petpulse-primary/40' : 'hover:shadow-md'
+      }`}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick() } : undefined}
+    >
       <div className="w-12 h-12 rounded-full bg-petpulse-primary/15 flex items-center justify-center flex-shrink-0 overflow-hidden text-petpulse-primary-dark">
         {avatarUrl ? (
           <img src={avatarUrl} alt={title} className="w-full h-full object-cover" />
