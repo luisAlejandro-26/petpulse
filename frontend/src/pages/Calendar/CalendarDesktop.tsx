@@ -9,6 +9,7 @@ import { WEEKDAYS, MONTH_NAMES, ACTIVITY_META, STATUS_LABEL, EVENT_ICONS, format
 import petsIllustration from '../../assets/pets-illustration.png'
 import { Icon } from '@iconify/react'
 
+
 function CalendarDesktop() {
   const { token } = useAuth()
   const navigate = useNavigate()
@@ -16,6 +17,7 @@ function CalendarDesktop() {
   const [pets, setPets] = useState<Pet[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
+
 
   useEffect(() => {
     if (!token) return
@@ -74,17 +76,20 @@ function CalendarDesktop() {
   }, [year, month])
 
   const upcomingEvents = useMemo(() => {
-    const now = new Date()
     return events
-      .filter((ev) => ev.status === 'SCHEDULED' || new Date(ev.event_date) >= now)
+      .filter((ev) => ev.status === 'SCHEDULED')
       .sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime())
-      .slice(0, 5)
   }, [events])
 
-  const actividadReciente = events
-    .filter((e) => e.status === 'COMPLETED' || e.status === 'SCHEDULED')
-    .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
-    .slice(0, 10)
+  const actividadReciente = useMemo(() => {
+    return events
+      .filter((e) => e.status === 'COMPLETED' || e.status === 'SCHEDULED')
+      .sort((a, b) => {
+        if (a.status !== b.status) return a.status === 'SCHEDULED' ? -1 : 1
+        return new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
+      })
+      .slice(0, 10)
+  }, [events])
 
   function prevMonth() { setCurrentDate(new Date(year, month - 1, 1)) }
   function nextMonth() { setCurrentDate(new Date(year, month + 1, 1)) }
@@ -103,56 +108,60 @@ function CalendarDesktop() {
         </header>
 
         {/* Calendario */}
-        <div className="bg-white rounded-2xl border border-petpulse-border p-6">
-          <h2 className="font-bold text-lg text-petpulse-text mb-5 flex items-center gap-2">
-            <Icon icon="mdi:calendar-month-outline" width={22} height={22} className="text-petpulse-primary" />
-            Calendario
-          </h2>
+        <div className="bg-white rounded-2xl border border-petpulse-border p-6 max-h-[calc(100vh-8rem)] flex flex-col overflow-hidden">
+          {/* Calendario grid - fixed */}
+          <div className="shrink-0">
+            <h2 className="font-bold text-lg text-petpulse-text mb-5 flex items-center gap-2">
+              <Icon icon="mdi:calendar-month-outline" width={22} height={22} className="text-petpulse-primary" />
+              Calendario
+            </h2>
 
-          <div className="flex items-center justify-between mb-4">
-            <button type="button" onClick={prevMonth} aria-label="Mes anterior" className="p-1.5 rounded-lg hover:bg-petpulse-bg transition-colors">
-              <Icon icon="mdi:chevron-left" width={20} height={20} className="text-petpulse-text" />
-            </button>
-            <span className="font-bold text-base text-petpulse-text">
-              {MONTH_NAMES[month]} {year}
-            </span>
-            <button type="button" onClick={nextMonth} aria-label="Mes siguiente" className="p-1.5 rounded-lg hover:bg-petpulse-bg transition-colors">
-              <Icon icon="mdi:chevron-right" width={20} height={20} className="text-petpulse-text" />
-            </button>
-          </div>
+            <div className="flex items-center justify-between mb-4">
+              <button type="button" onClick={prevMonth} aria-label="Mes anterior" className="p-1.5 rounded-lg hover:bg-petpulse-bg transition-colors">
+                <Icon icon="mdi:chevron-left" width={20} height={20} className="text-petpulse-text" />
+              </button>
+              <span className="font-bold text-base text-petpulse-text">
+                {MONTH_NAMES[month]} {year}
+              </span>
+              <button type="button" onClick={nextMonth} aria-label="Mes siguiente" className="p-1.5 rounded-lg hover:bg-petpulse-bg transition-colors">
+                <Icon icon="mdi:chevron-right" width={20} height={20} className="text-petpulse-text" />
+              </button>
+            </div>
 
-          <div className="grid grid-cols-7 text-center mb-2">
-            {WEEKDAYS.map((d, i) => (
-              <span key={i} className="text-xs font-semibold text-petpulse-text-secondary">{d}</span>
-            ))}
-          </div>
+            <div className="grid grid-cols-7 text-center mb-2">
+              {WEEKDAYS.map((d, i) => (
+                <span key={i} className="text-xs font-semibold text-petpulse-text-secondary">{d}</span>
+              ))}
+            </div>
 
-          <div className="grid grid-cols-7 gap-y-1 text-center">
-            {calendarGrid.map((day, i) => {
-              if (day === null) return <div key={i} />
-              const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear()
-              const hasEvent = eventDaysInMonth.has(day)
-              return (
-                <div key={i} className="flex flex-col items-center">
-                  <span
-                    className={`w-8 h-8 flex items-center justify-center rounded-full text-sm ${
-                      isToday ? 'bg-petpulse-primary text-white font-bold' : 'text-petpulse-text'
-                    }`}
-                  >
-                    {day}
-                  </span>
-                  {hasEvent && !isToday && (
+            <div className="grid grid-cols-7 gap-y-1 text-center">
+              {calendarGrid.map((day, i) => {
+                if (day === null) return <div key={i} />
+                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear()
+                const hasEvent = eventDaysInMonth.has(day)
+                return (
+                  <div key={i} className="flex flex-col items-center">
                     <span
-                      className="w-1.5 h-1.5 rounded-full mt-0.5"
-                      style={{ backgroundColor: eventDaysInMonth.get(day) === 'COMPLETED' ? '#7A9A7B' : '#E07A5F' }}
-                    />
-                  )}
-                </div>
-              )
-            })}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full text-sm ${
+                        isToday ? 'bg-petpulse-primary text-white font-bold' : 'text-petpulse-text'
+                      }`}
+                    >
+                      {day}
+                    </span>
+                    {hasEvent && !isToday && (
+                      <span
+                        className="w-1.5 h-1.5 rounded-full mt-0.5"
+                        style={{ backgroundColor: eventDaysInMonth.get(day) === 'COMPLETED' ? '#7A9A7B' : '#E07A5F' }}
+                      />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
-          <div className="mt-6">
+          {/* Próximos Recordatorios - scrollable */}
+          <div className="mt-6 flex-1 min-h-0 overflow-y-auto pr-1">
             <p className="font-bold text-sm text-petpulse-text mb-3">Próximos Recordatorios</p>
             {loading && (
               <p className="text-center text-petpulse-text-secondary text-sm">Cargando...</p>
@@ -215,14 +224,7 @@ function CalendarDesktop() {
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-6 border-b border-petpulse-border">
           <h2 className="text-lg font-bold text-petpulse-text">Notificaciones</h2>
-          <button
-            type="button"
-            aria-label="Ver notificaciones"
-            className="relative w-10 h-10 rounded-full bg-petpulse-bg flex items-center justify-center text-petpulse-text hover:text-petpulse-primary-dark transition-colors"
-          >
-            <Icon icon="mdi:bell-outline" width={20} height={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-petpulse-accent rounded-full border border-white" />
-          </button>
+
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-6">
@@ -309,7 +311,7 @@ function CalendarDesktop() {
             )}
 
             {!loading && pets.length > 0 && (
-              <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2.5">
                 {pets.map((pet) => (
                   <div
                     key={pet.id_pet}
@@ -343,6 +345,7 @@ function CalendarDesktop() {
           </div>
         </div>
       </aside>
+
     </div>
   )
 }

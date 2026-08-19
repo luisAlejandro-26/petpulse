@@ -11,6 +11,9 @@ import ListItemCard from '../../components/dashboard/ListItemCard'
 import { ACTIVITY_META, STATUS_LABEL, calculateAge, formatDate } from '../../components/dashboard/dashboardUtils'
 import { Icon } from '@iconify/react'
 import petsIllustration from '../../assets/pets-illustration.png'
+import { useNotifications } from '../../components/dashboard/useNotifications'
+import NotificationsModal from '../../components/dashboard/NotificationsModal'
+import HealthToast from '../../components/dashboard/HealthToast'
 
 interface HomeDesktopProps {
   role: 'user' | 'admin'
@@ -31,6 +34,8 @@ function HomeDesktop({ role }: HomeDesktopProps) {
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [savingRole, setSavingRole] = useState(false)
+
+  const { alertaSalud: notifAlertaSalud, actividadReciente: notifActividadReciente, notifOpen, setNotifOpen, toastVisible, setToastVisible, loading: notifLoading, hasBadge } = useNotifications()
 
   useEffect(() => {
     if (!token) return
@@ -344,11 +349,14 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           <h2 className="text-lg font-bold text-petpulse-text">Notificaciones</h2>
           <button
             type="button"
-            aria-label="Ver notificaciones"
+            onClick={() => setNotifOpen(true)}
             className="relative w-10 h-10 rounded-full bg-petpulse-bg flex items-center justify-center text-petpulse-text hover:text-petpulse-primary-dark transition-colors"
+            aria-label="Notificaciones"
           >
             <Icon icon="mdi:bell-outline" width={20} height={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-petpulse-accent rounded-full border border-white" />
+            {hasBadge && (
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-petpulse-accent rounded-full border border-white" />
+            )}
           </button>
         </div>
 
@@ -484,6 +492,19 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           </div>
         </div>
       )}
+      <NotificationsModal
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        alertaSalud={notifAlertaSalud}
+        actividadReciente={notifActividadReciente}
+        loading={notifLoading}
+      />
+      <HealthToast
+        visible={toastVisible}
+        alertaSalud={notifAlertaSalud}
+        onDismiss={() => setToastVisible(false)}
+        onViewDetails={() => { setToastVisible(false); setNotifOpen(true) }}
+      />
     </div>
   )
 }

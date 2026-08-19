@@ -5,6 +5,7 @@ import { sendMessage, getConversations, getConversation, deleteConversation } fr
 import type { AiMessage, AiConversation } from '../../api/types'
 import Sidebar from '../../components/dashboard/Sidebar'
 
+
 const SUGGESTIONS = [
   {
     icon: 'mdi:dog-side',
@@ -66,6 +67,7 @@ function PetIADesktop() {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [conversations, setConversations] = useState<AiConversation[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
+
 
   const firstName = user?.name_user?.split(' ')[0] ?? ''
   const hasStarted = messages.length > 0
@@ -391,16 +393,7 @@ function PetIADesktop() {
       {/* ── Panel derecho ── */}
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
         {/* Campana */}
-        <div className="flex justify-end px-6 pt-6">
-          <button
-            type="button"
-            aria-label="Notificaciones"
-            className="relative w-10 h-10 rounded-full bg-petpulse-bg flex items-center justify-center text-petpulse-text hover:text-petpulse-primary-dark transition-colors"
-          >
-            <Icon icon="mdi:bell-outline" width={20} height={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-petpulse-accent rounded-full border border-white" />
-          </button>
-        </div>
+
 
         {/* Ilustración principal */}
         <div className="flex justify-center px-6 py-6">
@@ -533,6 +526,7 @@ function PetIADesktop() {
           30% { transform: translateY(-4px); opacity: 1; }
         }
       `}</style>
+
     </div>
   )
 }

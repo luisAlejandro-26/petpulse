@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import Sidebar from '../../components/dashboard/Sidebar'
 
+
 type Category = {
   type: 'VACUNA' | 'CONTROL' | 'DESPARACITACION' | 'CIRUGIA' | 'OTHER'
   label: string
@@ -65,12 +66,7 @@ function EventCategoryPickerDesktop() {
 
       {/* ── Panel derecho (Consejos) ── */}
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
-        <div className="flex justify-end px-6 pt-6">
-          <button type="button" aria-label="Notificaciones" className="relative w-10 h-10 rounded-full bg-petpulse-bg flex items-center justify-center text-petpulse-text hover:text-petpulse-primary-dark transition-colors">
-            <Icon icon="mdi:bell-outline" width={20} height={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-petpulse-accent rounded-full border border-white" />
-          </button>
-        </div>
+
 
         <div className="flex justify-center px-6 py-6">
           <img src="/assets/imagen-centro-ia.svg" alt="Mascotas" className="w-48 h-auto object-contain" />
@@ -108,6 +104,7 @@ function EventCategoryPickerDesktop() {
           <img src="/assets/banner-agg-pet.svg" alt="" className="w-full h-auto object-cover rounded-2xl mt-2" />
         </div>
       </aside>
+
     </div>
   )
 }

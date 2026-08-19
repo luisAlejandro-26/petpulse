@@ -8,6 +8,7 @@ import type { Pet, HealthEvent, EventType } from '../../api/types'
 import Sidebar from '../../components/dashboard/Sidebar'
 import { calculateAge, STATUS_LABEL, EVENT_ICONS } from '../../components/dashboard/dashboardUtils'
 
+
 const GENDER_LABEL: Record<string, string> = {
   MACHO: 'Macho',
   HEMBRA: 'Hembra',
@@ -328,12 +329,7 @@ function PetProfileDesktop() {
 
       {/* ── Panel derecho ── */}
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
-        <div className="flex justify-end px-6 pt-6">
-          <button type="button" aria-label="Notificaciones" className="relative w-10 h-10 rounded-full bg-petpulse-bg flex items-center justify-center text-petpulse-text hover:text-petpulse-primary-dark transition-colors">
-            <Icon icon="mdi:bell-outline" width={20} height={20} />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-petpulse-accent rounded-full border border-white" />
-          </button>
-        </div>
+
 
         {/* Donut de progreso */}
         <div className="px-6 py-6 flex flex-col items-center gap-4">
