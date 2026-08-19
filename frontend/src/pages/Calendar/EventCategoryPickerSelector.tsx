@@ -3,6 +3,8 @@ import EventCategoryPickerMobile from './EventCategoryPicker'
 import EventCategoryPickerTablet from './EventCategoryPickerTablet'
 import EventCategoryPickerDesktop from './EventCategoryPickerDesktop'
 
+// Selector de pantalla segun el tamano de la ventana.
+// Primer paso del flujo "Agendar cita": elegir el tipo de evento.
 function EventCategoryPickerSelector() {
   const breakpoint = useBreakpoint()
 

@@ -29,6 +29,8 @@ interface Business {
 }
 
 // Coordenadas reales de San Cristóbal, Táchira
+// Lista de negocios ficticios (veterinarias/peluquerias) para elegir
+// donde se hara la cita. No viene del backend, esta fija en el frontend.
 const BUSINESSES: Record<BusinessType, Business[]> = {
   peluqueria: [
     {
@@ -80,22 +82,27 @@ const BUSINESSES: Record<BusinessType, Business[]> = {
   ],
 }
 
+// Titulo y texto del selector segun si es veterinaria o peluqueria.
 const TITLES: Record<BusinessType, { title: string; selectorLabel: string }> = {
   peluqueria: { title: 'Peluquerías', selectorLabel: 'Seleccionar peluquería' },
   veterinaria: { title: 'Veterinarias', selectorLabel: 'Seleccionar veterinaria' },
 }
 
+// Pantalla para elegir el negocio (veterinaria o peluqueria) donde se
+// va a agendar la cita, segundo paso del flujo de "Agendar cita".
 function BusinessBookingTablet() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const type: BusinessType = searchParams.get('type') === 'veterinaria' ? 'veterinaria' : 'peluqueria'
 
   const businesses = BUSINESSES[type]
+  // Negocio seleccionado, arranca con el primero de la lista por defecto.
   const [selectedId, setSelectedId] = useState(businesses[0]?.id ?? '')
 
   const selected = businesses.find((b) => b.id === selectedId) ?? businesses[0]
   const copy = TITLES[type]
 
+  // Pasa al siguiente paso (EventForm) llevando el negocio elegido en la URL.
   function handleAgendar() {
     const eventType = searchParams.get('eventType') || (type === 'peluqueria' ? 'OTHER' : 'CONTROL')
     navigate(`/events/new?business=${encodeURIComponent(selected.name)}&eventType=${eventType}`)

@@ -10,6 +10,9 @@ type Category = {
   businessType: 'veterinaria' | 'peluqueria'
 }
 
+// Cada categoria dice ademas a que tipo de negocio corresponde
+// (veterinaria o peluqueria), para saber que lista mostrar en el
+// siguiente paso (BusinessBookingTablet).
 const CATEGORIES: Category[] = [
   { type: 'VACUNA', label: 'Vacuna', icon: 'game-icons:medicines', businessType: 'veterinaria' },
   { type: 'CONTROL', label: 'Control médico', icon: 'hugeicons:doctor-01', businessType: 'veterinaria' },
@@ -18,9 +21,13 @@ const CATEGORIES: Category[] = [
   { type: 'OTHER', label: 'Peluquería (baño, corte)', icon: 'mdi:content-cut', businessType: 'peluqueria' },
 ]
 
+// Primer paso del flujo "Agendar cita": elegir que tipo de evento se
+// necesita (vacuna, control, peluqueria, etc.).
 function EventCategoryPickerTablet() {
   const navigate = useNavigate()
 
+  // Al elegir una categoria, pasa al paso de elegir negocio, llevando el
+  // tipo de negocio y el tipo de evento en la URL.
   function handleSelect(category: Category) {
     navigate(`/events/booking?type=${category.businessType}&eventType=${category.type}`)
   }

@@ -8,6 +8,7 @@ import type { EventType, Pet } from '../../api/types'
 import logo from '../../assets/logo.png'
 import dogCatIllustration from '../../assets/dog-cat-illustration.png'
 
+// Nombre visible de cada tipo de evento (para el titulo del formulario).
 const EVENT_TYPE_LABELS: Record<EventType, string> = {
   VACUNA: 'Vacuna',
   CONTROL: 'Control médico',
@@ -24,6 +25,8 @@ const TYPE_LAYOUT: EventType[][] = [
   ['CIRUGIA', 'OTHER'],
 ]
 
+// Formulario para confirmar un recordatorio: llega con el tipo de evento
+// y el negocio ya elegidos (via query params), solo falta mascota/titulo/fecha.
 function EventFormTablet() {
   const { token } = useAuth()
   const navigate = useNavigate()
@@ -32,6 +35,7 @@ function EventFormTablet() {
   const businessName = searchParams.get('business') || ''
   const initialType = (searchParams.get('eventType') as EventType) || 'OTHER'
 
+  // El tipo de evento viene fijo desde la pantalla anterior (no se cambia aqui).
   const [eventType] = useState<EventType>(initialType)
   const [pets, setPets] = useState<Pet[]>([])
   const [id_pet, setIdPet] = useState('')
@@ -41,6 +45,7 @@ function EventFormTablet() {
   const [submitting, setSubmitting] = useState(false)
   const [loadingPets, setLoadingPets] = useState(true)
 
+  // Trae las mascotas del usuario para el selector "Mascota".
   useEffect(() => {
     if (!token) return
     getPets(token)
@@ -49,6 +54,7 @@ function EventFormTablet() {
       .finally(() => setLoadingPets(false))
   }, [token])
 
+  // Crea el evento (recordatorio) con status SCHEDULED y regresa al calendario.
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')

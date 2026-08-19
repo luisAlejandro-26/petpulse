@@ -35,23 +35,29 @@ const STATUS_LABEL: Record<string, { text: string; className: string }> = {
   CANCELLED: { text: 'Cancelado', className: 'bg-petpulse-text-secondary/15 text-petpulse-text-secondary' },
 }
 
+// Formatea una fecha ISO a algo tipo "18 ago 2026" para las tarjetas.
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return '00/00/00'
   return d.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+// Pantalla de Calendario para Tablet: calendario mensual con puntos de
+// color por dia (verde completado, coral pendiente), Actividad reciente
+// y Proximos recordatorios (con toggle Pendiente/Aplicado y borrar).
 function CalendarTablet() {
   const { token } = useAuth()
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
 
+  // Todos los eventos del usuario, cargados una sola vez al entrar.
   const [events, setEvents] = useState<HealthEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const [confirmId, setConfirmId] = useState<number | null>(null)
 
+  // Trae los eventos del backend al montar la pantalla.
   useEffect(() => {
     if (!token) return
     getEvents(token)
@@ -64,6 +70,8 @@ function CalendarTablet() {
   const month = currentDate.getMonth()
   const today = new Date()
 
+  // Mapa dia->status, solo de los eventos del mes visible actual.
+  // Se usa para pintar el puntito de color debajo de cada dia del calendario.
   const eventDaysInMonth = useMemo(() => {
     const map = new Map<number, string>()
     events.forEach((ev) => {
@@ -75,6 +83,8 @@ function CalendarTablet() {
     return map
   }, [events, year, month])
 
+  // Arma la cuadricula de dias del mes (con casillas vacias al inicio
+  // para que el dia 1 caiga en la columna correcta de la semana).
   const calendarGrid = useMemo(() => {
     const firstDay = new Date(year, month, 1)
     const startOffset = firstDay.getDay()
@@ -87,6 +97,7 @@ function CalendarTablet() {
     return cells
   }, [year, month])
 
+  // Retrocede/avanza el calendario un mes.
   function prevMonth() {
     setCurrentDate(new Date(year, month - 1, 1))
   }
@@ -94,6 +105,8 @@ function CalendarTablet() {
     setCurrentDate(new Date(year, month + 1, 1))
   }
 
+  // Cambia un evento entre Pendiente (SCHEDULED) y Aplicado (COMPLETED)
+  // al hacer click en su badge, dentro de "Proximos recordatorios".
   async function handleToggleStatus(ev: HealthEvent) {
     if (!token) return
     const newStatus = ev.status === 'COMPLETED' ? 'SCHEDULED' : 'COMPLETED'
@@ -105,6 +118,7 @@ function CalendarTablet() {
     }
   }
 
+  // Confirma y ejecuta el borrado de un evento (tras el modal de confirmacion).
   async function confirmDelete() {
     if (!token || confirmId === null) return
     const id = confirmId
