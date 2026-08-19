@@ -124,14 +124,7 @@ El proyecto sigue un **GitFlow adaptado** con un monorepo:
 | 4 | Integraciones AWS S3 + Gemini AI | Pendiente |
 | 5 | CI/CD y Pulido Final | Pendiente |
 
----
 
-## Equipo
-
-- **Tech Lead:** Luis Jiménez
-- **Equipo:** 3 desarrolladores
-
----
 
 ## Licencia
 
