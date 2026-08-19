@@ -16,6 +16,8 @@ const SPECIES_OPTIONS: { value: PetSpecies; label: string }[] = [
   { value: 'OTHER', label: 'Otro' },
 ]
 
+// Formulario de mascota para Tablet: sirve tanto para AGREGAR como para
+// EDITAR (isEditing se calcula a partir de si hay :id en la ruta).
 function PetFormTablet() {
   const { token } = useAuth()
   const navigate = useNavigate()
@@ -23,6 +25,7 @@ function PetFormTablet() {
   const isEditing = Boolean(id)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Campos del formulario, uno por cada dato de la mascota.
   const [name_pet, setNamePet] = useState('')
   const [species, setSpecies] = useState<PetSpecies | ''>('')
   const [breed, setBreed] = useState('')
@@ -30,13 +33,19 @@ function PetFormTablet() {
   const [diseases, setDiseases] = useState('')
   const [color, setColor] = useState('')
   const [peso, setPeso] = useState('')
+  // Foto: photoFile es el archivo real que se sube, photoPreview es
+  // solo la vista previa local (URL temporal) mientras no se guarda.
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  // Si estamos editando, arranca en loading=true mientras se trae la
+  // mascota existente; si es "agregar", no hay nada que cargar.
   const [loading, setLoading] = useState(isEditing)
 
+  // Si es modo edicion, trae los datos actuales de la mascota y llena
+  // el formulario con ellos.
   useEffect(() => {
     if (!isEditing || !id || !token) return
 
@@ -55,6 +64,8 @@ function PetFormTablet() {
       .finally(() => setLoading(false))
   }, [id, isEditing, token])
 
+  // Guarda el archivo elegido y genera una vista previa local (no sube
+  // nada al servidor todavia, eso pasa al enviar el formulario).
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     if (!file) return
@@ -62,6 +73,8 @@ function PetFormTablet() {
     setPhotoPreview(URL.createObjectURL(file))
   }
 
+  // Al enviar: si hay foto nueva la sube primero a Supabase Storage,
+  // y con la URL resultante llama a createPet o updatePet segun el modo.
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')

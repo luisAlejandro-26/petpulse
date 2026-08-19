@@ -7,6 +7,8 @@ import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
 
+// Puntito de validacion en tiempo real (gris = sin escribir, verde = ok,
+// rojo = error) que aparece junto a cada campo de la contraseña.
 function Dot({ state }: { state: 'neutral' | 'ok' | 'error' }) {
   const color = state === 'ok' ? '#7a9a7b' : state === 'error' ? '#e07a5f' : '#d8d3cd'
   return (
@@ -16,10 +18,13 @@ function Dot({ state }: { state: 'neutral' | 'ok' | 'error' }) {
   )
 }
 
+// Pantalla de registro para Tablet: nombre, fecha de nacimiento, genero,
+// correo, contraseña (con validaciones en tiempo real) y boton de Google.
 function RegisterTablet() {
   const { register } = useAuth()
   const navigate = useNavigate()
 
+  // Campos del formulario de registro.
   const [nombre, setNombre] = useState('')
   const [apellido, setApellido] = useState('')
   const [gender, setGender] = useState('')
@@ -34,6 +39,7 @@ function RegisterTablet() {
   const hasMinLength = password.length >= 8
   const hasLettersAndNumbers = /[a-zA-Z]/.test(password) && /[0-9]/.test(password)
 
+  // Llama a register() del contexto de autenticacion con todos los datos.
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -61,6 +67,7 @@ function RegisterTablet() {
     }
   }
 
+  // Dispara el boton de registro con Google.
   function handleGoogleClick() {
     setError('')
     setInfo('')

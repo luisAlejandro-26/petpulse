@@ -7,11 +7,14 @@ import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
 
+// Pantalla de inicio de sesion para Tablet: formulario email/contraseña
+// mas boton de Google. La animacion/tamanos siguen el Figma.
 function LoginTablet() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const registered = (location.state as { registered?: boolean } | null)?.registered
+  // Campos del formulario y estados de la UI (error, mensaje info, carga).
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -20,6 +23,7 @@ function LoginTablet() {
   const [showPassword, setShowPassword] = useState(false)
   const googleRef = useRef<GoogleAuthHandle>(null)
 
+  // Llama a login() del contexto de autenticacion con email/contraseña.
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -35,6 +39,8 @@ function LoginTablet() {
     }
   }
 
+  // Dispara el boton de Google (usa un ref hacia el boton visual propio,
+  // conectado via imperativeHandle en vez del boton nativo de Google).
   function handleGoogleClick() {
     setError('')
     setInfo('')

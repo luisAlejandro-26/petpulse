@@ -3,6 +3,8 @@ import EventFormMobile from './EventForm'
 import EventFormTablet from './EventFormTablet'
 import EventFormDesktop from './EventFormDesktop'
 
+// Selector de pantalla segun el tamano de la ventana.
+// Ultimo paso del flujo "Agendar cita": confirmar mascota, titulo y fecha.
 function EventFormSelector() {
   const breakpoint = useBreakpoint()
 

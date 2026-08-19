@@ -8,6 +8,7 @@ import type { HealthEvent, EventType } from '../../api/types'
 import logo from '../../assets/logo.png'
 import dogCatIllustration from '../../assets/dog-cat-illustration.png'
 
+// Calcula la edad de la mascota (en años) a partir de su nacimiento.
 function calculateAge(birthDate: string): string {
   const birth = new Date(birthDate)
   const now = new Date()
@@ -43,6 +44,8 @@ interface EventCardProps {
   onDelete: (id: number) => void
 }
 
+// Tarjeta reutilizable para cada seccion de la ficha (Recordatorios,
+// Desparasitacion, Vacunas): titulo + boton "+" + lista de eventos.
 function EventCard({ title, icon, events, emptyText, onAdd, onDelete }: EventCardProps) {
   return (
     <div className="bg-petpulse-card border border-petpulse-border rounded-2xl p-5">
@@ -106,17 +109,22 @@ function EventCard({ title, icon, events, emptyText, onAdd, onDelete }: EventCar
   )
 }
 
+// Ficha completa de una mascota: datos basicos, y sus eventos agrupados
+// en Proximos recordatorios / Desparasitacion / Vacunas / Enfermedades.
 function PetProfileTablet() {
   const { id } = useParams()
   const { token } = useAuth()
   const navigate = useNavigate()
 
+  // Datos de la mascota y todos sus eventos, traidos por separado.
   const [pet, setPet] = useState<import('../../api/types').Pet | null>(null)
   const [events, setEvents] = useState<HealthEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [confirmId, setConfirmId] = useState<number | null>(null)
 
+  // Trae la mascota (por id de la URL) y todos los eventos, y filtra
+  // en el cliente solo los que son de esta mascota (id_pet === Number(id)).
   useEffect(() => {
     if (!id || !token) return
     Promise.all([getPet(Number(id), token), getEvents(token)])
@@ -128,6 +136,7 @@ function PetProfileTablet() {
       .finally(() => setLoading(false))
   }, [id, token])
 
+  // Eventos con status SCHEDULED, ordenados por fecha mas cercana primero.
   const upcomingEvents = useMemo(
     () =>
       events
@@ -136,6 +145,8 @@ function PetProfileTablet() {
     [events]
   )
 
+  // Filtra los eventos de esta mascota por tipo (VACUNA, DESPARACITACION...)
+  // para llenar cada EventCard con lo que le corresponde.
   function eventsByType(type: EventType) {
     return events
       .filter((ev) => ev.event_type === type)
@@ -145,10 +156,13 @@ function PetProfileTablet() {
   const vacunas = eventsByType('VACUNA')
   const desparasitaciones = eventsByType('DESPARACITACION')
 
+  // Lleva a la pantalla de elegir categoria de evento, con esta mascota
+  // ya preseleccionada (via query param ?pet=id).
   function goToAddEvent() {
     navigate(`/events/category?pet=${id}`)
   }
 
+  // Borra el evento que se confirmo en el modal de "Eliminar recordatorio".
   async function confirmDelete() {
     if (!token || confirmId === null) return
     try {

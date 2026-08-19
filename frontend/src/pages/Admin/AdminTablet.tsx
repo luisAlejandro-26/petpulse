@@ -7,6 +7,8 @@ import StatCard from '../../components/dashboard/StatCard'
 import ListItemCard from '../../components/dashboard/ListItemCard'
 import logo from '../../assets/logo.png'
 
+// Panel de administracion para Tablet: pantalla unica (sin nav a las
+// demas secciones de la app), con estadisticas y gestion de usuarios.
 function AdminTablet() {
   const { user, token, logout } = useAuth()
 
@@ -15,9 +17,11 @@ function AdminTablet() {
   const [users, setUsers] = useState<User[]>([])
   const [search, setSearch] = useState('')
   const [stats, setStats] = useState<AdminStats | null>(null)
+  // Usuario que se esta editando (abre el modal de cambiar rol).
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [savingRole, setSavingRole] = useState(false)
 
+  // Al entrar a la pantalla, trae la lista de usuarios y las estadisticas.
   useEffect(() => {
     if (!token) return
     setLoading(true)
@@ -31,6 +35,8 @@ function AdminTablet() {
       .finally(() => setLoading(false))
   }, [token])
 
+  // Busqueda con debounce: espera 350ms sin que el usuario escriba mas
+  // antes de volver a pedir la lista filtrada (evita spamear al backend).
   useEffect(() => {
     if (!token) return
     const timer = setTimeout(() => {
@@ -41,6 +47,7 @@ function AdminTablet() {
     return () => clearTimeout(timer)
   }, [search, token])
 
+  // Elimina un usuario (con confirmacion previa).
   async function handleDeleteUser(id: number) {
     if (!token) return
     if (!window.confirm('¿Seguro que deseas eliminar este usuario?')) return
@@ -52,6 +59,8 @@ function AdminTablet() {
     }
   }
 
+  // Cambia el rol del usuario seleccionado (USER <-> ADMIN) llamando
+  // al endpoint PUT /api/users/[id].
   async function handleSaveRole(newRole: 'USER' | 'ADMIN') {
     if (!token || !editingUser) return
     setSavingRole(true)

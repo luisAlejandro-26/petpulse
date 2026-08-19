@@ -8,8 +8,12 @@ import fondoInicio from '../../assets/fondo_inicio.png'
 
 type Step = 'email' | 'code' | 'password' | 'success'
 
+// Flujo de "olvide mi contraseña" para Tablet, en 4 pasos:
+// 1) pedir correo, 2) verificar codigo, 3) nueva contraseña, 4) exito.
+// step controla cual pantalla se ve; progress anima la barra de progreso.
 function ForgotPasswordTablet() {
   const navigate = useNavigate()
+  // step arranca en 'email' y avanza conforme se completa cada paso.
   const [step, setStep] = useState<Step>('email')
   const [progress, setProgress] = useState(0)
   const [email, setEmail] = useState('')
@@ -22,6 +26,7 @@ function ForgotPasswordTablet() {
 
   const REDIRECT_MS = 2500
 
+  // Anima la barra de progreso cada vez que cambia el paso actual.
   useEffect(() => {
     if (step !== 'success') return
     const start = Date.now()
@@ -36,6 +41,7 @@ function ForgotPasswordTablet() {
     }
   }, [step, navigate])
 
+  // Paso 1: pide el codigo de recuperacion al correo ingresado.
   async function handleEmailSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -50,6 +56,7 @@ function ForgotPasswordTablet() {
     }
   }
 
+  // Paso 2: valida el codigo (localmente) antes de pasar al paso 3.
   function handleCodeSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -60,6 +67,7 @@ function ForgotPasswordTablet() {
     setStep('password')
   }
 
+  // Reenvia el codigo al correo si el usuario no lo recibio.
   async function handleResend() {
     setError('')
     setSubmitting(true)
@@ -73,6 +81,7 @@ function ForgotPasswordTablet() {
     }
   }
 
+  // Paso 3: valida que las contraseñas coincidan y las guarda con el codigo.
   async function handlePasswordSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -95,6 +104,7 @@ function ForgotPasswordTablet() {
     }
   }
 
+  // Retrocede un paso (o sale del flujo si esta en el primero).
   function goBack() {
     setError('')
     setNotice('')

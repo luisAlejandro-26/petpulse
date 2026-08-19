@@ -45,6 +45,8 @@ function App() {
               </RequireAuth>
             }
           />
+          {/* Ruta directa al panel de admin (ademas de que /dashboard ya
+              redirige ahi solo si el usuario es admin, ver Dashboard arriba). */}
           <Route
             path="/admin"
             element={

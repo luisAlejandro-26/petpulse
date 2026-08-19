@@ -18,6 +18,7 @@ const TIPS = [
   { icon: 'mdi:heart-outline', label: 'Esto nos ayuda a brindarte la mejor experiencia' },
 ]
 
+// Calcula la edad en años a partir de la fecha de nacimiento del usuario.
 function calculateAge(birthDate?: string): number | null {
   if (!birthDate) return null
   const birth = new Date(birthDate)
@@ -30,11 +31,14 @@ function calculateAge(birthDate?: string): number | null {
   return years
 }
 
+// Formatea la fecha de nacimiento a texto legible ("11 de julio de 2009").
 function formatBirthDate(iso?: string) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('es-VE', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
+// Saca las iniciales del nombre para el avatar cuando no hay foto
+// (ej. "Carolina Zapata" -> "CZ").
 function getInitials(name?: string) {
   if (!name) return '?'
   const parts = name.trim().split(/\s+/)
@@ -43,18 +47,24 @@ function getInitials(name?: string) {
   return (first + second).toUpperCase()
 }
 
+// Pantalla de Mi perfil para Tablet: card resumen + Informacion personal
+// (editable) + Contraseña (editable por separado) + Consejos de seguridad.
 function ProfileTablet() {
   const { user, token, updateProfile, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
 
+  // editingInfo y changingPassword son independientes: se puede editar
+  // el nombre/fecha sin tocar la contraseña, y viceversa.
   const [editingInfo, setEditingInfo] = useState(false)
   const [changingPassword, setChangingPassword] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [petsCount, setPetsCount] = useState<number | null>(null)
 
+  // Copias editables de los datos del usuario (se llenan al empezar a
+  // editar, no se tocan los datos reales hasta guardar).
   const [name_user, setNameUser] = useState(user?.name_user ?? '')
   const [gender, setGender] = useState(user?.gender ?? '')
   const [birth_date, setBirthDate] = useState(user?.birth_date?.split('T')[0] ?? '')
@@ -65,6 +75,7 @@ function ProfileTablet() {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Trae la cantidad de mascotas del usuario, para mostrarla en la card resumen.
   useEffect(() => {
     if (!token) return
     getPets(token)
@@ -72,6 +83,8 @@ function ProfileTablet() {
       .catch(() => setPetsCount(null))
   }, [token])
 
+  // Copia los datos actuales del usuario a los campos editables y
+  // activa el modo edicion de la card "Informacion personal".
   function startEditingInfo() {
     setNameUser(user?.name_user ?? '')
     setGender(user?.gender ?? '')
@@ -82,6 +95,7 @@ function ProfileTablet() {
     setEditingInfo(true)
   }
 
+  // Guarda el archivo elegido y genera una vista previa local.
   function handlePickImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -90,6 +104,8 @@ function ProfileTablet() {
     e.target.value = ''
   }
 
+  // Guarda nombre/genero/fecha de nacimiento (y sube la foto nueva si
+  // hay una) llamando a updateProfile del contexto de autenticacion.
   async function handleSaveInfo(e: FormEvent) {
     e.preventDefault()
     if (!name_user.trim()) {
@@ -120,6 +136,7 @@ function ProfileTablet() {
     }
   }
 
+  // Cambia la contraseña, validando primero que las dos coincidan.
   async function handleSavePassword(e: FormEvent) {
     e.preventDefault()
     if (!password || password !== confirmPassword) {

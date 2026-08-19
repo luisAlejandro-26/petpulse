@@ -8,6 +8,8 @@ import type { HealthEvent, Pet } from '../../api/types'
 import logo from '../../assets/logo.png'
 import petsIllustration from '../../assets/pets-illustration.png'
 
+// Calcula la edad de una mascota a partir de su fecha de nacimiento.
+// Si tiene menos de 1 año, la muestra en meses; si no, en años.
 function calculateAge(birthDate: string): string {
   const birth = new Date(birthDate)
   const now = new Date()
@@ -23,6 +25,7 @@ function calculateAge(birthDate: string): string {
   return `${years} ${years === 1 ? 'año' : 'años'}`
 }
 
+// Formatea una fecha ISO a dd/mm/aa para mostrarla en las tarjetas.
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return '00/00/00'
@@ -32,6 +35,8 @@ function formatDate(dateStr: string): string {
   return `${dd}/${mm}/${yy}`
 }
 
+// Texto e icono a mostrar en "Actividad reciente" segun el tipo de evento.
+// tone: 'accent' se pinta en coral (recordatorios), 'primary' en verde.
 const ACTIVITY_META: Record<string, { label: string; icon: string; tone: 'primary' | 'accent' }> = {
   VACUNA: { label: 'Vacuna aplicada', icon: 'mdi:needle', tone: 'primary' },
   CONTROL: { label: 'Consulta realizada', icon: 'mdi:file-document-outline', tone: 'primary' },
@@ -40,6 +45,10 @@ const ACTIVITY_META: Record<string, { label: string; icon: string; tone: 'primar
   OTHER: { label: 'Recordatorio', icon: 'mdi:alert-circle-outline', tone: 'accent' },
 }
 
+// Pantalla de inicio (Home) para el breakpoint Tablet.
+// Muestra: stats de mascotas/citas/alertas, lista de "Mis mascotas",
+// actividad reciente, banner de agendar cita, y el panel de notificaciones
+// (campana + modal + toast automatico de alertas de salud).
 function HomeTablet() {
   const { user, token } = useAuth()
   const location = useLocation()
@@ -53,6 +62,8 @@ function HomeTablet() {
   const [notifOpen, setNotifOpen] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
 
+  // Al montar la pantalla, trae las mascotas y los eventos del usuario en
+  // paralelo (Promise.all) para no esperar una peticion tras otra.
   useEffect(() => {
     if (!token) return
 
@@ -65,19 +76,28 @@ function HomeTablet() {
       .finally(() => setLoading(false))
   }, [token])
 
+  // Cuenta cuantas citas estan agendadas (status SCHEDULED).
   const proximasCitas = useMemo(
     () => events.filter((e) => e.status === 'SCHEDULED').length,
     [events],
   )
 
+  // Cuenta cuantos eventos tienen una proxima dosis/fecha (next_due_date)
+  // que todavia no ha pasado.
   const recordatorios = useMemo(
     () =>
       events.filter((e) => e.next_due_date && new Date(e.next_due_date).getTime() >= Date.now()).length,
     [events],
   )
 
+  // Tipos de evento que cuentan como "de salud" para las alertas
+  // (se excluye OTHER porque en el sistema equivale a Peluqueria).
   const HEALTH_EVENT_TYPES = new Set(['VACUNA', 'CONTROL', 'DESPARACITACION', 'CIRUGIA'])
 
+  // Cuenta eventos de salud que caen dentro de los proximos 3 dias,
+  // ya sea por su fecha (event_date) o por su proxima dosis (next_due_date).
+  // Misma logica que usa Luis en HomeDesktop.tsx, para que ambas pantallas
+  // muestren siempre el mismo numero.
   const alertaSalud = useMemo(() => {
     const now = new Date()
     const threeDaysMs = 3 * 24 * 60 * 60 * 1000
@@ -94,6 +114,7 @@ function HomeTablet() {
     }).length
   }, [events])
 
+  // Ultimos 4 eventos ya completados, para la lista de "Actividad reciente".
   const actividadReciente = useMemo(() => {
     return events
       .filter((e) => e.status === 'COMPLETED')
@@ -101,12 +122,16 @@ function HomeTablet() {
       .slice(0, 4)
   }, [events])
 
+  // Toast automatico: en cuanto termina de cargar, si hay alguna alerta de
+  // salud proxima, se muestra solo (sin que el usuario tenga que abrir la
+  // campana). No requiere backend nuevo, reutiliza alertaSalud de arriba.
   useEffect(() => {
     if (!loading && alertaSalud > 0) {
       setToastVisible(true)
     }
   }, [loading, alertaSalud])
 
+  // Clases del nav inferior: resalta el item activo segun la ruta actual.
   const navItemClass = (path: string) =>
     `flex flex-col items-center gap-[3px] no-underline text-[11px] font-semibold px-4 py-2 rounded-[14px] transition-colors hover:bg-[#eaf0ea] hover:text-petpulse-primary-dark ${
       isActive(path) ? 'bg-[#eaf0ea] text-petpulse-primary-dark' : 'text-petpulse-text-secondary'
@@ -115,6 +140,7 @@ function HomeTablet() {
   return (
     <div className="min-h-screen bg-petpulse-bg font-inter text-petpulse-text box-border pb-28 *:box-border">
       <div className="w-full max-w-[1100px] mx-auto px-6 pt-8 flex flex-col gap-5">
+        {/* Header: logo, saludo, y campana de notificaciones */}
         <header className="flex items-start justify-between gap-4 flex-wrap max-[560px]:justify-center max-[560px]:text-center">
           <div className="flex items-center gap-2 max-[560px]:justify-center">
             <img src={logo} alt="" className="w-[84px] h-auto shrink-0" />
@@ -136,6 +162,8 @@ function HomeTablet() {
             </p>
           </div>
 
+          {/* Campana: abre el modal de notificaciones. El puntito rojo solo
+              aparece si hay alertas de salud o actividad reciente que ver. */}
           <button
             type="button"
             onClick={() => setNotifOpen(true)}
@@ -149,6 +177,7 @@ function HomeTablet() {
           </button>
         </header>
 
+        {/* Tarjetas de estadisticas: Proximas citas / Recordatorios / Alerta de salud */}
         <div className="grid grid-cols-3 gap-4 max-[560px]:grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
           <Link
             to="/calendar"
@@ -208,6 +237,7 @@ function HomeTablet() {
           </Link>
         </div>
 
+        {/* Dos columnas: lista de mascotas a la izquierda, actividad reciente a la derecha */}
         <div className="grid grid-cols-[1.6fr_1fr] gap-4 items-start max-[700px]:grid-cols-1">
           <section aria-labelledby="mis-mascotas-heading" className="flex flex-col">
             <h2
@@ -229,6 +259,9 @@ function HomeTablet() {
               {!loading &&
                 !error &&
                 pets.map((pet) => (
+                  // Toda la tarjeta lleva al perfil de la mascota (/pets/:id).
+                  // El lapiz de editar usa preventDefault + stopPropagation
+                  // para no disparar tambien el click del Link contenedor.
                   <Link
                     key={pet.id_pet}
                     to={`/pets/${pet.id_pet}`}
@@ -320,6 +353,7 @@ function HomeTablet() {
           </section>
         </div>
 
+        {/* Banner de "agendar cita" */}
         <div className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px] max-[560px]:flex-wrap max-[560px]:justify-center max-[560px]:text-center">
           <img src={petsIllustration} alt="" className="h-[88px] w-auto shrink-0 object-contain" />
           <div className="flex-1 min-w-[140px]">
@@ -337,6 +371,7 @@ function HomeTablet() {
         </div>
       </div>
 
+      {/* Nav inferior fijo, comun a todas las pantallas Tablet */}
       <nav className="fixed bottom-4 left-0 right-0 flex justify-center px-5 z-10" aria-label="Navegación principal">
         <div className="w-full max-w-[620px] bg-petpulse-card border border-petpulse-border rounded-[20px] shadow-[0_16px_32px_-18px_rgba(47,62,50,0.3)] flex items-center justify-around px-3 py-2">
           <Link to="/dashboard" className={navItemClass('/dashboard')}>
@@ -358,6 +393,7 @@ function HomeTablet() {
         </div>
       </nav>
 
+      {/* Modal de notificaciones (se abre al hacer click en la campana) */}
       {notifOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5">
           <div className="w-full max-w-[440px] max-h-[80vh] bg-petpulse-bg rounded-[20px] flex flex-col overflow-hidden">
@@ -454,6 +490,7 @@ function HomeTablet() {
         </div>
       )}
 
+      {/* Toast automatico de alertas de salud (ver useEffect de arriba) */}
       {toastVisible && (
         <div className="fixed top-6 right-6 z-50 w-full max-w-[340px] animate-[toast-in_0.25s_ease-out]">
           <div className="bg-petpulse-card border border-petpulse-accent/30 rounded-2xl shadow-[0_16px_32px_-14px_rgba(47,62,50,0.35)] p-4 flex items-start gap-3">

@@ -5,12 +5,17 @@ import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
 
+// Tiempo (en ms) que se queda en pantalla antes de redirigir al login.
 const REDIRECT_MS = 3500
 
+// Pantalla de exito tras registrarse: muestra una animacion de check
+// y redirige sola al login despues de REDIRECT_MS.
 function RegisterSuccessTablet() {
   const navigate = useNavigate()
   const [progress, setProgress] = useState(0)
 
+  // Anima una barra de progreso en tiempo real (cada 30ms) mientras
+  // corre el temporizador que redirige al login.
   useEffect(() => {
     const start = Date.now()
     const interval = setInterval(() => {

@@ -38,6 +38,8 @@ interface LocalMessage extends AiMessage {
   pending?: boolean
 }
 
+// Convierte una imagen elegida por el usuario a base64, para poder
+// enviarla al backend junto con el mensaje del chat.
 function fileToBase64(file: File): Promise<{ base64: string; mime: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -52,19 +54,25 @@ function fileToBase64(file: File): Promise<{ base64: string; mime: string }> {
   })
 }
 
+// Hora de cada mensaje ("01:16 a. m.") para mostrarla bajo la burbuja.
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
 }
 
+// Fecha de cada conversacion en el historial ("18 ago 2026").
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+// Chat de PetIA para Tablet: pantalla de bienvenida con sugerencias,
+// chat con Gemini (texto e imagenes), historial de conversaciones.
 function PetIATablet() {
   const { user, token } = useAuth()
   const location = useLocation()
   const isActive = (path: string) => location.pathname === path
 
+  // Mensajes de la conversacion activa (se llenan al enviar o al abrir
+  // una conversacion vieja desde el historial).
   const [messages, setMessages] = useState<LocalMessage[]>([])
   const [conversationId, setConversationId] = useState<number | null>(null)
   const [input, setInput] = useState('')
@@ -78,6 +86,9 @@ function PetIATablet() {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [conversations, setConversations] = useState<AiConversation[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
+  // hasStarted (mas abajo) decide si se ve la pantalla de bienvenida o
+  // el chat. manuallyStarted permite forzar el chat vacio aunque no haya
+  // mensajes todavia (ej. al presionar "Hacer una pregunta").
   const [manuallyStarted, setManuallyStarted] = useState(false)
 
   const firstName = user?.name_user?.split(' ')[0] ?? ''
@@ -91,6 +102,7 @@ function PetIATablet() {
     if (manuallyStarted) inputRef.current?.focus()
   }, [manuallyStarted])
 
+  // Trae la lista de conversaciones guardadas y abre el panel de historial.
   async function openHistory() {
     if (!token) return
     setHistoryOpen(true)
@@ -105,6 +117,7 @@ function PetIATablet() {
     }
   }
 
+  // Carga una conversacion vieja del historial y la muestra como chat activo.
   async function handleSelectConversation(id: number) {
     if (!token) return
     setLoadingHistory(true)
@@ -120,6 +133,8 @@ function PetIATablet() {
     }
   }
 
+  // Borra una conversacion del historial (con stopPropagation para no
+  // disparar tambien el click de "seleccionar" esa misma conversacion).
   async function handleDeleteConversation(e: React.MouseEvent, id: number) {
     e.stopPropagation()
     if (!token) return
@@ -134,6 +149,7 @@ function PetIATablet() {
     }
   }
 
+  // Limpia todo y vuelve a la pantalla de bienvenida (nueva conversacion).
   function handleNewChat() {
     setConversationId(null)
     setMessages([])
@@ -141,6 +157,8 @@ function PetIATablet() {
     setManuallyStarted(false)
   }
 
+  // Guarda la imagen elegida (convertida a base64) para adjuntarla al
+  // siguiente mensaje que se envie.
   async function handlePickImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -149,6 +167,8 @@ function PetIATablet() {
     e.target.value = ''
   }
 
+  // Envia el mensaje (texto y/o imagen) a Gemini. Muestra el mensaje del
+  // usuario de inmediato (optimista) y agrega la respuesta cuando llega.
   async function handleSend(overrideText?: string) {
     const text = (overrideText ?? input).trim()
     if (!text && !attachedImage) return
