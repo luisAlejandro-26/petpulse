@@ -206,14 +206,6 @@ function PetProfileTablet() {
               <Icon icon="mdi:paw" width={18} height={18} className="text-petpulse-primary" />
             </h1>
           </div>
-
-          <button
-            type="button"
-            className="w-10 h-10 rounded-full border border-petpulse-border bg-petpulse-card text-petpulse-text flex items-center justify-center cursor-pointer shrink-0 transition-colors hover:bg-[#eaf0ea]"
-            aria-label="Notificaciones"
-          >
-            <Icon icon="mdi:bell-outline" width={22} height={22} />
-          </button>
         </header>
 
         {/* Card principal */}

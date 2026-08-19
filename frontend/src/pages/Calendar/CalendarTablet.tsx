@@ -167,14 +167,6 @@ function CalendarTablet() {
               Gestiona citas, vacunas y recordatorios importantes
             </p>
           </div>
-
-          <button
-            type="button"
-            className="w-10 h-10 rounded-full border border-petpulse-border bg-petpulse-card text-petpulse-text flex items-center justify-center cursor-pointer shrink-0 transition-colors hover:bg-[#eaf0ea] hover:border-petpulse-primary"
-            aria-label="Notificaciones"
-          >
-            <Icon icon="mdi:bell-outline" width={22} height={22} />
-          </button>
         </header>
 
         <div className="grid grid-cols-1 gap-4 items-start">
