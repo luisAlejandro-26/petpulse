@@ -14,6 +14,7 @@ const EVENT_TYPE_LABELS: Record<EventType, string> = {
   OTHER: 'Peluquería',
 }
 
+// Último paso del flujo de agregar recordatorio: confirma mascota + descripción + fecha (tipo y negocio ya vienen fijos por la URL)
 function EventForm() {
   const { token } = useAuth()
   const navigate = useNavigate()
@@ -21,15 +22,17 @@ function EventForm() {
 
   const eventType = (searchParams.get('eventType') as EventType) || 'OTHER'
   const businessName = searchParams.get('business') || ''
+  const preselectedPetId = searchParams.get('pet') || '' // viene con valor cuando el flujo se abrió desde el botón "+" de PetProfile
 
   const [pets, setPets] = useState<Pet[]>([])
-  const [id_pet, setIdPet] = useState('')
+  const [id_pet, setIdPet] = useState(preselectedPetId)
   const [title, setTitle] = useState('')
   const [event_date, setEventDate] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [loadingPets, setLoadingPets] = useState(true)
 
+  // Carga las mascotas del usuario para el selector
   useEffect(() => {
     if (!token) return
     getPets(token)
@@ -38,6 +41,7 @@ function EventForm() {
       .finally(() => setLoadingPets(false))
   }, [token])
 
+  // Crea el evento con status SCHEDULED (pendiente por defecto) y regresa al Calendario
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -75,6 +79,7 @@ function EventForm() {
       <div className="relative w-full max-w-[402px] h-screen overflow-hidden">
       <div className="h-full overflow-y-auto pb-10">
 
+        {/* Header */}
         <div className="flex items-center justify-between px-5 pt-6">
           <button
             type="button"
@@ -99,6 +104,7 @@ function EventForm() {
           </p>
         )}
 
+        {/* Si el usuario no tiene mascotas, no se puede agendar nada: se le avisa en vez de mostrar el formulario */}
         {loadingPets ? (
           <p className="text-center text-petpulse-text-secondary text-sm font-inter mt-8">Cargando...</p>
         ) : pets.length === 0 ? (

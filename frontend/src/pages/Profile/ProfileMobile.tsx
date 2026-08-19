@@ -29,21 +29,23 @@ const GENDER_LABEL: Record<string, string> = {
   OTRO: 'Otro',
 }
 
+// Pantalla de Perfil del usuario: vista de solo lectura por defecto, botón "Editar perfil" activa el formulario (nombre, género, fecha, foto)
 function ProfileMobile() {
   const { user, updateProfile, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(false) // alterna entre vista de solo lectura y formulario de edición
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   const [name_user, setNameUser] = useState(user?.name_user ?? '')
   const [gender, setGender] = useState(user?.gender ?? '')
   const [birth_date, setBirthDate] = useState(user?.birth_date?.split('T')[0] ?? '')
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [pendingImage, setPendingImage] = useState<{ base64: string; mime: string } | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null) // preview local de la foto elegida, antes de guardar
+  const [pendingImage, setPendingImage] = useState<{ base64: string; mime: string } | null>(null) // foto lista para subir en el próximo submit
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Precarga los campos con los datos actuales del usuario y entra en modo edición
   function startEditing() {
     setNameUser(user?.name_user ?? '')
     setGender(user?.gender ?? '')
@@ -63,6 +65,7 @@ function ProfileMobile() {
     e.target.value = ''
   }
 
+  // Guarda los cambios: la foto (si hay una nueva) se sube junto con los demás campos en la misma llamada a updateProfile
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!name_user.trim()) {
@@ -87,7 +90,7 @@ function ProfileMobile() {
     }
   }
 
-  const avatarSrc = imagePreview ?? user?.profile_image_url ?? null
+  const avatarSrc = imagePreview ?? user?.profile_image_url ?? null // prioriza el preview local sobre la foto guardada
 
   return (
     <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
@@ -103,7 +106,7 @@ function ProfileMobile() {
         </div>
 
         <div className="flex-1 overflow-y-auto pb-36 px-5">
-          {/* Avatar */}
+          {/* ── Avatar: solo editable (botón de lápiz) cuando editing=true ── */}
           <div className="flex flex-col items-center mt-4">
             <div className="relative">
               <div className="w-[100px] h-[100px] rounded-full bg-petpulse-primary/15 border-2 border-petpulse-primary/20 flex items-center justify-center overflow-hidden">
@@ -151,7 +154,7 @@ function ProfileMobile() {
           )}
 
           {!editing ? (
-            /* ── Vista de solo lectura ── */
+            /* ── Vista de solo lectura: correo, género, fecha de nacimiento + botones Editar/Cerrar sesión ── */
             <div className="mt-8">
               <p className="font-inter font-bold text-[14px] text-petpulse-primary tracking-[0.5px] uppercase mb-3">
                 Información de la cuenta
@@ -201,7 +204,7 @@ function ProfileMobile() {
               </button>
             </div>
           ) : (
-            /* ── Formulario de edición ── */
+            /* ── Formulario de edición: nombre, género, fecha de nacimiento ── */
             <form onSubmit={handleSubmit} className="mt-6">
               <label htmlFor="name_user" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
                 Nombre

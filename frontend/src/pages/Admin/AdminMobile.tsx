@@ -5,6 +5,7 @@ import { deleteUser, getAdminStats, getUsers, updateUserRole } from '../../api/d
 import type { AdminStats, User } from '../../api/types'
 import SideMenu from '../../components/SideMenu'
 
+// Panel de administración: solo accesible para usuarios con role_account === 'ADMIN' (App.tsx redirige aquí automáticamente desde /dashboard)
 function AdminMobile() {
   const { user, token, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -14,10 +15,11 @@ function AdminMobile() {
   const [users, setUsers] = useState<User[]>([])
   const [search, setSearch] = useState('')
   const [stats, setStats] = useState<AdminStats | null>(null)
-  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [editingUser, setEditingUser] = useState<User | null>(null) // usuario cuyo rol se está cambiando (null = modal cerrado)
   const [savingRole, setSavingRole] = useState(false)
-  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null) // id del usuario pendiente de confirmar eliminación
 
+  // Carga inicial: lista de usuarios + estadísticas del panel
   useEffect(() => {
     if (!token) return
     setLoading(true)
@@ -31,6 +33,7 @@ function AdminMobile() {
       .finally(() => setLoading(false))
   }, [token])
 
+  // Búsqueda con debounce: espera 350ms sin escribir antes de consultar al backend
   useEffect(() => {
     if (!token) return
     const timer = setTimeout(() => {
@@ -41,6 +44,7 @@ function AdminMobile() {
     return () => clearTimeout(timer)
   }, [search, token])
 
+  // Elimina el usuario confirmado en el modal
   async function handleDeleteUser() {
     if (!token || confirmDeleteId === null) return
     try {
@@ -53,6 +57,7 @@ function AdminMobile() {
     }
   }
 
+  // Cambia el rol del usuario que se está editando (USER ↔ ADMIN)
   async function handleSaveRole(newRole: 'USER' | 'ADMIN') {
     if (!token || !editingUser) return
     setSavingRole(true)
@@ -73,7 +78,7 @@ function AdminMobile() {
     <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
       <div className="relative w-full max-w-[402px] h-screen flex flex-col overflow-hidden">
 
-        {/* Header */}
+        {/* Header: menú + título + cerrar sesión (el admin no tiene BottomNav, solo maneja este panel) */}
         <div className="flex items-center justify-between px-5 pt-6 pb-4">
           <button type="button" aria-label="Abrir menú" onClick={() => setMenuOpen(true)}>
             <Icon icon="akar-icons:three-line-horizontal" width={22} height={22} color="#2F3E32" />
@@ -98,7 +103,7 @@ function AdminMobile() {
             </p>
           )}
 
-          {/* Stats */}
+          {/* ── Stats: usuarios totales, storage usado en el chat de IA, consultas realizadas ── */}
           <div className="flex flex-col gap-3">
             <div className="bg-white border border-petpulse-border rounded-xl p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-petpulse-primary/15 flex items-center justify-center flex-shrink-0">
@@ -131,7 +136,7 @@ function AdminMobile() {
             </div>
           </div>
 
-          {/* Gestión de usuarios */}
+          {/* ── Gestión de usuarios: buscar, editar rol, eliminar (el propio admin no puede editarse ni eliminarse a sí mismo) ── */}
           <p className="font-inter font-bold text-base text-petpulse-text mt-6 mb-3">Gestión de usuarios</p>
 
           <div className="relative mb-4">
@@ -152,7 +157,7 @@ function AdminMobile() {
           ) : (
             <div className="flex flex-col gap-3">
               {users.map((item) => {
-                const isSelf = item.id_user === user?.id_user
+                const isSelf = item.id_user === user?.id_user // oculta los botones de editar/eliminar en la propia cuenta del admin
                 return (
                   <div key={item.id_user} className="bg-white border border-petpulse-border rounded-xl p-3.5 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-petpulse-primary/15 flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -204,7 +209,7 @@ function AdminMobile() {
 
         <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-        {/* Modal cambiar rol */}
+        {/* ── Modal cambiar rol: convertir en usuario normal o administrador ── */}
         {editingUser && (
           <div className="fixed inset-0 z-50 flex items-end justify-center">
             <div className="absolute inset-0 bg-black/40" onClick={() => setEditingUser(null)} />
@@ -254,7 +259,7 @@ function AdminMobile() {
           </div>
         )}
 
-        {/* Modal confirmar eliminar usuario */}
+        {/* ── Modal confirmar eliminar usuario ── */}
         {confirmDeleteId !== null && userToDelete && (
           <div className="fixed inset-0 z-50 flex items-end justify-center">
             <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmDeleteId(null)} />

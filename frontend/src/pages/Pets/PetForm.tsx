@@ -14,6 +14,7 @@ const SPECIES_OPTIONS: { value: PetSpecies; label: string }[] = [
   { value: 'OTHER', label: 'Otro' },
 ]
 
+// Formulario de mascota: crear (sin id en la ruta) o editar (con id en /pets/:id/edit), decidido por isEditing
 function PetForm() {
   const { token } = useAuth()
   const navigate = useNavigate()
@@ -27,15 +28,16 @@ function PetForm() {
   const [diseases, setDiseases] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [loading, setLoading] = useState(isEditing)
+  const [loading, setLoading] = useState(isEditing) // solo hay carga inicial cuando se está editando (crear arranca vacío)
 
-  const [pet_image_url, setPetImageUrl] = useState('')
+  const [pet_image_url, setPetImageUrl] = useState('') // URL ya subida a Supabase Storage (se llena tras handlePickImage)
   const [color, setColor] = useState('')
   const [weight, setWeight] = useState('')
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null) // preview local mientras se sube la imagen
   const [uploadingImage, setUploadingImage] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Modo edición: precarga todos los campos con los datos actuales de la mascota
   useEffect(() => {
     if (!isEditing || !id || !token) return
 
@@ -54,6 +56,7 @@ function PetForm() {
       .finally(() => setLoading(false))
   }, [id, isEditing, token])
 
+  // Sube la imagen a Supabase Storage apenas se elige el archivo (no espera al submit del formulario)
   async function handlePickImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file || !token) return
@@ -73,6 +76,7 @@ function PetForm() {
     }
   }
 
+  // Crea o actualiza la mascota según isEditing, con todos los campos incluyendo la URL de imagen ya subida
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -108,7 +112,7 @@ function PetForm() {
     )
   }
 
-  const displayImage = imagePreview ?? (pet_image_url || null)
+  const displayImage = imagePreview ?? (pet_image_url || null) // prioriza el preview local mientras se sube sobre la URL ya guardada
 
   return (
     <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
@@ -135,7 +139,7 @@ function PetForm() {
         )}
 
         <form onSubmit={handleSubmit} className="px-5 mt-5" noValidate>
-          {/* Subir imagen */}
+          {/* ── Subir imagen: input file oculto, disparado por el botón/preview ── */}
           <input
             ref={fileInputRef}
             type="file"
@@ -169,7 +173,7 @@ function PetForm() {
             )}
           </button>
 
-          {/* Sección DATOS */}
+          {/* ── Sección DATOS ── */}
           <p className="font-inter font-bold text-[14px] text-petpulse-primary tracking-[0.5px] uppercase mt-8 mb-3">
             Datos
           </p>
@@ -244,7 +248,7 @@ function PetForm() {
             />
           </div>
 
-          {/* Color */}
+          {/* Color: campo opcional, se usa en la ficha de la mascota (PetProfile) */}
           <label htmlFor="color" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
             Color <span className="text-petpulse-text-secondary font-normal normal-case">(opcional)</span>
           </label>
@@ -258,7 +262,7 @@ function PetForm() {
             />
           </div>
 
-          {/* Peso */}
+          {/* Peso: opcional, se envía como número (undefined si el campo queda vacío) */}
           <label htmlFor="weight" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
             Peso (Kg) <span className="text-petpulse-text-secondary font-normal normal-case">(opcional)</span>
           </label>
@@ -275,7 +279,7 @@ function PetForm() {
             />
           </div>
 
-          {/* Enfermedades */}
+          {/* Enfermedades: texto libre, opcional */}
           <label htmlFor="diseases" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
             Enfermedades <span className="text-petpulse-text-secondary font-normal normal-case">(opcional)</span>
           </label>

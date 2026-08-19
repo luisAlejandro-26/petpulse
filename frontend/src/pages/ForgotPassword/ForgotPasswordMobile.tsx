@@ -5,21 +5,26 @@ import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
 
-type Step = 'request' | 'reset'
+type Step = 'request' | 'reset' // 'request' = paso 1 (pedir el email), 'reset' = paso 2 (código + nueva contraseña)
 
+// Pantalla de recuperación de contraseña en 2 pasos: pedir código por email, luego validarlo y establecer la nueva contraseña
 function ForgotPasswordMobile() {
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>('request')
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
+  // Validaciones de la nueva contraseña, se recalculan en cada tecleo para pintar los indicadores en vivo
   const hasMinLength = newPassword.length >= 8
   const hasLettersAndNumbers = /[a-zA-Z]/.test(newPassword) && /[0-9]/.test(newPassword)
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false) // ojito del campo "Nueva contraseña"
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false) // ojito del campo "Confirmar contraseña"
 
+  // Paso 1: pide al backend que envíe el código de verificación al email y avanza al paso 2
   async function handleRequestCode(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -36,6 +41,7 @@ function ForgotPasswordMobile() {
     }
   }
 
+  // Paso 2: valida que las contraseñas cumplan las reglas y coincidan, luego confirma el código y restablece la contraseña
   async function handleResetPassword(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -75,7 +81,7 @@ function ForgotPasswordMobile() {
 
           {step === 'request' ? (
             <>
-              {/* Título */}
+              {/* ── Paso 1: solicitar código por email ── */}
               <h2 className="font-encode-expanded font-bold text-2xl text-petpulse-primary text-center mt-6">
                 Recuperar contraseña
               </h2>
@@ -146,7 +152,7 @@ function ForgotPasswordMobile() {
             </>
           ) : (
             <>
-              {/* Paso 2: código + nueva contraseña */}
+              {/* ── Paso 2: código de verificación + nueva contraseña ── */}
               <h2 className="font-encode-expanded font-bold text-2xl text-petpulse-primary text-center mt-6">
                 Ingresa el código
               </h2>
@@ -182,6 +188,7 @@ function ForgotPasswordMobile() {
                 <label htmlFor="newPassword" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
                   Nueva contraseña
                 </label>
+                {/* Input con ojito para mostrar/ocultar la nueva contraseña */}
                 <div className="relative mb-4">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary pointer-events-none">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -191,16 +198,35 @@ function ForgotPasswordMobile() {
                   </span>
                   <input
                     id="newPassword"
-                    type="password"
+                    type={showNewPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                     minLength={6}
                     autoComplete="new-password"
                     placeholder="••••••••••"
-                    className="w-full h-[44px] bg-white border border-petpulse-border rounded-lg pl-9 pr-3 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
+                    className="w-full h-[44px] bg-white border border-petpulse-border rounded-lg pl-9 pr-10 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    aria-label={showNewPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary"
+                  >
+                    {showNewPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
+                {/* Indicadores en vivo de las reglas de la nueva contraseña */}
                 <div className="flex items-center gap-3 mt-1 mb-4">
                   <span className={`flex items-center gap-1 text-[10px] whitespace-nowrap transition-colors ${
                     hasMinLength ? 'text-petpulse-primary' : 'text-petpulse-accent'
@@ -222,6 +248,7 @@ function ForgotPasswordMobile() {
                 <label htmlFor="confirmPassword" className="font-encode-condensed font-semibold text-sm text-petpulse-text block mb-1">
                   Confirmar contraseña
                 </label>
+                {/* Input con ojito para mostrar/ocultar la confirmación */}
                 <div className="relative mb-5">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary pointer-events-none">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -231,15 +258,33 @@ function ForgotPasswordMobile() {
                   </span>
                   <input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     minLength={6}
                     autoComplete="new-password"
                     placeholder="••••••••••"
-                    className="w-full h-[44px] bg-white border border-petpulse-border rounded-lg pl-9 pr-3 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
+                    className="w-full h-[44px] bg-white border border-petpulse-border rounded-lg pl-9 pr-10 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary"
+                  >
+                    {showConfirmPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
 
                 <button

@@ -6,7 +6,7 @@ import type { AiMessage, AiConversation } from '../../api/types'
 import SideMenu from '../../components/SideMenu'
 import BottomNav from '../../components/BottomNav'
 
-const SUGGESTIONS = [
+const SUGGESTIONS = [ // tarjetas de sugerencia en la pantalla de bienvenida; al tocarlas envían el prompt directo
   {
     icon: 'mdi:dog-side',
     title: 'Identificar razas',
@@ -31,6 +31,7 @@ interface LocalMessage extends AiMessage {
   pending?: boolean
 }
 
+// Convierte un archivo de imagen a base64 puro (sin el prefijo data:...) para enviarlo al backend
 function fileToBase64(file: File): Promise<{ base64: string; mime: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -53,29 +54,32 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+// Pantalla de chat con PetIA (Gemini): bienvenida con sugerencias, chat con texto/imagen, e historial de conversaciones
 function PetIAMobile() {
   const { user, token } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [messages, setMessages] = useState<LocalMessage[]>([])
-  const [conversationId, setConversationId] = useState<number | null>(null)
+  const [messages, setMessages] = useState<LocalMessage[]>([]) // mensajes de la conversación activa (vacío = pantalla de bienvenida)
+  const [conversationId, setConversationId] = useState<number | null>(null) // null = conversación nueva, aún no creada en el backend
   const [input, setInput] = useState('')
   const [attachedImage, setAttachedImage] = useState<{ base64: string; mime: string; preview: string } | null>(null)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null) // referencia al contenedor de mensajes, para auto-scroll al fondo
 
   const [historyOpen, setHistoryOpen] = useState(false)
   const [conversations, setConversations] = useState<AiConversation[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
 
   const firstName = user?.name_user?.split(' ')[0] ?? ''
-  const hasStarted = messages.length > 0
+  const hasStarted = messages.length > 0 // decide si se muestra la bienvenida o el chat activo
 
+  // Auto-scroll al último mensaje cada vez que llega uno nuevo
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
+  // Abre el panel de historial y carga la lista de conversaciones del usuario
   async function openHistory() {
     if (!token) return
     setHistoryOpen(true)
@@ -90,6 +94,7 @@ function PetIAMobile() {
     }
   }
 
+  // Carga el historial completo de una conversación anterior y la deja como activa
   async function handleSelectConversation(id: number) {
     if (!token) return
     setLoadingHistory(true)
@@ -105,8 +110,9 @@ function PetIAMobile() {
     }
   }
 
+  // Elimina una conversación del historial; si era la que estaba activa, resetea a chat nuevo
   async function handleDeleteConversation(e: React.MouseEvent, id: number) {
-  e.stopPropagation()
+  e.stopPropagation() // evita que el click también dispare handleSelectConversation (el botón está dentro de la card)
   if (!token) return
   try {
     await deleteConversation(id, token)
@@ -119,6 +125,7 @@ function PetIAMobile() {
   }
 }
 
+  // Limpia el chat activo y vuelve a la pantalla de bienvenida (nueva conversación)
   function handleNewChat() {
     setConversationId(null)
     setMessages([])
@@ -133,6 +140,7 @@ function PetIAMobile() {
     e.target.value = ''
   }
 
+  // Envía el mensaje (texto y/o imagen) a Gemini: agrega el mensaje del usuario de inmediato (optimista) y espera la respuesta
   async function handleSend(overrideText?: string) {
     const text = (overrideText ?? input).trim()
     if (!text && !attachedImage) return
@@ -185,7 +193,7 @@ function PetIAMobile() {
     <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
       <div className="relative w-full max-w-[402px] h-screen flex flex-col overflow-hidden">
 
-        {/* Header */}
+        {/* ── Header: menú + título + historial ── */}
         <div className="flex items-center justify-between px-5 pt-6 pb-4 border-b border-petpulse-primary/30">
           <button type="button" aria-label="Abrir menú" onClick={() => setMenuOpen(true)}>
             <Icon icon="akar-icons:three-line-horizontal" width={22} height={22} color="#2F3E32" />
@@ -197,7 +205,7 @@ function PetIAMobile() {
         </div>
 
         {!hasStarted ? (
-          /* ── Pantalla de bienvenida ── */
+          /* ── Pantalla de bienvenida: saludo + tarjetas de sugerencia ── */
           <div className="flex-1 overflow-y-auto pb-24 px-5">
             <div className="flex flex-col items-center mt-8">
               <div
@@ -245,7 +253,7 @@ function PetIAMobile() {
 
             </div>
         ) : (
-          /* ── Pantalla de chat activo ── */
+          /* ── Pantalla de chat activo: burbujas de mensaje + indicador de "escribiendo" ── */
           <div ref={scrollRef} className="flex-1 overflow-y-auto pb-4 px-5">
             <p className="font-inter font-medium text-lg text-petpulse-text-secondary text-center mt-4 mb-4">
               Hoy
@@ -277,6 +285,7 @@ function PetIAMobile() {
                 </div>
               ))}
 
+              {/* Indicador de "pensando": patita pulsando + puntitos rebotando mientras se espera la respuesta de Gemini */}
               {sending && (
                 <div className="flex flex-col items-start">
                   <p className="font-encode-semi font-bold text-xs text-petpulse-primary mb-1">PetIA</p>
@@ -310,7 +319,7 @@ function PetIAMobile() {
           </div>
         )}
 
-        {/* Preview de imagen adjunta */}
+        {/* Preview de imagen adjunta, antes de enviarla */}
         {attachedImage && (
           <div className="px-5 pb-2 flex items-center gap-2">
             <img src={attachedImage.preview} alt="preview" className="w-14 h-14 rounded-lg object-cover" />
@@ -325,7 +334,7 @@ function PetIAMobile() {
           </div>
         )}
 
-        {/* Input */}
+        {/* ── Input: adjuntar imagen + textarea auto-resize (Enter envía, Shift+Enter hace salto de línea) + enviar ── */}
         <div className="px-3.5 pb-24">
           <div className="min-h-[47px] max-h-32 bg-white border border-petpulse-text-secondary rounded-3xl flex items-end px-3 py-2 gap-2">
             <input
@@ -357,6 +366,7 @@ function PetIAMobile() {
               className="flex-1 min-w-0 max-h-24 resize-none font-inter text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none bg-transparent leading-5 py-1"
               style={{ height: 'auto' }}
               onInput={(e) => {
+                // crece la altura del textarea con el contenido, hasta un máximo de 96px (luego hace scroll interno)
                 const el = e.currentTarget
                 el.style.height = 'auto'
                 el.style.height = `${Math.min(el.scrollHeight, 96)}px`
@@ -377,7 +387,7 @@ function PetIAMobile() {
         <BottomNav />
         <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-        {/* Panel de historial de conversaciones */}
+        {/* ── Panel de historial: lista de conversaciones, nueva conversación, eliminar ── */}
         {historyOpen && (
           <div className="absolute inset-0 z-50 flex flex-col bg-black/40">
             <div className="mt-auto bg-petpulse-bg rounded-t-3xl max-h-[80%] flex flex-col overflow-hidden">

@@ -43,6 +43,7 @@ interface EventCardProps {
   onDelete: (id: number) => void
 }
 
+// Tarjeta reutilizable para cada categoría de eventos (Próximos recordatorios, Vacunas, Desparasitación): lista los eventos o muestra emptyText
 function EventCard({ title, icon, events, emptyText, onAdd, onDelete }: EventCardProps) {
   return (
     <div className="bg-white border border-petpulse-border rounded-xl p-4 mb-4">
@@ -96,18 +97,20 @@ function EventCard({ title, icon, events, emptyText, onAdd, onDelete }: EventCar
   )
 }
 
+// Pantalla de ficha de una mascota: datos básicos + eventos de salud filtrados por tipo (recordatorios, vacunas, desparasitación) + enfermedades
 function PetProfileMobile() {
-  const { id } = useParams()
+  const { id } = useParams() // id de la mascota, viene de la ruta /pets/:id
   const { token } = useAuth()
   const navigate = useNavigate()
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [pet, setPet] = useState<Pet | null>(null)
-  const [events, setEvents] = useState<HealthEvent[]>([])
+  const [events, setEvents] = useState<HealthEvent[]>([]) // ya filtrados: solo los de esta mascota
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [confirmId, setConfirmId] = useState<number | null>(null)
+  const [confirmId, setConfirmId] = useState<number | null>(null) // id del evento pendiente de confirmar eliminación (null = modal cerrado)
 
+  // Carga la mascota y TODOS los eventos del usuario en paralelo, luego filtra solo los de esta mascota
   useEffect(() => {
     if (!id || !token) return
     Promise.all([getPet(Number(id), token), getEvents(token)])
@@ -119,6 +122,7 @@ function PetProfileMobile() {
       .finally(() => setLoading(false))
   }, [id, token])
 
+  // Eventos pendientes (status SCHEDULED) de esta mascota, ordenados por fecha más próxima
   const upcomingEvents = useMemo(
     () =>
       events
@@ -127,6 +131,7 @@ function PetProfileMobile() {
     [events]
   )
 
+  // Filtra los eventos de esta mascota por tipo (VACUNA, DESPARACITACION, etc.) - reutilizado para las tarjetas de Vacunas/Desparasitación
   function eventsByType(type: EventType) {
     return events
       .filter((ev) => ev.event_type === type)
@@ -135,11 +140,14 @@ function PetProfileMobile() {
 
   const vacunas = eventsByType('VACUNA')
   const desparasitaciones = eventsByType('DESPARACITACION')
+  // "Enfermedades" NO viene de eventos: es el campo de texto libre pet.diseases
 
+  // Lleva al flujo de agregar recordatorio con esta mascota ya preseleccionada (botón "+" de cada sección)
   function goToAddEvent() {
     navigate(`/events/category?pet=${id}`)
   }
 
+  // Elimina el evento confirmado en el modal
   async function confirmDelete() {
     if (!token || confirmId === null) return
     try {
@@ -172,7 +180,7 @@ function PetProfileMobile() {
     <div className="h-screen w-full bg-petpulse-bg flex justify-center overflow-hidden">
       <div className="relative w-full max-w-[402px] h-screen flex flex-col overflow-hidden">
 
-        {/* Header */}
+        {/* ── Header ── */}
         <div className="flex items-center justify-between px-5 pt-6 pb-4">
           <button type="button" aria-label="Abrir menú" onClick={() => setMenuOpen(true)}>
             <Icon icon="akar-icons:three-line-horizontal" width={22} height={22} color="#2F3E32" />
@@ -184,7 +192,7 @@ function PetProfileMobile() {
         </div>
 
         <div className="flex-1 overflow-y-auto pb-24 px-5">
-          {/* Card principal (incluye Peso/Edad/Color adentro) */}
+          {/* ── Card principal: foto, nombre, raza, género + Peso/Edad/Color adentro ── */}
           <div className="bg-white border border-petpulse-border rounded-2xl p-4">
             <div className="flex items-center gap-4">
               <div className="w-[100px] h-[95px] rounded-full bg-petpulse-primary flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -233,7 +241,7 @@ function PetProfileMobile() {
             </div>
           </div>
 
-          {/* Próximos recordatorios */}
+          {/* ── Próximos recordatorios: eventos SCHEDULED de esta mascota ── */}
           <div className="mt-5">
             <EventCard
               title="Próximos recordatorios"
@@ -245,7 +253,7 @@ function PetProfileMobile() {
             />
           </div>
 
-          {/* Desparasitación */}
+          {/* ── Desparasitación: eventos filtrados por event_type DESPARACITACION ── */}
           <EventCard
             title="Desparasitación"
             icon="material-symbols:emergency"
@@ -255,7 +263,7 @@ function PetProfileMobile() {
             onDelete={setConfirmId}
           />
 
-          {/* Vacunas */}
+          {/* ── Vacunas: eventos filtrados por event_type VACUNA ── */}
           <EventCard
             title="Vacunas"
             icon="game-icons:medicines"
@@ -265,7 +273,7 @@ function PetProfileMobile() {
             onDelete={setConfirmId}
           />
 
-          {/* Enfermedades */}
+          {/* ── Enfermedades: texto libre de pet.diseases, mensaje amigable si está vacío ── */}
           <div className="bg-white border border-petpulse-border rounded-xl p-4 mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Icon icon="mdi:heart-outline" width={18} height={18} color="#6B8C6C" />
@@ -284,7 +292,7 @@ function PetProfileMobile() {
         <BottomNav />
         <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-        {/* Modal de confirmación de eliminación */}
+        {/* ── Modal de confirmación de eliminación (de eventos, no de la mascota) ── */}
         {confirmId !== null && (
           <div className="fixed inset-0 z-50 flex items-end justify-center">
             <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmId(null)} />
