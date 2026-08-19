@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 
 type Category = {
@@ -18,9 +18,12 @@ const CATEGORIES: Category[] = [
 
 function EventCategoryPicker() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const petId = searchParams.get('pet')
 
   function handleSelect(category: Category) {
-    navigate(`/events/booking?type=${category.businessType}&eventType=${category.type}`)
+    const petParam = petId ? `&pet=${petId}` : ''
+    navigate(`/events/booking?type=${category.businessType}&eventType=${category.type}${petParam}`)
   }
 
   return (

@@ -5,19 +5,23 @@ import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
 
+// Pantalla de registro: crea una cuenta nueva con validación de contraseña en tiempo real
 function RegisterMobile() {
   const { register } = useAuth()
   const navigate = useNavigate()
   const [name_user, setNameUser] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  // Validaciones de contraseña que se recalculan en cada tecleo, para pintar los indicadores en vivo
   const hasMinLength = password.length >= 8
   const hasLettersAndNumbers = /[a-zA-Z]/.test(password) && /[0-9]/.test(password)
   const [gender, setGender] = useState('')
   const [birth_date, setBirthDate] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false) 
 
+  // Valida la contraseña antes de enviar (aunque los indicadores ya avisan en vivo) y crea la cuenta
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -44,6 +48,7 @@ function RegisterMobile() {
       <div className="h-full overflow-y-auto">
 
         <div className="flex-1">
+          {/* ── Logo y encabezado ── */}
           <div className="flex flex-col items-center pt-5">
             <img src={logo} alt="Logo PetPulse" className="w-[70px] h-auto" />
             <img src={tituloLogo} alt="PetPulse" className="w-40 h-auto -mt-1" />
@@ -62,6 +67,7 @@ function RegisterMobile() {
             </p>
           )}
 
+          {/* ── Formulario de registro ── */}
           <form onSubmit={handleSubmit} className="px-12 mt-4" noValidate>
             <label htmlFor="name_user" className="font-encode-expanded font-semibold text-sm text-petpulse-text block mb-1">
               Nombre y apellido
@@ -153,6 +159,7 @@ function RegisterMobile() {
             <label htmlFor="password" className="font-encode-expanded font-semibold text-sm text-petpulse-text block mb-1">
               Contraseña
             </label>
+            {/* Input de contraseña con validaciones en vivo y botón de ojito */}
             <div className="relative mb-2">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary pointer-events-none">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -162,17 +169,36 @@ function RegisterMobile() {
               </span>
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
                 autoComplete="new-password"
                 placeholder="••••••••••"
-                className="w-full h-11 bg-white border border-petpulse-border rounded-lg pl-9 pr-3 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
+                className="w-full h-11 bg-white border border-petpulse-border rounded-lg pl-9 pr-10 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary"
+              >
+                {showPassword ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                    <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
             </div>
 
+            {/* Indicadores en vivo de las reglas de contraseña (se pintan de verde cuando se cumplen) */}
             <div className="flex items-center gap-4 mt-1 mb-5">
               <span className={`flex items-center gap-1 text-[11px] transition-colors ${
                 hasMinLength ? 'text-petpulse-primary' : 'text-petpulse-accent'
@@ -209,6 +235,7 @@ function RegisterMobile() {
           </p>
         </div>
 
+        {/* Imagen decorativa al final del flujo (no es absolute aquí: fluye después del formulario) */}
         <img src={fondoInicio} alt="" className="w-full h-auto block" aria-hidden="true" />
 
       </div>

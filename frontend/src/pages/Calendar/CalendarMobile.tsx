@@ -14,7 +14,7 @@ const MONTH_NAMES = [
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ]
 
-const EVENT_ICON_NAME: Record<string, string> = {
+const EVENT_ICON_NAME: Record<string, string> = { // ícono según el tipo de evento, usado en la lista de "Próximos Recordatorios"
   VACUNA: 'game-icons:medicines',
   CONTROL: 'hugeicons:doctor-01',
   DESPARACITACION: 'material-symbols:emergency',
@@ -22,6 +22,7 @@ const EVENT_ICON_NAME: Record<string, string> = {
   OTHER: 'mdi:content-cut',
 }
 
+// Círculo de ícono de un evento: verde si ya se aplicó (COMPLETED), coral si sigue pendiente
 function EventIcon({ type, status }: { type: string; status: string }) {
   const bg = status === 'COMPLETED' ? '#7A9A7B' : '#E07A5F'
   const iconName = EVENT_ICON_NAME[type] ?? 'mdi:paw'
@@ -36,12 +37,13 @@ function EventIcon({ type, status }: { type: string; status: string }) {
   )
 }
 
-const STATUS_LABEL: Record<string, { text: string; className: string }> = {
+const STATUS_LABEL: Record<string, { text: string; className: string }> = { // texto y color de la etiqueta de estado de cada evento
   COMPLETED: { text: 'Aplicado', className: 'bg-petpulse-primary/15 text-petpulse-primary-dark' },
   SCHEDULED: { text: 'Pendiente', className: 'bg-petpulse-accent/15 text-petpulse-accent' },
   CANCELLED: { text: 'Cancelado', className: 'bg-petpulse-text-secondary/15 text-petpulse-text-secondary' },
 }
 
+// Pantalla de Calendario: grid mensual con puntos de color por evento + lista de próximos recordatorios (crear/completar/eliminar)
 function CalendarMobile() {
   const { token } = useAuth()
   
@@ -49,11 +51,12 @@ function CalendarMobile() {
 
   const [events, setEvents] = useState<HealthEvent[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [deletingId, setDeletingId] = useState<number | null>(null)
-  const [confirmId, setConfirmId] = useState<number | null>(null)
+  const [currentDate, setCurrentDate] = useState(new Date()) // mes que se está mostrando en el grid
+  const [deletingId, setDeletingId] = useState<number | null>(null) // id del evento en animación de salida (mientras se borra)
+  const [confirmId, setConfirmId] = useState<number | null>(null) // id del evento pendiente de confirmar eliminación (null = modal cerrado)
  const [menuOpen, setMenuOpen] = useState(false)
 
+  // Trae TODOS los eventos del usuario (todas sus mascotas) apenas se tiene el token
   useEffect(() => {
     if (!token) return
     getEvents(token)
@@ -66,6 +69,7 @@ function CalendarMobile() {
   const month = currentDate.getMonth()
   const today = new Date()
 
+  // Mapa día → estado del evento, para pintar el puntito de color debajo de cada día del mes actual
   const eventDaysInMonth = useMemo(() => {
     const map = new Map<number, string>()
     events.forEach((ev) => {
@@ -77,6 +81,7 @@ function CalendarMobile() {
     return map
   }, [events, year, month])
 
+  // Genera las celdas del grid del mes (null = celda vacía de relleno antes del día 1 o después del último día)
   const calendarGrid = useMemo(() => {
     const firstDay = new Date(year, month, 1)
     const startOffset = (firstDay.getDay() + 6) % 7
@@ -96,6 +101,7 @@ function CalendarMobile() {
     setCurrentDate(new Date(year, month + 1, 1))
   }
 
+  // Alterna el estado de un evento entre Pendiente y Aplicado (botón de estado en la lista)
   async function handleToggleStatus(ev: HealthEvent) {
     if (!token) return
     const newStatus = ev.status === 'COMPLETED' ? 'SCHEDULED' : 'COMPLETED'
@@ -107,6 +113,7 @@ function CalendarMobile() {
     }
   }
 
+  // Elimina el evento confirmado en el modal, esperando primero la animación de salida (fade + colapso)
   async function confirmDelete() {
     if (!token || confirmId === null) return
     const id = confirmId
@@ -126,6 +133,7 @@ function CalendarMobile() {
     }, 280)
   }
 
+  // Los 5 próximos eventos pendientes o futuros, ordenados por fecha más cercana - se muestran en "Próximos Recordatorios"
   const upcomingEvents = useMemo(() => {
     const now = new Date()
     return events
@@ -141,7 +149,7 @@ function CalendarMobile() {
       <div className="relative w-full max-w-[402px] h-screen flex flex-col overflow-hidden">
 
         <div className="flex-1 overflow-y-auto pb-24">
-          {/* Header */}
+          {/* ── Header ── */}
           <div className="flex items-center justify-between px-6 pt-6">
             <button type="button" aria-label="Abrir menú" onClick={() => setMenuOpen(true)}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
@@ -152,7 +160,7 @@ function CalendarMobile() {
             <div className="w-6" />
           </div>
 
-          {/* Navegación de mes */}
+          {/* ── Navegación de mes ── */}
           <div className="flex items-center justify-between px-10 mt-6">
             <button type="button" onClick={prevMonth} aria-label="Mes anterior">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2F3E32" strokeWidth="2">
@@ -176,7 +184,7 @@ function CalendarMobile() {
             ))}
           </div>
 
-          {/* Cuadrícula del calendario */}
+          {/* ── Cuadrícula del calendario: día actual resaltado + puntito de color si tiene evento ── */}
           <div className="grid grid-cols-7 px-10 mt-2 gap-y-2 text-center">
             {calendarGrid.map((day, i) => {
               if (day === null) return <div key={i} />
@@ -209,7 +217,7 @@ function CalendarMobile() {
             })}
           </div>
 
-          {/* Próximos Recordatorios */}
+          {/* ── Próximos Recordatorios: toggle de estado + eliminar con confirmación ── */}
           <p className="font-inter font-bold text-sm text-petpulse-text px-5 mt-8 mb-3">
             Próximos Recordatorios
           </p>
@@ -229,7 +237,7 @@ function CalendarMobile() {
               const statusInfo = STATUS_LABEL[ev.status]
               const eventDate = new Date(ev.event_date)
               const dateLabel = eventDate.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })
-              const isDeleting = deletingId === ev.id_event
+              const isDeleting = deletingId === ev.id_event // controla la animación de colapso antes de quitarlo del array
 
               return (
                 <div
@@ -270,7 +278,7 @@ function CalendarMobile() {
             })}
           </div>
 
-          {/* Botón agregar recordatorio */}
+          {/* Botón agregar recordatorio: abre el flujo Categoría → Negocio → Formulario */}
           <div className="px-5 mt-6">
             <Link
               to="/events/category"
@@ -284,7 +292,7 @@ function CalendarMobile() {
         {/* NavBar inferior */}
         <BottomNav />
 
-        {/* Modal de confirmación de eliminación */}
+        {/* ── Modal de confirmación de eliminación ── */}
         {confirmId !== null && eventToDelete && (
           <div className="fixed inset-0 z-50 flex items-end justify-center">
             <div

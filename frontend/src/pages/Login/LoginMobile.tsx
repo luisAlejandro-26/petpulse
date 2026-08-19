@@ -6,21 +6,25 @@ import logo from '../../assets/logo.png'
 import tituloLogo from '../../assets/titulo_logo.png'
 import fondoInicio from '../../assets/fondo_inicio.png'
 
+// Pantalla de inicio de sesión: login con email/contraseña o con Google (GoogleAuth)
 function LoginMobile() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const registered = (location.state as { registered?: boolean } | null)?.registered
+  const registered = (location.state as { registered?: boolean } | null)?.registered // viene true si el usuario acaba de registrarse (RegisterSuccessMobile redirige aquí)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const googleRef = useRef<GoogleAuthHandle>(null)
+  const [showPassword, setShowPassword] = useState(false) // controla el ojito de mostrar/ocultar contraseña
+  const googleRef = useRef<GoogleAuthHandle>(null) // referencia al componente GoogleAuth para disparar el login desde nuestro propio botón
 
+  // El botón visual de Google no hace el login directo: delega en GoogleAuth vía la ref
   function handleGoogleClick() {
     googleRef.current?.signIn()
   }
 
+  // Login con email/contraseña: valida formato mínimo, llama al AuthContext y redirige al dashboard
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError('')
@@ -51,6 +55,7 @@ function LoginMobile() {
 
         {/* Contenido con padding inferior para dejar espacio a la imagen */}
         <div className="pb-40">
+          {/* ── Logo y encabezado ── */}
           <div className="flex flex-col items-center pt-6">
             <img src={logo} alt="Logo PetPulse" className="w-24 h-auto" />
             <img src={tituloLogo} alt="PetPulse" className="w-48 h-auto -mt-2" />
@@ -74,6 +79,7 @@ function LoginMobile() {
             </p>
           )}
 
+          {/* ── Formulario de login ── */}
           <form onSubmit={handleSubmit} className="px-[55px] mt-7" noValidate>
             <label htmlFor="email" className="font-encode-condensed font-semibold text-base text-petpulse-text block mb-1">
               Correo Electrónico
@@ -100,6 +106,7 @@ function LoginMobile() {
             <label htmlFor="password" className="font-encode-condensed font-semibold text-base text-petpulse-text block mb-1">
               Contraseña
             </label>
+            {/* Input de contraseña con botón de ojito para mostrar/ocultar el texto */}
             <div className="relative mb-2">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary pointer-events-none">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -109,14 +116,32 @@ function LoginMobile() {
               </span>
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
                 placeholder="••••••••••"
-                className="w-full h-[44px] bg-white border border-petpulse-border rounded-lg pl-9 pr-3 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
+                className="w-full h-[44px] bg-white border border-petpulse-border rounded-lg pl-9 pr-10 text-sm text-petpulse-text placeholder:text-petpulse-text-secondary focus:outline-none focus:ring-2 focus:ring-petpulse-primary focus:border-petpulse-primary transition-shadow"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-petpulse-text-secondary"
+              >
+                {showPassword ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                    <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
             </div>
 
             <button
@@ -134,6 +159,7 @@ function LoginMobile() {
             </div>
           </form>
 
+          {/* ── Login alternativo con Google ── */}
           <div className="flex items-center gap-3 px-[55px] mt-6">
             <div className="flex-1 h-px bg-petpulse-border" />
             <span className="font-inter font-bold text-xs text-petpulse-text-secondary">o continuar con</span>
@@ -154,11 +180,12 @@ function LoginMobile() {
               </svg>
               <span className="font-encode-expanded text-sm text-black">Iniciar Sesión con Google</span>
             </button>
+            {/* GoogleAuth no renderiza nada visible; solo maneja el flujo OAuth cuando handleGoogleClick lo dispara */}
             <GoogleAuth ref={googleRef} onError={setError} />
           </div>
         </div>
 
-        {/* Texto + imagen pegados al fondo real de la pantalla */}
+        {/* ── Pie de pantalla: link a registro + imagen decorativa, fijos abajo (absolute) ── */}
         <div className="absolute bottom-0 left-0 w-full">
           <p className="font-encode-semi text-sm text-petpulse-text text-center px-8 mb-2">
             ¿No tienes cuenta?{' '}
