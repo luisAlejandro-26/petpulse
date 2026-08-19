@@ -107,7 +107,7 @@ function BusinessBookingDesktop() {
         <div className="flex items-center gap-4">
           <button
             type="button"
-            onClick={() => navigate('/events/category')}
+            onClick={() => navigate('/dashboard')}
             aria-label="Cambiar tipo de cita"
             className="w-10 h-10 rounded-full border border-petpulse-border bg-white flex items-center justify-center text-petpulse-text hover:text-petpulse-primary hover:border-petpulse-primary transition-colors"
           >
