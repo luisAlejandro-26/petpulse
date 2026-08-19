@@ -51,6 +51,7 @@ function HomeTablet() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [notifOpen, setNotifOpen] = useState(false)
+  const [toastVisible, setToastVisible] = useState(false)
 
   useEffect(() => {
     if (!token) return
@@ -75,10 +76,23 @@ function HomeTablet() {
     [events],
   )
 
-  const alertaSalud = useMemo(
-    () => pets.filter((p) => p.diseases && p.diseases.trim() !== '').length,
-    [pets],
-  )
+  const HEALTH_EVENT_TYPES = new Set(['VACUNA', 'CONTROL', 'DESPARACITACION', 'CIRUGIA'])
+
+  const alertaSalud = useMemo(() => {
+    const now = new Date()
+    const threeDaysMs = 3 * 24 * 60 * 60 * 1000
+    return events.filter((e) => {
+      if (e.status === 'CANCELLED') return false
+      if (!HEALTH_EVENT_TYPES.has(e.event_type)) return false
+      const eventTime = new Date(e.event_date).getTime()
+      if (eventTime <= now.getTime() + threeDaysMs) return true
+      if (e.next_due_date) {
+        const dueTime = new Date(e.next_due_date).getTime()
+        if (dueTime <= now.getTime() + threeDaysMs) return true
+      }
+      return false
+    }).length
+  }, [events])
 
   const actividadReciente = useMemo(() => {
     return events
@@ -86,6 +100,12 @@ function HomeTablet() {
       .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
       .slice(0, 4)
   }, [events])
+
+  useEffect(() => {
+    if (!loading && alertaSalud > 0) {
+      setToastVisible(true)
+    }
+  }, [loading, alertaSalud])
 
   const navItemClass = (path: string) =>
     `flex flex-col items-center gap-[3px] no-underline text-[11px] font-semibold px-4 py-2 rounded-[14px] transition-colors hover:bg-[#eaf0ea] hover:text-petpulse-primary-dark ${
@@ -433,6 +453,49 @@ function HomeTablet() {
           </div>
         </div>
       )}
+
+      {toastVisible && (
+        <div className="fixed top-6 right-6 z-50 w-full max-w-[340px] animate-[toast-in_0.25s_ease-out]">
+          <div className="bg-petpulse-card border border-petpulse-accent/30 rounded-2xl shadow-[0_16px_32px_-14px_rgba(47,62,50,0.35)] p-4 flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#fbe9e5] flex items-center justify-center flex-shrink-0">
+              <Icon icon="mdi:heart-pulse" width={20} height={20} className="text-petpulse-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-poppins font-bold text-sm text-petpulse-text m-0">
+                {alertaSalud} {alertaSalud === 1 ? 'alerta de salud próxima' : 'alertas de salud próximas'}
+              </p>
+              <p className="text-xs text-petpulse-text-secondary mt-1 mb-0">
+                Tienes {alertaSalud === 1 ? 'un evento' : 'eventos'} de salud en los próximos 3 días.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setToastVisible(false)
+                  setNotifOpen(true)
+                }}
+                className="text-xs font-semibold text-petpulse-primary-dark mt-2 hover:underline"
+              >
+                Ver detalles
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setToastVisible(false)}
+              aria-label="Cerrar aviso"
+              className="text-petpulse-text-secondary flex-shrink-0 hover:text-petpulse-text"
+            >
+              <Icon icon="mdi:close" width={18} height={18} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes toast-in {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }
