@@ -447,11 +447,13 @@ function ProfileTablet() {
             Cerrar sesión
           </button>
           <a
-            href="mailto:soporte@petpulse.app"
+            href="https://luisalejandro-26.github.io/blog-sistemas-informaci-n-I/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-petpulse-card border border-petpulse-border text-petpulse-text font-inter font-bold text-sm rounded-full px-5 py-2.5 no-underline transition-colors hover:bg-[#eaf0ea]"
           >
-            <Icon icon="mdi:headset" width={16} height={16} />
-            Contacta soporte
+            <Icon icon="mdi:information-outline" width={16} height={16} />
+            Sobre nosotros
           </a>
         </div>
 
