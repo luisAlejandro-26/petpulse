@@ -27,10 +27,13 @@ function EventCategoryPickerDesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* layout principal */}
+      {/* sidebar */}
       <Sidebar />
 
       {/* ── Centro ── */}
       <main className="flex-1 min-w-0 h-screen overflow-y-auto px-8 py-8 flex flex-col gap-5">
+        {/* header */}
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -46,6 +49,7 @@ function EventCategoryPickerDesktop() {
           </div>
         </div>
 
+        {/* lista categorías */}
         <div className="flex flex-col gap-3">
           {CATEGORIES.map((cat) => (
             <button
@@ -68,10 +72,12 @@ function EventCategoryPickerDesktop() {
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
 
 
+        {/* ilustración IA */}
         <div className="flex justify-center px-6 py-6">
           <img src="/assets/imagen-centro-ia.svg" alt="Mascotas" className="w-48 h-auto object-contain" />
         </div>
 
+        {/* consejos rápidos */}
         <div className="mx-6 bg-[#EAF0EB] rounded-3xl p-6 flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border border-[#6B8C6C] flex items-center justify-center flex-shrink-0">

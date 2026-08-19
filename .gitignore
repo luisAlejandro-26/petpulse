@@ -19,6 +19,7 @@ dist/
 out/
 next-env.d.ts
 *.tsbuildinfo
+.vite/
 
 # === Environment variables ===
 .env

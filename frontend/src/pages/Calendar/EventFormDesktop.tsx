@@ -84,6 +84,7 @@ function EventFormDesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* sidebar */}
       <Sidebar />
 
       {/* ── Centro: Formulario ── */}
@@ -123,6 +124,7 @@ function EventFormDesktop() {
             </p>
           ) : (
             <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+              {/* campos: mascota, tipo, titulo, fecha */}
               <div>
                 <label htmlFor="id_pet" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">
                   Mascota

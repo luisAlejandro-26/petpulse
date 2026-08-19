@@ -170,6 +170,7 @@ function ForgotPasswordDesktop() {
           <div className="w-full max-w-[760px] mb-10">
             <img src="/assets/banner.svg" alt="Ilustración de mascotas" className="w-full h-auto object-contain" />
           </div>
+          {/* features: seguridad, bienestar, recordatorios */}
           <div className="flex w-full justify-center items-start divide-x divide-gray-200">
             <div className="flex-1 flex flex-col items-center text-center px-5">
               <Icon icon="mdi:shield-check-outline" width={36} height={36} className="text-[#5A7A5F] mb-3" />
@@ -191,8 +192,10 @@ function ForgotPasswordDesktop() {
 
         {/* Columna Derecha */}
         <div className="w-full lg:w-1/2 flex justify-center">
+          {/* tarjeta recuperar contraseña */}
           <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 w-full max-w-[560px] p-10 sm:p-14 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
 
+            {/* boton volver */}
             {step !== 'success' && (
               <div className="flex justify-start mb-6">
                 <button
@@ -206,6 +209,7 @@ function ForgotPasswordDesktop() {
               </div>
             )}
 
+            {/* header recuperar contraseña */}
             <div className="mb-8 text-center">
               <h2 className="text-[28px] font-bold text-[#6B8C6C]">
                 {step === 'success' ? 'Recuperación exitosa' : 'Recuperar contraseña'}
@@ -217,6 +221,7 @@ function ForgotPasswordDesktop() {
               )}
             </div>
 
+            {/* alertas error / aviso */}
             {error && (
               <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm text-center">
                 {error}
@@ -228,7 +233,7 @@ function ForgotPasswordDesktop() {
               </div>
             )}
 
-            {/* Email Step */}
+            {/* paso 1: ingresar email */}
             {step === 'email' && (
               <form onSubmit={handleEmailSubmit} className="space-y-6">
                 <div className="flex flex-col items-center text-center mb-6">
@@ -267,7 +272,7 @@ function ForgotPasswordDesktop() {
               </form>
             )}
 
-            {/* Code Step */}
+            {/* paso 2: verificar codigo */}
             {step === 'code' && (
               <form onSubmit={handleCodeSubmit} className="space-y-6">
                 <div className="flex flex-col items-center text-center mb-6">
@@ -300,6 +305,7 @@ function ForgotPasswordDesktop() {
                 >
                   {submitting ? 'Verificando...' : 'Verificar'}
                 </button>
+                {/* boton reenviar codigo con countdown */}
                 <button
                   type="button"
                   onClick={handleResend}
@@ -315,7 +321,7 @@ function ForgotPasswordDesktop() {
               </form>
             )}
 
-            {/* Password Step */}
+            {/* paso 3: nueva contraseña */}
             {step === 'password' && (
               <form onSubmit={handlePasswordSubmit} className="space-y-6">
                 <div className="flex flex-col items-center text-center mb-6">
@@ -326,6 +332,7 @@ function ForgotPasswordDesktop() {
                   <p className="text-sm text-gray-500 mt-1.5 max-w-[340px]">{stepContent.password.description}</p>
                 </div>
 
+                {/* campo nueva contraseña con toggle ojito */}
                 <div>
                   <label htmlFor="newPassword" className="block text-[15px] font-semibold text-gray-700 mb-2">Nueva contraseña</label>
                   <div className="relative">
@@ -349,6 +356,7 @@ function ForgotPasswordDesktop() {
                       <Icon icon={showPassword ? 'mdi:eye-off-outline' : 'mdi:eye-outline'} width={20} height={20} />
                     </button>
                   </div>
+                  {/* password requirements */}
                   <div className="flex gap-4 mt-2 flex-wrap">
                     <span className={`inline-flex items-center gap-1.5 text-[11px] ${
                       newPassword.length === 0
@@ -385,6 +393,7 @@ function ForgotPasswordDesktop() {
                   </div>
                 </div>
 
+                {/* campo confirmar contraseña */}
                 <div>
                   <label htmlFor="confirmPassword" className="block text-[15px] font-semibold text-gray-700 mb-2">Confirmar contraseña</label>
                   <div className="relative">
@@ -416,9 +425,10 @@ function ForgotPasswordDesktop() {
               </form>
             )}
 
-            {/* Success Step */}
+            {/* paso 4: recuperacion exitosa */}
             {step === 'success' && (
               <div className="flex flex-col items-center text-center">
+                {/* escudo animado con checkmark */}
                 <div className="mb-6" role="status" aria-live="polite">
                   <svg width="150" height="172" viewBox="0 0 120 138" fill="none" aria-hidden="true">
                     <path
@@ -440,6 +450,7 @@ function ForgotPasswordDesktop() {
                     />
                   </svg>
                 </div>
+                {/* barra de progreso */}
                 <p className="text-sm text-[#7A7A7A] mb-5">Espera un momento para ser redirigido al inicio de sesión.</p>
                 <div className="w-40 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                   <div
@@ -447,6 +458,7 @@ function ForgotPasswordDesktop() {
                     style={{ width: `${progress}%` }}
                   />
                 </div>
+                {/* boton ir a iniciar sesion */}
                 <button
                   type="button"
                   onClick={() => navigate('/login')}

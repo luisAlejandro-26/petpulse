@@ -86,6 +86,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
           <div className="w-full max-w-[760px] mb-10">
             <img src="/assets/banner.svg" alt="Ilustración de mascotas" className="w-full h-auto object-contain" />
           </div>
+          {/* features: seguridad, bienestar, recordatorios */}
           <div className="flex w-full justify-center items-start divide-x divide-gray-200">
             <div className="flex-1 flex flex-col items-center text-center px-5">
               <Icon icon="mdi:shield-check-outline" width={36} height={36} className="text-[#5A7A5F] mb-3" />
@@ -107,7 +108,9 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
 
         {/* Columna Derecha */}
         <div className="w-full lg:w-1/2 flex justify-center">
+          {/* tarjeta formulario registro */}
           <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 w-full max-w-[480px] p-10 sm:p-12 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
+            {/* header registro */}
             <div className="mb-8 text-center">
               <h2 className="text-[28px] font-bold text-[#6B8C6C]">Regístrate</h2>
               <p className="text-sm text-[#7A7A7A] mt-1.5">Crea tu cuenta para comenzar</p>
@@ -119,7 +122,9 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
               </div>
             )}
 
+            {/* formulario registro */}
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* campos nombre y apellido */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-[#7A7A7A] mb-1.5">Nombre</label>
@@ -153,6 +158,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
                 </div>
               </div>
 
+              {/* campo sexo */}
               <div>
                 <label htmlFor="gender" className="block text-sm font-medium text-[#7A7A7A] mb-1.5">Sexo</label>
                 <div className="relative">
@@ -172,6 +178,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
                 </div>
               </div>
 
+              {/* campo fecha nacimiento */}
               <div>
                 <label htmlFor="birthDate" className="block text-sm font-medium text-[#7A7A7A] mb-1.5">Fecha de nacimiento</label>
                 <div className="relative">
@@ -187,6 +194,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
                 </div>
               </div>
 
+              {/* campo email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-[#7A7A7A] mb-1.5">Correo electrónico</label>
                 <div className="relative">
@@ -203,6 +211,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
                 </div>
               </div>
 
+              {/* campo contraseña con toggle ojito */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-[#7A7A7A] mb-1.5">Contraseña</label>
                 <div className="relative">
@@ -226,6 +235,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
                   </button>
                 </div>
 
+                {/* password requirements */}
                 <div className="flex gap-4 mt-2 flex-wrap">
                   <span className={`inline-flex items-center gap-1.5 text-[11px] ${
                     password.length === 0
@@ -262,6 +272,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
                 </div>
               </div>
 
+              {/* boton registrar */}
               <button
                 type="submit"
                 disabled={submitting}
@@ -271,6 +282,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
               </button>
             </form>
 
+            {/* boton google auth */}
             <button
               type="button"
               onClick={handleGoogleClick}
@@ -281,6 +293,7 @@ function RegisterDesktop({ onNavigateToLogin }: RegisterDesktopProps) {
             </button>
             <GoogleAuth ref={googleRef} onError={setError} />
 
+            {/* link login */}
             <p className="text-center text-sm text-[#7A7A7A] mt-8">
               ¿Ya tienes cuenta?{' '}
               <button

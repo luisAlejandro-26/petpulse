@@ -160,8 +160,10 @@ function HomeDesktop({ role }: HomeDesktopProps) {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* sidebar */}
       <Sidebar />
 
+      {/* layout principal */}
       <main className="flex-1 min-w-0 px-8 lg:px-10 py-8 flex flex-col gap-8">
         <header>
           <h1 className="text-3xl font-bold text-petpulse-text">
@@ -180,6 +182,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           </div>
         )}
 
+        {/* stat cards */}
         <section className="grid grid-cols-2 xl:grid-cols-3 gap-5">
           {role === 'user' ? (
             <>
@@ -230,6 +233,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
         <section className="bg-white rounded-2xl border border-petpulse-border p-6">
           {role === 'user' ? (
             <>
+              {/* header mascotas */}
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-lg font-bold text-petpulse-text">Mis mascotas</h2>
                 <button
@@ -262,6 +266,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
+                  {/* lista mascotas */}
                   {pets.map((pet) => (
                     <ListItemCard
                       key={pet.id_pet}
@@ -279,6 +284,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
             </>
           ) : (
             <>
+              {/* admin: gestión usuarios */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
                 <h2 className="text-lg font-bold text-petpulse-text">Gestión de usuarios</h2>
                 <div className="relative">
@@ -324,6 +330,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
             </>
           )}
         </section>
+        {/* banner ilustración */}
         {role === 'user' && (<section className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px]">
           <img src={petsIllustration} alt="" className="h-[88px] w-auto shrink-0 object-contain" />
           <div className="flex-1 min-w-[140px]">
@@ -343,6 +350,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
         
       </main>
 
+      {/* right panel: notificaciones */}
       {role === 'user' && (
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col">
         <div className="flex items-center justify-between px-6 py-6 border-b border-petpulse-border">
@@ -361,6 +369,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-6">
+          {/* alertas salud badge */}
           <div className="rounded-2xl bg-white border border-petpulse-border p-5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#fbe9e5] flex items-center justify-center flex-shrink-0">
@@ -376,6 +385,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
             </p>
           </div>
 
+          {/* actividad reciente */}
           <div>
             <h3 className="text-sm font-bold text-petpulse-text uppercase tracking-wide mb-4">
               Actividad reciente
@@ -446,6 +456,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
       </aside>
       )}
 
+      {/* modal editar rol */}
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5">
           <div className="w-full max-w-[400px] bg-petpulse-bg rounded-[20px] px-6 py-6">
@@ -492,6 +503,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           </div>
         </div>
       )}
+      {/* modal notificaciones */}
       <NotificationsModal
         open={notifOpen}
         onClose={() => setNotifOpen(false)}
@@ -499,6 +511,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
         actividadReciente={notifActividadReciente}
         loading={notifLoading}
       />
+      {/* toast notificación */}
       <HealthToast
         visible={toastVisible}
         alertaSalud={notifAlertaSalud}

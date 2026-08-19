@@ -71,11 +71,13 @@ function ProfileDesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* sidebar */}
       <Sidebar />
 
+      {/* layout principal */}
       <main className="flex-1 min-w-0 h-screen overflow-y-auto px-8 py-8 flex flex-col gap-5">
 
-          {/* Header card */}
+          {/* header: foto + nombre */}
           <div className="bg-white rounded-2xl border border-petpulse-border p-6 flex items-start gap-6">
             <div className="relative flex-shrink-0">
               <div className="w-32 h-32 rounded-full bg-petpulse-primary/15 border-2 border-petpulse-primary/20 flex items-center justify-center overflow-hidden text-petpulse-primary-dark font-bold text-3xl">
@@ -86,6 +88,7 @@ function ProfileDesktop() {
                 )}
               </div>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePickImage} />
+              {/* upload foto perfil */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -116,10 +119,13 @@ function ProfileDesktop() {
 
           {photoError && <p role="alert" className="text-petpulse-accent text-sm text-center">{photoError}</p>}
 
+          {/* card info personal */}
           <PersonalInfoCard />
 
+          {/* card contraseña */}
           <PasswordCard />
 
+          {/* boton sobre nosotros */}
           <a
             href="https://luisalejandro-26.github.io/blog-sistemas-informaci-n-I/"
             target="_blank"
@@ -138,7 +144,7 @@ function ProfileDesktop() {
 
       </main>
 
-      {/* ── Panel derecho (PetIA style) ── */}
+      {/* right panel: consejos */}
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
 
 
@@ -146,6 +152,7 @@ function ProfileDesktop() {
           <img src="/assets/imagen-centro-ia.svg" alt="Mascotas" className="w-48 h-auto object-contain" />
         </div>
 
+        {/* tarjeta consejos */}
         <div className="mx-6 bg-[#EAF0EB] rounded-3xl p-6 flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border border-[#6B8C6C] flex items-center justify-center flex-shrink-0">
@@ -227,8 +234,10 @@ function PersonalInfoCard() {
     }
   }
 
-  return (
+      return (
     <div className="bg-white rounded-2xl border border-petpulse-border">
+      {/* card info personal */}
+      {/* header: titulo + editar */}
       <div className="px-6 py-4 border-b border-petpulse-border flex items-center justify-between">
         <p className="font-bold text-sm text-petpulse-text">Información personal</p>
         {!editing && (
@@ -365,8 +374,10 @@ function PasswordCard() {
     }
   }
 
-  return (
+      return (
     <div className="bg-white rounded-2xl border border-petpulse-border">
+      {/* card contraseña */}
+      {/* header: titulo + editar */}
       <div className="px-6 py-4 border-b border-petpulse-border flex items-center justify-between">
         <p className="font-bold text-sm text-petpulse-text">Contraseña</p>
         {!editing && (
@@ -378,12 +389,14 @@ function PasswordCard() {
 
       {error && <p role="alert" className="text-petpulse-accent text-xs text-center pt-3">{error}</p>}
 
+      {/* campos editables */}
       {editing ? (
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
           <div>
             <label htmlFor="profile-new-password" className="block text-[15px] font-semibold text-gray-700 mb-2">Nueva contraseña</label>
             <div className="relative">
               <Icon icon="mdi:lock-outline" width={20} height={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              {/* toggle ojito */}
               <input
                 id="profile-new-password"
                 type={showPassword ? 'text' : 'password'}
@@ -398,6 +411,7 @@ function PasswordCard() {
                 <Icon icon={showPassword ? 'mdi:eye-off-outline' : 'mdi:eye-outline'} width={20} height={20} />
               </button>
             </div>
+            {/* password validation */}
             <div className="flex gap-4 mt-2 flex-wrap">
               <span className={`inline-flex items-center gap-1.5 text-[11px] ${password.length === 0 ? 'text-[#7A7A7A]' : hasMinLength ? 'text-[#6B8C6C] font-semibold' : 'text-[#E07A5F] font-semibold'}`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${password.length === 0 ? 'bg-[#7A7A7A]' : hasMinLength ? 'bg-[#6B8C6C]' : 'bg-[#E07A5F]'}`} />

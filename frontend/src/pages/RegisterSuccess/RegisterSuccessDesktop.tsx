@@ -38,6 +38,7 @@ function RegisterSuccessDesktop() {
           <div className="w-full max-w-[760px] mb-10">
             <img src="/assets/banner.svg" alt="Ilustración de mascotas" className="w-full h-auto object-contain" />
           </div>
+          {/* features: seguridad, bienestar, recordatorios */}
           <div className="flex w-full justify-center items-start divide-x divide-gray-200">
             <div className="flex-1 flex flex-col items-center text-center px-5">
               <svg className="w-9 h-9 text-[#5A7A5F] mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -65,10 +66,12 @@ function RegisterSuccessDesktop() {
 
         {/* Columna Derecha */}
         <div className="w-full lg:w-1/2 flex justify-center">
+          {/* tarjeta registro exitoso */}
           <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 w-full max-w-[560px] p-10 sm:p-14 flex flex-col items-center text-center">
 
             <h2 className="text-[28px] font-bold text-[#6B8C6C] mb-8">Registro exitoso</h2>
 
+            {/* escudo animado con checkmark */}
             <div className="mb-8" role="status" aria-live="polite">
               <svg width="150" height="172" viewBox="0 0 120 138" fill="none" aria-hidden="true">
                 <path
@@ -91,8 +94,10 @@ function RegisterSuccessDesktop() {
               </svg>
             </div>
 
+            {/* mensaje redireccion */}
             <p className="text-sm text-[#7A7A7A] mb-5">Espere un momento, será redirigido al inicio de sesión</p>
 
+            {/* barra de progreso */}
             <div className="w-40 h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#6B8C6C] rounded-full transition-[width] duration-75 ease-linear"
