@@ -2,14 +2,13 @@
 
 # Plan maestro (no subir al repo)
 PETPULSE_ROADMAP.md
+PETPULSE_TICKETS.md
 
 # === Node / JavaScript ===
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
-yarn.lock
 .pnp
 .pnp.js
 
@@ -18,6 +17,8 @@ build/
 dist/
 .next/
 out/
+next-env.d.ts
+*.tsbuildinfo
 
 # === Environment variables ===
 .env
@@ -37,12 +38,6 @@ out/
 .DS_Store
 Thumbs.db
 *.log
-
-# === Docker ===
-docker-compose.override.yml
-
-# === Oracle DB (volumen persistente) ===
-oracle-data/
 
 # === Coverage / Tests ===
 coverage/
