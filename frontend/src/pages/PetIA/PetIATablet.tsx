@@ -236,13 +236,6 @@ function PetIATablet() {
             >
               <Icon icon="mdi:history" width={20} height={20} />
             </button>
-            <button
-              type="button"
-              className="w-10 h-10 rounded-full border border-petpulse-border bg-petpulse-card text-petpulse-text flex items-center justify-center cursor-pointer transition-colors hover:bg-[#eaf0ea] hover:border-petpulse-primary"
-              aria-label="Notificaciones"
-            >
-              <Icon icon="mdi:bell-outline" width={20} height={20} />
-            </button>
           </div>
         </header>
 
