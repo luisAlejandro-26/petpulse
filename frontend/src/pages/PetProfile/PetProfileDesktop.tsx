@@ -227,11 +227,12 @@ function PetProfileDesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* sidebar */}
       <Sidebar />
 
-      {/* ── Centro ── */}
+      {/* layout principal */}
       <main className="flex-1 min-w-0 h-screen overflow-y-auto px-8 py-8 flex flex-col gap-5">
-        {/* Header */}
+        {/* header mascota: foto + nombre */}
         <div className="flex items-center gap-4">
           <button
             type="button"
@@ -276,8 +277,8 @@ function PetProfileDesktop() {
             </div>
           </div>
 
-          {/* Atributos: Peso / Edad / Color */}
-          <div className="bg-petpulse-bg border border-petpulse-border rounded-xl flex mt-5 divide-x divide-petpulse-border">
+        {/* barra atributos: peso, edad, color */}
+        <div className="bg-petpulse-bg border border-petpulse-border rounded-xl flex mt-5 divide-x divide-petpulse-border">
             <div className="flex-1 flex flex-col items-center gap-1.5 py-4">
               <Icon icon="mdi:weight-kilogram" width={20} height={20} className="text-petpulse-primary" />
               <p className="text-sm font-semibold text-petpulse-text">{pet.weight ? `${pet.weight} Kg` : '—'}</p>
@@ -293,7 +294,7 @@ function PetProfileDesktop() {
           </div>
         </div>
 
-        {/* Tarjetas por tipo de evento */}
+        {/* tarjetas eventos agrupados */}
         {EVENT_TYPE_ORDER.map((type) => {
           const meta = EVENT_TYPE_META[type]
           return (
@@ -309,7 +310,7 @@ function PetProfileDesktop() {
           )
         })}
 
-        {/* Enfermedades */}
+        {/* enfermedades card */}
         <div className="bg-white border border-petpulse-border rounded-2xl p-5">
           <h3 className="font-bold text-[15px] text-[#6B8C6C] mb-4">Enfermedades</h3>
           {pet.diseases ? (
@@ -327,22 +328,22 @@ function PetProfileDesktop() {
         </div>
       </main>
 
-      {/* ── Panel derecho ── */}
+      {/* right panel */}
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
 
 
-        {/* Donut de progreso */}
+        {/* donut chart salud */}
         <div className="px-6 py-6 flex flex-col items-center gap-4">
           <DonutChart percentage={completionPercentage} />
           <p className="text-sm font-semibold text-petpulse-text text-center">Recordatorios completados</p>
         </div>
 
-        {/* Descripción del padecimiento */}
+      {/* scrollbar recordatorios */}
         <div className="mx-6 flex flex-col gap-4">
           <h3 className="font-bold text-[#6B8C6C] text-base text-center">Descripción Padecimiento</h3>
 
-          {/* Card blanca con textarea verde */}
-          <div className="bg-white rounded-2xl border border-petpulse-border p-4 flex flex-col gap-3">
+        {/* textarea enfermedades editable */}
+        <div className="bg-white rounded-2xl border border-petpulse-border p-4 flex flex-col gap-3">
             <textarea
               value={diseasesText}
               onChange={(e) => setDiseasesText(e.target.value)}
@@ -360,11 +361,12 @@ function PetProfileDesktop() {
             </button>
           </div>
 
-          <img src="/assets/banner-agg-pet.svg" alt="" className="w-full h-auto object-cover rounded-2xl" />
+        {/* banner consejo */}
+        <img src="/assets/banner-agg-pet.svg" alt="" className="w-full h-auto object-cover rounded-2xl" />
         </div>
       </aside>
 
-      {/* Modal de confirmación de eliminación */}
+      {/* modal confirmar eliminar */}
       {confirmId !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmId(null)} />

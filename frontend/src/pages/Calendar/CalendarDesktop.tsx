@@ -96,6 +96,7 @@ function CalendarDesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* sidebar */}
       <Sidebar />
 
       {/* ── Centro ── */}
@@ -116,6 +117,7 @@ function CalendarDesktop() {
               Calendario
             </h2>
 
+            {/* navegación meses */}
             <div className="flex items-center justify-between mb-4">
               <button type="button" onClick={prevMonth} aria-label="Mes anterior" className="p-1.5 rounded-lg hover:bg-petpulse-bg transition-colors">
                 <Icon icon="mdi:chevron-left" width={20} height={20} className="text-petpulse-text" />
@@ -134,6 +136,7 @@ function CalendarDesktop() {
               ))}
             </div>
 
+            {/* dots de eventos */}
             <div className="grid grid-cols-7 gap-y-1 text-center">
               {calendarGrid.map((day, i) => {
                 if (day === null) return <div key={i} />
@@ -202,6 +205,7 @@ function CalendarDesktop() {
           </div>
         </div>
 
+        {/* banner consejo */}
         <section className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px]">
           <img src={petsIllustration} alt="" className="h-[88px] w-auto shrink-0 object-contain" />
           <div className="flex-1 min-w-[140px]">
@@ -228,6 +232,7 @@ function CalendarDesktop() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-6">
+          {/* actividad reciente */}
           <div>
             <h3 className="text-sm font-bold text-petpulse-text uppercase tracking-wide mb-4">
               Actividad reciente
@@ -291,6 +296,7 @@ function CalendarDesktop() {
 
           <div className="border-t border-petpulse-border" />
 
+          {/* mis mascotas */}
           <div>
             <h3 className="text-sm font-bold text-petpulse-text uppercase tracking-wide mb-4 flex items-center gap-1.5">
               Mis mascotas

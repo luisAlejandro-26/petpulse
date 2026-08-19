@@ -183,11 +183,12 @@ function PetIADesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* sidebar */}
       <Sidebar />
 
-      {/* ── Centro: Chat ── */}
+      {/* layout principal */}
       <main className="flex-1 min-w-0 flex flex-col h-screen">
-        {/* Header del chat */}
+        {/* header chat */}
         <div className="flex items-center justify-between px-8 py-5 border-b border-petpulse-border">
           <h1 className="text-2xl font-bold text-petpulse-primary">PetIA</h1>
           <div className="flex items-center gap-2">
@@ -210,7 +211,7 @@ function PetIADesktop() {
           </div>
         </div>
 
-        {/* Cuerpo del chat */}
+        {/* body chat */}
         {!hasStarted ? (
           <div className="flex-1 overflow-y-auto px-8 py-8">
             <div className="max-w-2xl mx-auto">
@@ -233,6 +234,7 @@ function PetIADesktop() {
                 </p>
               </div>
 
+              {/* sugerencias rápidas */}
               <p className="font-semibold text-base text-petpulse-text mb-3">
                 ¿En qué puedo ayudarte?
               </p>
@@ -260,11 +262,13 @@ function PetIADesktop() {
           </div>
         ) : (
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-8 py-6">
+            {/* mensajes chat */}
             <div className="max-w-2xl mx-auto">
               <p className="font-medium text-lg text-petpulse-text-secondary text-center mt-2 mb-4">
                 Hoy
               </p>
 
+              {/* lista mensajes */}
               <div className="flex flex-col gap-4">
                 {messages.map((m, i) => (
                   <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
@@ -291,6 +295,7 @@ function PetIADesktop() {
                   </div>
                 ))}
 
+                {/* typing indicator */}
                 {sending && (
                   <div className="flex flex-col items-start">
                     <p className="font-semibold text-xs text-petpulse-primary mb-1">PetIA</p>
@@ -325,7 +330,7 @@ function PetIADesktop() {
           </div>
         )}
 
-        {/* Preview de imagen adjunta */}
+        {/* preview imagen adjunta */}
         {attachedImage && (
           <div className="px-8 pb-2 flex items-center gap-2">
             <img src={attachedImage.preview} alt="preview" className="w-14 h-14 rounded-lg object-cover" />
@@ -340,9 +345,10 @@ function PetIADesktop() {
           </div>
         )}
 
-        {/* Input */}
+        {/* input area */}
         <div className="px-8 pb-6">
           <div className="max-w-2xl mx-auto min-h-[47px] max-h-32 bg-white border border-petpulse-text-secondary rounded-3xl flex items-end px-3 py-2 gap-2">
+            {/* upload imagen */}
             <input
               ref={fileInputRef}
               type="file"
@@ -390,7 +396,7 @@ function PetIADesktop() {
         </div>
       </main>
 
-      {/* ── Panel derecho ── */}
+      {/* right panel */}
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col overflow-y-auto">
         {/* Campana */}
 
@@ -404,7 +410,7 @@ function PetIADesktop() {
           />
         </div>
 
-        {/* Tarjeta Consejos rápidos */}
+        {/* consejos rapidos */}
         <div className="mx-6 mb-6 bg-[#EAF0EB] rounded-3xl p-6 flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border border-[#6B8C6C] flex items-center justify-center flex-shrink-0">
@@ -448,7 +454,7 @@ function PetIADesktop() {
         </div>
       </aside>
 
-      {/* Panel de historial */}
+      {/* historial conversaciones */}
       {historyOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div

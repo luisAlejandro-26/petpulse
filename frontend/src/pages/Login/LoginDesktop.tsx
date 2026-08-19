@@ -75,6 +75,7 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
           <div className="w-full max-w-[760px] mb-10">
             <img src="/assets/banner.svg" alt="Ilustración de mascotas" className="w-full h-auto object-contain" />
           </div>
+          {/* features: seguridad, bienestar, recordatorios */}
           <div className="flex w-full justify-center items-start divide-x divide-gray-200">
             <div className="flex-1 flex flex-col items-center text-center px-5">
               <Icon icon="mdi:shield-check-outline" width={36} height={36} className="text-[#5A7A5F] mb-3" />
@@ -96,12 +97,15 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
 
         {/* Columna Derecha */}
         <div className="w-full lg:w-1/2 flex justify-center">
+          {/* tarjeta formulario login */}
           <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 w-full max-w-[520px] p-10 sm:p-14 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
+            {/* header login */}
             <div className="mb-10 text-center">
               <h2 className="text-[32px] font-bold text-[#5A7A5F]">Inicia sesión</h2>
               <p className="text-base text-gray-500 mt-2">Accede a tu cuenta para continuar</p>
             </div>
 
+            {/* alerta registro exitoso */}
             {registered && (
               <div className="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm text-center">
                 Registro exitoso. Inicia sesión para continuar.
@@ -114,7 +118,9 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
               </div>
             )}
 
+            {/* formulario login */}
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* campo email */}
               <div>
                 <label htmlFor="email" className="block text-[15px] font-semibold text-gray-700 mb-2">
                   Correo electrónico
@@ -133,6 +139,7 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
                 </div>
               </div>
 
+              {/* campo contraseña con toggle ojito */}
               <div>
                 <label htmlFor="password" className="block text-[15px] font-semibold text-gray-700 mb-2">
                   Contraseña
@@ -159,6 +166,7 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
                 </div>
               </div>
 
+              {/* link forgot password */}
               <div className="flex justify-end pt-1">
                 <button
                   type="button"
@@ -169,6 +177,7 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
                 </button>
               </div>
 
+              {/* boton iniciar sesion */}
               <button
                 type="submit"
                 disabled={submitting}
@@ -178,12 +187,14 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
               </button>
             </form>
 
+            {/* divisor o continuar con */}
             <div className="flex items-center gap-3 my-8">
               <div className="flex-1 h-px bg-gray-100" />
               <span className="text-sm text-gray-400 whitespace-nowrap">o continuar con</span>
               <div className="flex-1 h-px bg-gray-100" />
             </div>
 
+            {/* boton google auth */}
             <button
               type="button"
               onClick={handleGoogleClick}
@@ -194,6 +205,7 @@ function LoginDesktop({ onNavigateToRegister }: LoginDesktopProps) {
             </button>
             <GoogleAuth ref={googleRef} onError={setError} />
 
+            {/* link registro */}
             <p className="text-center text-sm text-gray-500 mt-10">
               ¿No tienes cuenta?{' '}
               <button

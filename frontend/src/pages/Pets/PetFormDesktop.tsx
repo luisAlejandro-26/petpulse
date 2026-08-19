@@ -114,6 +114,8 @@ function PetFormDesktop() {
 
   return (
     <div className="min-h-screen w-full bg-petpulse-bg flex">
+      {/* layout principal */}
+      {/* sidebar */}
       <Sidebar />
 
       {/* ── Centro: Formulario ── */}
@@ -181,6 +183,7 @@ function PetFormDesktop() {
 
                 {/* Campos */}
                 <div className="flex-1 min-w-[280px] grid grid-cols-2 gap-x-6 gap-y-4">
+                  {/* campo nombre */}
                   <div>
                     <label htmlFor="name_pet" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">Nombre</label>
                     <div className="relative flex items-center">
@@ -189,6 +192,7 @@ function PetFormDesktop() {
                     </div>
                   </div>
 
+                  {/* campo especie */}
                   <div>
                     <label htmlFor="species" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">Especie</label>
                     <div className="relative flex items-center">
@@ -202,6 +206,7 @@ function PetFormDesktop() {
                     </div>
                   </div>
 
+                  {/* campo raza */}
                   <div>
                     <label htmlFor="breed" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">Raza</label>
                     <div className="relative flex items-center">
@@ -210,6 +215,7 @@ function PetFormDesktop() {
                     </div>
                   </div>
 
+                  {/* campo color */}
                   <div>
                     <label htmlFor="color" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">
                       Color <span className="text-petpulse-text-secondary font-normal">(opcional)</span>
@@ -220,6 +226,7 @@ function PetFormDesktop() {
                     </div>
                   </div>
 
+                  {/* campo fecha nacimiento */}
                   <div>
                     <label htmlFor="birth_date" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">Fecha de nacimiento</label>
                     <div className="relative flex items-center">
@@ -228,6 +235,7 @@ function PetFormDesktop() {
                     </div>
                   </div>
 
+                  {/* campo peso */}
                   <div>
                     <label htmlFor="peso" className="block text-[13px] font-semibold text-petpulse-text mb-1.5">Peso</label>
                     <div className="relative flex items-center">
@@ -262,6 +270,7 @@ function PetFormDesktop() {
 
               {/* Botones */}
               <div className="flex gap-4 flex-wrap">
+                {/* boton guardar */}
                 <button
                   type="submit"
                   disabled={submitting}
@@ -290,6 +299,7 @@ function PetFormDesktop() {
           <img src="/assets/imagen-centro-ia.svg" alt="Mascotas" className="w-48 h-auto object-contain" />
         </div>
 
+        {/* consejos rápidos */}
         <div className="mx-6 bg-[#EAF0EB] rounded-3xl p-6 flex flex-col gap-5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border border-[#6B8C6C] flex items-center justify-center flex-shrink-0">
