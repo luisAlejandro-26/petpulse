@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { deletePet, getPets } from '../../api/pets'
 import { getEvents } from '../../api/events'
-import { deleteUser, getAdminStats, getUsers } from '../../api/dashboard'
+import { deleteUser, getAdminStats, getUsers, updateUserRole } from '../../api/dashboard'
 import type { AdminStats, HealthEvent, Pet, User } from '../../api/types'
 import Sidebar from '../../components/dashboard/Sidebar'
 import StatCard from '../../components/dashboard/StatCard'
@@ -29,6 +29,8 @@ function HomeDesktop({ role }: HomeDesktopProps) {
   const [users, setUsers] = useState<User[]>([])
   const [search, setSearch] = useState('')
   const [stats, setStats] = useState<AdminStats | null>(null)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [savingRole, setSavingRole] = useState(false)
 
   useEffect(() => {
     if (!token) return
@@ -134,6 +136,20 @@ function HomeDesktop({ role }: HomeDesktopProps) {
       setUsers((prev) => prev.filter((item) => item.id_user !== id))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo eliminar el usuario')
+    }
+  }
+
+  async function handleSaveRole(newRole: 'USER' | 'ADMIN') {
+    if (!token || !editingUser) return
+    setSavingRole(true)
+    try {
+      const updated = await updateUserRole(editingUser.id_user, newRole, token)
+      setUsers((prev) => prev.map((item) => (item.id_user === updated.id_user ? updated : item)))
+      setEditingUser(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo cambiar el rol')
+    } finally {
+      setSavingRole(false)
     }
   }
 
@@ -293,10 +309,8 @@ function HomeDesktop({ role }: HomeDesktopProps) {
                         item.role_account === 'ADMIN' ? 'ADMINISTRADOR' : 'USUARIO'
                       }
                       badgeTone={item.role_account === 'ADMIN' ? 'admin' : 'user'}
-                      onEdit={() => {
-                        navigate(`/users/${item.id_user}/edit`)
-                      }}
-                      onDelete={() => void handleDeleteUser(item.id_user)}
+                      onEdit={item.id_user === user?.id_user ? undefined : () => setEditingUser(item)}
+                      onDelete={item.id_user === user?.id_user ? undefined : () => void handleDeleteUser(item.id_user)}
                     />
                   ))}
                 </div>
@@ -304,8 +318,7 @@ function HomeDesktop({ role }: HomeDesktopProps) {
             </>
           )}
         </section>
-
-        <section className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px]">
+        {role === 'user' && (<section className="relative flex items-center gap-5 bg-gradient-to-r from-[#dce7dc] to-[#eaf0ea] rounded-[20px] px-6 py-5 overflow-hidden min-h-[96px]">
           <img src={petsIllustration} alt="" className="h-[88px] w-auto shrink-0 object-contain" />
           <div className="flex-1 min-w-[140px]">
             <p className="font-bold text-[15px] text-petpulse-text m-0">Tu compromiso es su bienestar</p>
@@ -320,9 +333,11 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           >
             Agendar cita
           </button>
-        </section>
+        </section>)}
+        
       </main>
 
+      {role === 'user' && (
       <aside className="w-[320px] shrink-0 bg-white border-l border-petpulse-border h-screen sticky top-0 flex flex-col">
         <div className="flex items-center justify-between px-6 py-6 border-b border-petpulse-border">
           <h2 className="text-lg font-bold text-petpulse-text">Notificaciones</h2>
@@ -420,6 +435,54 @@ function HomeDesktop({ role }: HomeDesktopProps) {
           </div>
         </div>
       </aside>
+      )}
+
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5">
+          <div className="w-full max-w-[400px] bg-petpulse-bg rounded-[20px] px-6 py-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-petpulse-primary/15 flex items-center justify-center mb-4">
+                <Icon icon="mdi:shield-account-outline" width={26} height={26} color="#6B8C6C" />
+              </div>
+              <h3 className="font-bold text-lg text-petpulse-text m-0">Cambiar rol</h3>
+              <p className="text-sm text-petpulse-text-secondary mt-1.5 mb-0">
+                {editingUser.name_user} · {editingUser.email}
+              </p>
+              <p className="text-xs text-petpulse-text-secondary mt-1">
+                Rol actual: {editingUser.role_account === 'ADMIN' ? 'Administrador' : 'Usuario'}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2.5 mt-5">
+              <button
+                type="button"
+                disabled={savingRole || editingUser.role_account === 'USER'}
+                onClick={() => void handleSaveRole('USER')}
+                className="h-11 rounded-xl font-semibold text-sm border border-petpulse-border text-petpulse-text disabled:opacity-40 hover:bg-[#eaf0ea] transition-colors"
+              >
+                Hacer usuario normal
+              </button>
+              <button
+                type="button"
+                disabled={savingRole || editingUser.role_account === 'ADMIN'}
+                onClick={() => void handleSaveRole('ADMIN')}
+                className="h-11 rounded-xl font-semibold text-sm bg-petpulse-primary text-white disabled:opacity-40 hover:bg-petpulse-primary-dark transition-colors"
+              >
+                Hacer administrador
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setEditingUser(null)}
+              disabled={savingRole}
+              className="w-full h-11 mt-2.5 rounded-xl font-semibold text-sm text-petpulse-text-secondary hover:bg-[#eaf0ea] transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
