@@ -8,6 +8,7 @@ import { getPets } from '../../api/pets'
 import { getEvents } from '../../api/events'
 import type { Pet, HealthEvent } from '../../api/types'
 import { ACTIVITY_META, STATUS_LABEL, formatDate } from '../../components/dashboard/dashboardUtils'
+import HealthToast from '../../components/dashboard/HealthToast' // aviso emergente arriba de la pantalla cuando hay alertas de salud próximas
 import logo from '../../assets/logo.png'
 
 const HEALTH_EVENT_TYPES = new Set(['VACUNA', 'CONTROL', 'DESPARACITACION', 'CIRUGIA']) // tipos de evento que cuentan para el contador de "alertas de salud" (OTHER queda fuera)
@@ -31,7 +32,8 @@ function calculateAge(birthDate: string): string {
 function HomeMobile() {
   const { user, token } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [notifOpen, setNotifOpen] = useState(false) // abre/cierra el panel deslizable de notificaciones
+ const [notifOpen, setNotifOpen] = useState(false) // abre/cierra el panel deslizable de notificaciones
+  const [toastVisible, setToastVisible] = useState(false) // controla el aviso emergente (toast) de alertas de salud
   const navigate = useNavigate()
 
   const [pets, setPets] = useState<Pet[]>([])
@@ -68,6 +70,15 @@ function HomeMobile() {
       return false
     }).length
   }, [events])
+
+  // Muestra el toast automáticamente en cuanto se cargan los eventos, si hay alertas de salud
+  useEffect(() => {
+    if (!loading && alertaSalud > 0) {
+      setToastVisible(true)
+    }
+  }, [loading, alertaSalud])
+
+  
 
   // Últimos 10 eventos completados o pendientes, más recientes primero - se muestran en el panel de notificaciones
   const actividadReciente = useMemo(() => {
@@ -295,6 +306,16 @@ function HomeMobile() {
           </div>
         </div>
       )}
+
+      <HealthToast
+        visible={toastVisible}
+        alertaSalud={alertaSalud}
+        onDismiss={() => setToastVisible(false)}
+        onViewDetails={() => {
+          setToastVisible(false)
+          setNotifOpen(true)
+        }}
+      />
     </div>
   )
 }
